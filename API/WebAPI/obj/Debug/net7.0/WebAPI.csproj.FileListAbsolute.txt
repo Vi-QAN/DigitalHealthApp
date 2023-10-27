@@ -1,0 +1,468 @@
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.deps.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.runtimeconfig.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\libman.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.exe
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\appsettings.Development.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\appsettings.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.staticwebassets.runtime.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.exe
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.deps.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.runtimeconfig.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Azure.Core.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Humanizer.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityModel.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityModel.AspNetCore.OAuth2Introspection.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.AccessTokenValidation.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.AspNetIdentity.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.Storage.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\IdentityServer4.Storage.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Mono.TextTemplating.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.AspNetCore.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Hosting.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Logging.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Formatting.Compact.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Settings.Configuration.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Console.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Debug.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Serilog.Sinks.File.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.pdb
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.csproj.AssemblyReference.cache
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfoInputs.cache
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfo.cs
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CoreCompileInputs.cache
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.WebAPI.props
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebAPI.props
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebAPI.props
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets.pack.json
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets.build.json
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\staticwebassets.development.json
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\scopedcss\bundle\WebAPI.styles.css
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CopyComplete
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\refint\WebAPI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\WebAPI.genruntimeconfig.cache
+C:\Users\35383\Documents\Identity Server\WebAPI\obj\Debug\net7.0\ref\WebAPI.dll
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\WebData.staticwebassets.runtime.json
+C:\Users\35383\Documents\Identity Server\WebAPI\bin\Debug\net7.0\System.Net.Http.Json.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.csproj.AssemblyReference.cache
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfoInputs.cache
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CoreCompileInputs.cache
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\refint\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\libman.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\appsettings.Development.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\appsettings.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.deps.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.exe
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData\obj\project.assets.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData\obj\WebData.csproj.nuget.dgspec.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.exe
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.deps.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Azure.Core.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Humanizer.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityModel.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityModel.AspNetCore.OAuth2Introspection.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.AccessTokenValidation.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.AspNetIdentity.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.Storage.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\IdentityServer4.Storage.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Mono.TextTemplating.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\nunit.framework.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\nunit.framework.legacy.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.AspNetCore.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Hosting.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Logging.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Formatting.Compact.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Settings.Configuration.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Console.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Debug.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Serilog.Sinks.File.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Net.Http.Json.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.dll
+C:\Users\35383\Documents\Final Year Project\WebAPI\bin\Debug\net7.0\WebData.pdb
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets.pack.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets.build.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\staticwebassets.development.json
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\scopedcss\bundle\WebAPI.styles.css
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CopyComplete
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\WebAPI.genruntimeconfig.cache
+C:\Users\35383\Documents\Final Year Project\WebAPI\obj\Debug\net7.0\ref\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\libman.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\appsettings.Development.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\appsettings.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData\obj\project.assets.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData\obj\WebData.csproj.nuget.dgspec.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.deps.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.exe
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.exe
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.deps.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Azure.Core.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Humanizer.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityModel.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityModel.AspNetCore.OAuth2Introspection.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.AccessTokenValidation.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.AspNetIdentity.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.Storage.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\IdentityServer4.Storage.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Mono.TextTemplating.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\nunit.framework.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\nunit.framework.legacy.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.AspNetCore.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Hosting.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Logging.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Formatting.Compact.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Settings.Configuration.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Console.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Debug.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.File.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Net.Http.Json.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\bin\Debug\net7.0\WebData.pdb
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.AssemblyReference.cache
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfoInputs.cache
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CoreCompileInputs.cache
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets.pack.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets.build.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\staticwebassets.development.json
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\scopedcss\bundle\WebAPI.styles.css
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CopyComplete
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\refint\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\WebAPI.genruntimeconfig.cache
+C:\Users\35383\Documents\Final Year Project\API\WebAPI\obj\Debug\net7.0\ref\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\libman.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\appsettings.Development.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\appsettings.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData\obj\project.assets.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData\obj\WebData.csproj.nuget.dgspec.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.deps.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.exe
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.staticwebassets.runtime.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.exe
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.deps.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.runtimeconfig.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Azure.Core.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Humanizer.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityModel.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityModel.AspNetCore.OAuth2Introspection.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.AccessTokenValidation.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.AspNetIdentity.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.EntityFramework.Storage.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\IdentityServer4.Storage.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Mono.TextTemplating.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\nunit.framework.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\nunit.framework.legacy.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.AspNetCore.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Hosting.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Extensions.Logging.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Formatting.Compact.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Settings.Configuration.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Console.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.Debug.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Serilog.Sinks.File.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Net.Http.Json.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\bin\Debug\net7.0\WebData.pdb
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.AssemblyReference.cache
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfoInputs.cache
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.AssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CoreCompileInputs.cache
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildTransitive.WebAPI.props
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets.pack.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets.build.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\staticwebassets.development.json
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\scopedcss\bundle\WebAPI.styles.css
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.csproj.CopyComplete
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\refint\WebAPI.dll
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.pdb
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\WebAPI.genruntimeconfig.cache
+C:\Users\35383\Documents\Final Year Project\DigitalHealth\API\WebAPI\obj\Debug\net7.0\ref\WebAPI.dll
