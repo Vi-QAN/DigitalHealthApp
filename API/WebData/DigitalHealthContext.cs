@@ -9,13 +9,16 @@ namespace WebData
 {
     public class DigitalHealthContext : DbContext
     {
-        public DbSet<Doctor> Doctors { get; set; }
+        /*public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<SensorType> SensorTypes { get; set; }
         public DbSet<SensorValue> SensorValues { get; set; }
-        public DbSet<Device> Devices { get; set; }
+        public DbSet<Device> Devices { get; set; }*/
+        public DbSet<Information> Information { get; set; }
+        public DbSet<User> Users { get; set; }  
+        public DbSet<AuthorizationRecord> AuthorizationRecords { get; set; }
 
         public DigitalHealthContext(DbContextOptions<DigitalHealthContext> options)
             : base(options)
@@ -25,12 +28,14 @@ namespace WebData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new ConversationConfiguration());
+            /*modelBuilder.ApplyConfiguration(new ConversationConfiguration());
             modelBuilder.ApplyConfiguration(new DoctorConfiguration());
             modelBuilder.ApplyConfiguration(new PatientConfiguration());
             modelBuilder.ApplyConfiguration(new SensorValueConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());
-            modelBuilder.ApplyConfiguration(new MessageConfiguration());
+            modelBuilder.ApplyConfiguration(new MessageConfiguration());*/
+            modelBuilder.ApplyConfiguration(new InformationConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 
 

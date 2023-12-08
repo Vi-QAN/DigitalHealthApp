@@ -1,11 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Hosting;
 using WebData.Models;
 
 namespace WebData.Configurations
 {
+    public class UserConfiguration : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.ToTable("Users").HasKey(x => x.UserId);
+            builder.Property(x => x.UserId).ValueGeneratedOnAdd();
 
-    public class DoctorConfiguration : IEntityTypeConfiguration<Doctor>
+            builder
+                .HasMany(x => x.AccessedRecords)
+                .WithMany(x => x.OwnedRecords)
+                .UsingEntity<AuthorizationRecord>(
+                    r => { 
+                        r.HasKey(x => new { x.OwnerId, x.AccessorId });
+                        r.HasOne<User>().WithMany(e => e.AuthorizationRecords);
+                        r.HasOne<User>().WithMany(e => e.AuthorizationRecords);
+                    }
+                     
+                ) ;
+        }
+    }
+
+    /*public class DoctorConfiguration : IEntityTypeConfiguration<Doctor>
     {
         public void Configure(EntityTypeBuilder<Doctor> builder)
         {
@@ -27,5 +49,5 @@ namespace WebData.Configurations
             builder.Property(x => x.Name).IsRequired();
 
         }
-    }
+    }*/
 }

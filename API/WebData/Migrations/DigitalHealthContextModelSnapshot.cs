@@ -17,275 +17,113 @@ namespace WebData.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebData.Models.Conversation", b =>
+            modelBuilder.Entity("WebData.Models.AuthorizationRecord", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("AccessorId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Conversation", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.Device", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId")
-                        .IsUnique();
-
-                    b.ToTable("Device", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.Doctor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Doctor", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<Guid>("ConversationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsFile")
+                    b.Property<bool>("IsAuthorized")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MessageHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SentBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SentDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConversationId");
-
-                    b.ToTable("Message", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.Patient", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Age")
+                    b.Property<int?>("OwnedRecordsUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.HasKey("OwnerId", "AccessorId");
+
+                    b.HasIndex("OwnedRecordsUserId");
+
+                    b.ToTable("AuthorizationRecords");
+                });
+
+            modelBuilder.Entity("WebData.Models.Information", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileHash")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileExtension")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MultiAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "FileHash");
+
+                    b.ToTable("Information", (string)null);
+                });
+
+            modelBuilder.Entity("WebData.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("ContractAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
+                    b.HasKey("UserId");
 
-                    b.Property<int>("Sex")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Patient", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("WebData.Models.SensorType", b =>
+            modelBuilder.Entity("WebData.Models.AuthorizationRecord", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SensorTypes");
+                    b.HasOne("WebData.Models.User", null)
+                        .WithMany("AuthorizationRecords")
+                        .HasForeignKey("OwnedRecordsUserId");
                 });
 
-            modelBuilder.Entity("WebData.Models.SensorValue", b =>
+            modelBuilder.Entity("WebData.Models.Information", b =>
                 {
-                    b.Property<Guid>("SensorTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("RecordedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RecordedLocation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("SensorTypeId", "DeviceId", "RecordedDate");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("SensorValue", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.Conversation", b =>
-                {
-                    b.HasOne("WebData.Models.Doctor", "Doctor")
-                        .WithMany("Conversations")
-                        .HasForeignKey("DoctorId")
+                    b.HasOne("WebData.Models.User", "User")
+                        .WithMany("Information")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebData.Models.Patient", "Patient")
-                        .WithMany("Conversations")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebData.Models.Device", b =>
+            modelBuilder.Entity("WebData.Models.User", b =>
                 {
-                    b.HasOne("WebData.Models.Patient", "Patient")
-                        .WithOne("Device")
-                        .HasForeignKey("WebData.Models.Device", "PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("AuthorizationRecords");
 
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("WebData.Models.Message", b =>
-                {
-                    b.HasOne("WebData.Models.Conversation", "Conversation")
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Conversation");
-                });
-
-            modelBuilder.Entity("WebData.Models.SensorValue", b =>
-                {
-                    b.HasOne("WebData.Models.Device", "Device")
-                        .WithMany("SensorValues")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebData.Models.SensorType", "SensorType")
-                        .WithMany("SensorValues")
-                        .HasForeignKey("SensorTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
-
-                    b.Navigation("SensorType");
-                });
-
-            modelBuilder.Entity("WebData.Models.Conversation", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("WebData.Models.Device", b =>
-                {
-                    b.Navigation("SensorValues");
-                });
-
-            modelBuilder.Entity("WebData.Models.Doctor", b =>
-                {
-                    b.Navigation("Conversations");
-                });
-
-            modelBuilder.Entity("WebData.Models.Patient", b =>
-                {
-                    b.Navigation("Conversations");
-
-                    b.Navigation("Device")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WebData.Models.SensorType", b =>
-                {
-                    b.Navigation("SensorValues");
+                    b.Navigation("Information");
                 });
 #pragma warning restore 612, 618
         }
