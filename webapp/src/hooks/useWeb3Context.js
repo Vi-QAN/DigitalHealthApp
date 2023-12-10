@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import Web3 from 'web3';
 import truffleContract from "@truffle/contract";
 import digitalHealthABI from "../contracts/DigitalHealth.json";
-import { useState } from "react";
 
 const web3Context = React.createContext();
 
@@ -62,12 +61,14 @@ export default function useWeb3Context() {
     ]
 }
 
-export function Web3Provider({ children }) {
+function Web3Provider({ children }) {
     const web3 = useWeb3Context();
   
     return <web3Context.Provider value={web3}>{children}</web3Context.Provider>;
   }
 
-export function Web3Consumer() {
+function Web3Consumer() {
     return React.useContext(web3Context);
   }
+
+export { Web3Provider, Web3Consumer, web3Context }

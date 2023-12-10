@@ -9,7 +9,6 @@ import Button from 'react-bootstrap/Button';
 
 
 const NavComponent = ({userId}) => {
-    const navigate = useNavigate();
     
     return(
         <>

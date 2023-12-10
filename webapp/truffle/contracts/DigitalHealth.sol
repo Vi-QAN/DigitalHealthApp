@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "./Ownable.sol";
-
 contract DigitalHealth {
     
     struct Doctor {
@@ -52,7 +50,7 @@ contract DigitalHealth {
             return (users[msg.sender].name);
     }
 
-    function signup(bytes32 name) public onlyValidName(name) returns (bytes32) {
+    function signup(bytes32 name, bytes32 password) public onlyValidName(name) returns (bytes32) {
         // Check if user exists.
         // If yes, return user name.
         // If no, check if name was sent.
@@ -61,6 +59,7 @@ contract DigitalHealth {
         if (users[msg.sender].name == 0x0)
         {
             users[msg.sender].name = name;
+            users[msg.sender].password = password;
     	    users[msg.sender].owner = msg.sender; 
             return (users[msg.sender].name);
         }
