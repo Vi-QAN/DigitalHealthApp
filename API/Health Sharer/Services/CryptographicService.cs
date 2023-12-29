@@ -2,7 +2,7 @@
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 
-namespace DigitalHealthService.Services
+namespace HealthSharer.Services
 {
     public class CryptographicService
     {

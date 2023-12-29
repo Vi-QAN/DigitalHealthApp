@@ -6,6 +6,7 @@ namespace WebData.Abstractions
     {
         void AddUser(User user);
         User GetUserById(int id);
+        User GetUserByAddress(string address);
         User GetUserByContract(string contract);
         IQueryable<User> GetAllUsers();
         void UpdateUser(User user);

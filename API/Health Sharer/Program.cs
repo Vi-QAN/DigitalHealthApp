@@ -1,5 +1,5 @@
-using DigitalHealthService.Abstractions;
-using DigitalHealthService.Services;
+using HealthSharer.Abstractions;
+using HealthSharer.Services;
 using IdentityServer4.EntityFramework.Storage;
 using Microsoft.EntityFrameworkCore;
 using WebData;
@@ -14,6 +14,7 @@ builder.Services.AddDbContext<DigitalHealthContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IInformationService, InformationService>();
 builder.Services.AddScoped<IInformationRepository, InformationRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

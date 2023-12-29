@@ -1,6 +1,7 @@
-﻿using DigitalHealthService.Models;
+﻿using HealthSharer.Models;
+using System.Collections.Generic;
 
-namespace DigitalHealthService.Abstractions
+namespace HealthSharer.Abstractions
 {
     public interface IInformationService
     {

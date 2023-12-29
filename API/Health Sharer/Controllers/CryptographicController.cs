@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace DigitalHealthService.Controllers
+namespace HealthSharer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

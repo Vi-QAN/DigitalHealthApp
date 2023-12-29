@@ -1,6 +1,7 @@
-﻿using WebData.Models;
+﻿using HealthSharer.Models;
+using WebData.Models;
 
-namespace WebAPI.Extensions
+namespace HealthSharer.Extensions
 {
     public static class HelperExtension
     {

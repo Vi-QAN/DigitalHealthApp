@@ -1,11 +1,12 @@
-﻿using DigitalHealthService.Models;
+﻿using HealthSharer.Models;
+using System.Collections.Generic;
 
-namespace DigitalHealthService.Abstractions
+namespace HealthSharer.Abstractions
 {
     public interface IUserService
     {
         int AddUser(AddUserRequest request);
-        GetUserResponse GetUser(int id);
+        GetUserResponse GetUser(string address);
         int UpdateUser( AddUserRequest request);
         int AddAuthorization(AuthorizationRequest request);
         int RemoveAuthorization(AuthorizationRequest request);

@@ -27,8 +27,11 @@ namespace WebData.Repositories
             _context.Users.Update(user);
         }
 
+        public User GetUserByAddress(string address)
+        {
+            return _context.Users.FirstOrDefault(u => u.ContractAddress == address);
+        }
        
-
         public User GetUserById(int id)
         {
             return _context.Users.FirstOrDefault(u => u.UserId == id);
