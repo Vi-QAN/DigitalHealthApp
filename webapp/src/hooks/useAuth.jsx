@@ -1,55 +1,113 @@
-// import * as React from "react";
-// import {_web3Instance, _getLocalProvider} from "../lib/Web3Context";
-// import {AuthenticationContract} from "../lib/AuthenticationContext";
+import * as React from "react";
+import useWeb3Context from "./useWeb3Context";
 
-// const authContext = React.createContext();
+const authContext = React.createContext();
 
-// function useAuth() {
-//   const [authed, setAuthed] = React.useState(false);
+function useAuth() {
+  const [authed, setAuthed] = React.useState(false);
+  const [ userId, setUserId ] = React.useState(null);
+  const [ contract, setContract ] = React.useState(null);
+  const [ DigitalHealthContract, getLocalProvider] = useWeb3Context();
 
-//   return {
-//     authed,
-//     login() {
+  const convertToBytes32 = (value) => {
+    if (value.length > 32) {
+        throw new Error('Input string exceeds 32 characters');
+    }
+    
+    // Convert the string to UTF-8 bytes
+    const utf8Bytes = new TextEncoder().encode(value);
 
-//         return new Promise((res) => {
-//             _web3Instance.eth.getCoinbase((error, coinbase) => {
-//                 // Log errors, if any.
-//                 if (error) {
-//                 console.error(error);
-//                 }
-        
-//                 AuthenticationContract.deployed().then(function(instance) {
-        
-//                 // Attempt to sign up user.
-//                 instance.methods.signup(name, {from: coinbase})
-//                 .then(function(result) {
-//                     // If no error, login user.
-//                     return dispatch(loginUser())
-//                 })
-//                 .catch(function(result) {
-//                     // If error...
-//                 })
-//                 })
-//             })
-//             setAuthed(true);
-//             res();
-//         });
-//     },
-//     logout() {
-//       return new Promise((res) => {
-//         setAuthed(false);
-//         res();
-//       });
-//     },
-//   };
-// }
+    // Create a Uint8Array with 32 bytes (bytes32)
+    const bytes32 = new Uint8Array(32);
 
-// export function AuthProvider({ children }) {
-//   const auth = useAuth();
+    // Copy the UTF-8 bytes to the bytes32 array
+    bytes32.set(utf8Bytes);
 
-//   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
-// }
+    return '0x' + Buffer.from(bytes32).toString('hex');
+  }
 
-// export default function AuthConsumer() {
-//   return React.useContext(authContext);
-// }
+  return {
+    contract,
+    authed,
+    userId,
+    register(form) {
+        return new Promise((res) => {
+            DigitalHealthContract
+            .deployed()
+            .then(async function(instance) {
+                const result = await getLocalProvider().eth.getAccounts();
+                await instance.signup(convertToBytes32(form.email),convertToBytes32(form.password), {from: result[0]})
+                try {
+                const response = await fetch('http://localhost:5273/api/User', {
+                    method: "POST",
+                    headers: {
+                    "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                    "userName": "User 1",
+                    "contractAddress": result[0]
+                    })
+                }).then((res) => res.json());
+            } catch (error) {
+            // Failed to connect to server.
+            console.error(error);
+            }
+            }).catch(e => {
+                // Failed to load web3, accounts, or contract.
+                console.error(e);
+            });
+            setAuthed(true);
+            res();
+        });
+    },
+    login(form) {
+        return new Promise((res) => {
+            DigitalHealthContract
+            .deployed()
+            .then(async function(instance) {
+                const result = await getLocalProvider().eth.getAccounts();
+                const email = await instance.login(convertToBytes32(form.password), {from: result[0]});
+                console.log(email);
+                setContract(instance);
+                try {
+                const response = await fetch('http://localhost:5273/api/User/' + result[0], {
+                    method: "GET",
+                    headers: {
+                    "Content-type": "application/json"
+                    },
+                }).then((res) => res.json()).then(result => result);
+            
+                
+                setUserId(response.userId);
+            } catch (error) {
+            // Failed to connect to server.
+            console.error(error);
+            }
+            }).catch(e => {
+                // Failed to load web3, accounts, or contract.
+                console.error(e);
+            });
+            setAuthed(true);
+            res();
+        });
+    },
+    logout() {
+        return new Promise((res) => {
+            setAuthed(false);
+            res();
+      });
+    },
+  };
+}
+
+function AuthProvider({ children }) {
+  const auth = useAuth();
+
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+}
+
+function AuthConsumer() {
+  return React.useContext(authContext);
+}
+
+export { authContext, AuthProvider, AuthConsumer }

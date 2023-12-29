@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate} from 'react-router-dom';
 import {Button, Container, Form, ListGroup, Alert } from 'react-bootstrap';
 
-import useWeb3Context from "../hooks/useWeb3Context";
+import { authContext } from "../hooks/useAuth";
 
 import { create } from 'ipfs-http-client'
 
@@ -56,12 +57,11 @@ const AuthorizationList = ({userId, accounts, contract, authorizationList, setAu
 const Home = () => {
   const [ ipfs, setIpfs ] = useState(null);
   const [ input, setInput ] = useState(null);
-  const [ contract, setContract] = useState(null);
-  const [ DigitalHealthContract, getLocalProvider ] = useWeb3Context();
   const [ authorizationList, setAuthorizationList ] = useState([]);
   const [ fileList, setFileList] = useState([]);
   const [ accounts, setAccounts] = useState([]);
-  const [ userId, setUserId ] = useState(null);
+  const { contract, authed, userId } = useContext(authContext);
+  const navigate = useNavigate();
   
   const handleAuthorize = async (e) => {
     e.preventDefault();
@@ -86,37 +86,37 @@ const Home = () => {
     }))  
   }
 
-  const setupBlockChain = () =>{
-    DigitalHealthContract
-      .deployed()
-      .then(async function(instance) {
-        setContract(instance);
-        const result = await getLocalProvider().eth.getAccounts()
-        setAccounts(result);
-        await instance.signup(name, {from: result[0]})
-        try {
-          const response = await fetch('http://localhost:5273/api/User', {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json"
-            },
-            body: JSON.stringify({
-              "userName": "User 1",
-              "contractAddress": result[0]
-            })
-          }).then((res) => res.json());
+  // const setupBlockChain = () =>{
+  //   DigitalHealthContract
+  //     .deployed()
+  //     .then(async function(instance) {
+  //       setContract(instance);
+  //       const result = await getLocalProvider().eth.getAccounts()
+  //       setAccounts(result);
+  //       await instance.signup(name, {from: result[0]})
+  //       try {
+  //         const response = await fetch('http://localhost:5273/api/User', {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-type": "application/json"
+  //           },
+  //           body: JSON.stringify({
+  //             "userName": "User 1",
+  //             "contractAddress": result[0]
+  //           })
+  //         }).then((res) => res.json());
     
-          const id = await response;
-          setUserId(id);
-        } catch (error) {
-          // Failed to connect to server.
-          console.error(error);
-        }
-       }).catch(e => {
-          // Failed to load web3, accounts, or contract.
-          console.error(e);
-        });
-  }
+  //         const id = await response;
+  //         setUserId(id);
+  //       } catch (error) {
+  //         // Failed to connect to server.
+  //         console.error(error);
+  //       }
+  //      }).catch(e => {
+  //         // Failed to load web3, accounts, or contract.
+  //         console.error(e);
+  //       });
+  // }
 
   const setupIPFS = async () => {
     try {
@@ -168,7 +168,10 @@ const Home = () => {
   }
 
   useEffect(() => {
-    setupBlockChain();
+    if (!authed){
+      navigate('/login');
+    }
+    //setupBlockChain();
     setupIPFS();
   },[]);
 
@@ -220,6 +223,7 @@ const Home = () => {
         <SaveFile ipfs={ipfs} userId={userId} setFileList={setFileList}/> 
       }
     </>
+      
      
   );
 }
