@@ -3,23 +3,21 @@ pragma solidity ^0.8.13;
 
 import "./Ownable.sol";
 
-contract DigitalHealth {
+contract DigitalHealth is Ownable {
     
     struct Doctor {
         bool authorized;
     }
 
     struct User {
-        address owner;
         bytes32 name;
+        bytes32 email;
         bytes32 password;
         bytes32 key;
-        mapping(uint8 => Doctor) doctors;
+        mapping(address => Doctor) doctors;
     }
 
     mapping (address => User) private users;
-
-    uint private id; // Stores user id temporarily
 
     function stringToBytes32(string memory source) public pure returns (bytes32 result) {
         bytes memory tempEmptyStringTest = bytes(source);
@@ -35,24 +33,27 @@ contract DigitalHealth {
     // Authentication
     modifier onlyValidName(bytes32 name) {
         // Only valid names allowed
-
         require(!(name == 0x0));
         _;
     }
 
     modifier onlyExistingUser() {
         // Check if user exists or terminate
-
-        require(!(users[msg.sender].name == 0x0), "");
+        require(!(users[msg.sender].name == 0x0), "User does not exist");
         _;
     }
 
-    function login(bytes32 password) view public onlyExistingUser  returns (bytes32 name) {
+    modifier onlyAuthenticatedUser(bytes32 password){
+        require(users[msg.sender].password == password);
+        _;
+    }
+
+    function login(bytes32 password) view public onlyExistingUser returns (bytes32 name) {
         if (users[msg.sender].password == password)
             return (users[msg.sender].name);
     }
 
-    function signup(bytes32 name) public onlyValidName(name) returns (bytes32) {
+    function signup(bytes32 name, bytes32 email, bytes32 password) public onlyValidName(name) returns (bytes32) {
         // Check if user exists.
         // If yes, return user name.
         // If no, check if name was sent.
@@ -61,7 +62,8 @@ contract DigitalHealth {
         if (users[msg.sender].name == 0x0)
         {
             users[msg.sender].name = name;
-    	    users[msg.sender].owner = msg.sender; 
+            users[msg.sender].email = email;
+            users[msg.sender].password = password;
             return (users[msg.sender].name);
         }
 
@@ -78,35 +80,28 @@ contract DigitalHealth {
         }
     }
     
-    function setKey(address _user, bytes32 _key) public onlyOwner(_user) {
+    function setKey(address _user, bytes32 _key) public onlyExistingUser onlyOwner {
         users[_user].key = _key;
     }
 
-    function getKey(address _user, uint8 _id) public view onlyAuthorizedAccesser(_user, _id) returns(bytes32) {
+    function getKey(address _user, address accessor) public view onlyOwner onlyAuthorizedAccessor(_user, accessor)  returns(bytes32) {
         return users[_user].key;
     }
 
-    function removeAccesser(address _user, uint8 _id) public onlyOwner(_user) {
-        users[_user].doctors[_id].authorized = false;
+    function removeAccessor(address accessor, bytes32 password) public onlyExistingUser onlyAuthenticatedUser(password) {
+        users[msg.sender].doctors[accessor].authorized = false;
     }
 
-    function addAccesser(address _user, uint8 _id) public onlyOwner(_user) {
-        users[_user].doctors[_id].authorized = true;
+    function addAccessor(address accessor, bytes32 password) public onlyExistingUser onlyAuthenticatedUser(password) {
+        users[msg.sender].doctors[accessor].authorized = true;
     }
 
-    function getAccesser(address _user, uint8 _id) public view onlyOwner(_user) returns (Doctor memory ){
-        return users[_user].doctors[_id];
+    function getAccessor(address _user, address accessor) public view onlyOwner returns (Doctor memory ){
+        return users[_user].doctors[accessor];
     }
 
-    modifier onlyOwner(address _user) {
-        require(msg.sender == users[_user].owner, "Only Owner");
-        _;
-    }
-
-    modifier onlyAuthorizedAccesser(address _user, uint8 _id){
-        if (msg.sender != users[_user].owner){
-            require(users[_user].doctors[_id].authorized, "Only Authorized Accessor");
-        }
+    modifier onlyAuthorizedAccessor(address _user, address accessor) {
+        require(getAccessor(_user, accessor).authorized, "Only Authorized Accessor");
         _;
     }
 }
