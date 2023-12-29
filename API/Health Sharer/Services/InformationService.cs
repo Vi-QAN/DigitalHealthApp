@@ -12,11 +12,12 @@ namespace HealthSharer.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IInformationRepository _informationRepository;
-        //private readonly IContractService _contractService;
-        public InformationService(IUserRepository userRepository, IInformationRepository informationRepository) {
+        private readonly IContractService _contractService;
+        public InformationService(IUserRepository userRepository, IInformationRepository informationRepository, IContractService contractService)
+        {
             _userRepository = userRepository;
             _informationRepository = informationRepository;
-            //_contractService = contractService;
+            _contractService = contractService;
         }
 
         public GetInformationResponse AddInformation(AddInformationRequest addInformationRequest)
@@ -83,8 +84,6 @@ namespace HealthSharer.Services
             {
                 throw new NotFoundException("User not found");
             }
-
-            //_contractService.Connect();
 
             var information = _informationRepository.getAllInformation();
             var records = _userRepository.GetAuthorizationRecordsByAccessor(userId);
