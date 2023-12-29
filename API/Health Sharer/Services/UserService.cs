@@ -1,12 +1,14 @@
-﻿using DigitalHealthService.Abstractions;
-using DigitalHealthService.Exceptions;
-using DigitalHealthService.Models;
+﻿using HealthSharer.Abstractions;
+using HealthSharer.Exceptions;
+using HealthSharer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using System.Collections.Generic;
+using System.Linq;
 using WebData.Abstractions;
 using WebData.Models;
 
-namespace DigitalHealthService.Services
+namespace HealthSharer.Services
 {
     public class UserService : IUserService
     {
@@ -37,9 +39,9 @@ namespace DigitalHealthService.Services
 
         }
 
-        public GetUserResponse GetUser(int id)
+        public GetUserResponse GetUser(string address)
         {
-            var user = _userRepository.GetUserById(id);
+            var user = _userRepository.GetUserByAddress(address);
 
             if (user == default)
             {
@@ -154,5 +156,7 @@ namespace DigitalHealthService.Services
                     }
                 ).ToList();
         }
+
+        
     }
 }

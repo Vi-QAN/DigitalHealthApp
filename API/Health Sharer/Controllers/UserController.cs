@@ -1,9 +1,9 @@
-﻿using DigitalHealthService.Abstractions;
-using DigitalHealthService.Models;
+﻿using HealthSharer.Abstractions;
+using HealthSharer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-
-namespace DigitalHealthService.Controllers
+namespace HealthSharer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -21,11 +21,12 @@ namespace DigitalHealthService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUser(int id)
+        [Route("{address}")]
+        public IActionResult GetUser([FromRoute] string address)
         {
             try
             {
-                return Ok(_userService.GetUser(id));
+                return Ok(_userService.GetUser(address));
             }
             catch
             {

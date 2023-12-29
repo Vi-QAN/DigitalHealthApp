@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using DigitalHealthService.Abstractions;
-using DigitalHealthService.Models;
+using HealthSharer.Abstractions;
+using HealthSharer.Models;
+using Microsoft.Extensions.Logging;
 
-namespace DigitalHealthService.Controllers
+namespace HealthSharer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,8 +1,8 @@
-﻿using DigitalHealthService.Services;
+﻿using HealthSharer.Services;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-namespace DigitalHealthService.Test
+namespace HealthSharer.Test
 {
     public class CryptoServiceTest
     {

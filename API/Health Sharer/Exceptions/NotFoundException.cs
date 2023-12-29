@@ -1,4 +1,6 @@
-﻿namespace DigitalHealthService.Exceptions
+﻿using System;
+
+namespace HealthSharer.Exceptions
 {
     public class NotFoundException : Exception
     {

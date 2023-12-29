@@ -1,19 +1,22 @@
-﻿using DigitalHealthService.Abstractions;
-using DigitalHealthService.Exceptions;
-using DigitalHealthService.Models;
+﻿using HealthSharer.Abstractions;
+using HealthSharer.Exceptions;
+using HealthSharer.Models;
 using WebData.Models;
 using WebData.Abstractions;
 using WebData.Repositories;
+using System.Collections.Generic;
 
-namespace DigitalHealthService.Services
+namespace HealthSharer.Services
 {
     public class InformationService : IInformationService
     {
         private readonly IUserRepository _userRepository;
         private readonly IInformationRepository _informationRepository;
+        //private readonly IContractService _contractService;
         public InformationService(IUserRepository userRepository, IInformationRepository informationRepository) {
             _userRepository = userRepository;
             _informationRepository = informationRepository;
+            //_contractService = contractService;
         }
 
         public GetInformationResponse AddInformation(AddInformationRequest addInformationRequest)
@@ -74,11 +77,14 @@ namespace DigitalHealthService.Services
 
         public List<GetAllInformationResponse> GetAllInformationByAccessor(int userId)
         {
+            
             var user = _userRepository.GetUserById(userId);
             if (user == default)
             {
                 throw new NotFoundException("User not found");
             }
+
+            //_contractService.Connect();
 
             var information = _informationRepository.getAllInformation();
             var records = _userRepository.GetAuthorizationRecordsByAccessor(userId);

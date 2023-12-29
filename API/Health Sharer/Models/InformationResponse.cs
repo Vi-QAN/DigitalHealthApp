@@ -1,4 +1,4 @@
-﻿namespace DigitalHealthService.Models
+﻿namespace HealthSharer.Models
 {
     public class GetAllInformationResponse
     {
