@@ -1,15 +1,22 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { authContext } from '../hooks/useAuth';
 import { useNavigate } from "react-router-dom";
+import useWeb3Context from '../hooks/useWeb3Context';
 
 
 const Login = () => {
-  const [signupForm, setSignupForm] = useState({ email: '', password: '' });
+  const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '' });
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const { register, login, logout  } = useContext(authContext);
+  const [ DigitalHealthContract, getLocalProvider ] = useWeb3Context();
   const navigate = useNavigate();
 
+  const getCredential = async () => {
+    const result = await getLocalProvider().eth.getAccounts();
+    setSignupForm((prevForm) => ({ ...prevForm, ['account']: result[1] }));
+    setLoginForm((prevForm) => ({ ...prevForm, ['account']: result[1] }));
+  };  
 
   const handleSignupChange = (e) => {
     const { name, value } = e.target;
@@ -37,12 +44,26 @@ const Login = () => {
     // Add logic to send login data to the server
   };
 
+  useEffect(() => {
+    getCredential();
+  },[])
+
   return (
     <Container className="mt-5">
       <Row>
         <Col md={6}>
           <h2>Sign Up</h2>
           <Form onSubmit={handleSignupSubmit}>
+            <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={signupForm.name}
+                  onChange={handleSignupChange}
+                  required
+                />
+              </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Email address</Form.Label>
               <Form.Control

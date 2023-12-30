@@ -7,7 +7,7 @@ function useAuth() {
   const [authed, setAuthed] = React.useState(false);
   const [ userId, setUserId ] = React.useState(null);
   const [ contract, setContract ] = React.useState(null);
-  const [ DigitalHealthContract, getLocalProvider] = useWeb3Context();
+  const [ DigitalHealthContract ] = useWeb3Context();
 
   const convertToBytes32 = (value) => {
     if (value.length > 32) {
@@ -35,23 +35,22 @@ function useAuth() {
             DigitalHealthContract
             .deployed()
             .then(async function(instance) {
-                const result = await getLocalProvider().eth.getAccounts();
-                await instance.signup(convertToBytes32(form.email),convertToBytes32(form.password), {from: result[0]})
-                try {
-                const response = await fetch('http://localhost:5273/api/User', {
-                    method: "POST",
-                    headers: {
-                    "Content-type": "application/json"
-                    },
-                    body: JSON.stringify({
-                    "userName": "User 1",
-                    "contractAddress": result[0]
-                    })
-                }).then((res) => res.json());
-            } catch (error) {
-            // Failed to connect to server.
-            console.error(error);
-            }
+                await instance.signup(convertToBytes32(form.name), convertToBytes32(form.email),convertToBytes32(form.password), {from: form.account})
+            //     try {
+            //     const response = await fetch('http://localhost:5273/api/User', {
+            //         method: "POST",
+            //         headers: {
+            //         "Content-type": "application/json"
+            //         },
+            //         body: JSON.stringify({
+            //         "userName": "User 1",
+            //         "contractAddress": result[0]
+            //         })
+            //     }).then((res) => res.json());
+            // } catch (error) {
+            // // Failed to connect to server.
+            // console.error(error);
+            // }
             }).catch(e => {
                 // Failed to load web3, accounts, or contract.
                 console.error(e);
@@ -65,24 +64,23 @@ function useAuth() {
             DigitalHealthContract
             .deployed()
             .then(async function(instance) {
-                const result = await getLocalProvider().eth.getAccounts();
-                const email = await instance.login(convertToBytes32(form.password), {from: result[0]});
+                const email = await instance.login(convertToBytes32(form.password), {from: form.account});
                 console.log(email);
                 setContract(instance);
-                try {
-                const response = await fetch('http://localhost:5273/api/User/' + result[0], {
-                    method: "GET",
-                    headers: {
-                    "Content-type": "application/json"
-                    },
-                }).then((res) => res.json()).then(result => result);
+            //     try {
+            //     const response = await fetch('http://localhost:5273/api/User/' + result[0], {
+            //         method: "GET",
+            //         headers: {
+            //         "Content-type": "application/json"
+            //         },
+            //     }).then((res) => res.json()).then(result => result);
             
                 
-                setUserId(response.userId);
-            } catch (error) {
-            // Failed to connect to server.
-            console.error(error);
-            }
+            //     setUserId(response.userId);
+            // } catch (error) {
+            //     // Failed to connect to server.
+            //     console.error(error);
+            // }
             }).catch(e => {
                 // Failed to load web3, accounts, or contract.
                 console.error(e);
