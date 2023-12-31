@@ -35,11 +35,12 @@ namespace HealthSharer.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUser(AddUserRequest request) 
+        [Route("signup")]
+        public IActionResult Signup(SignupRequest request) 
         {
             try
             {
-                return Ok(_userService.AddUser(request));
+                return Ok(_userService.Signup(request));
             }
             catch
             {

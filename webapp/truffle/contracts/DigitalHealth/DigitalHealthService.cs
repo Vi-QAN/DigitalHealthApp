@@ -84,19 +84,18 @@ namespace Contracts.Contracts.DigitalHealth
             return ContractHandler.QueryDeserializingToObjectAsync<GetAccessorFunction, GetAccessorOutputDTO>(getAccessorFunction, blockParameter);
         }
 
-        public Task<byte[]> GetKeyQueryAsync(GetKeyFunction getKeyFunction, BlockParameter blockParameter = null)
+        public Task<GetKeyOutputDTO> GetKeyQueryAsync(GetKeyFunction getKeyFunction, BlockParameter blockParameter = null)
         {
-            return ContractHandler.QueryAsync<GetKeyFunction, byte[]>(getKeyFunction, blockParameter);
+            return ContractHandler.QueryDeserializingToObjectAsync<GetKeyFunction, GetKeyOutputDTO>(getKeyFunction, blockParameter);
         }
 
-        
-        public Task<byte[]> GetKeyQueryAsync(string user, string accessor, BlockParameter blockParameter = null)
+        public Task<GetKeyOutputDTO> GetKeyQueryAsync(string user, string accessor, BlockParameter blockParameter = null)
         {
             var getKeyFunction = new GetKeyFunction();
                 getKeyFunction.User = user;
                 getKeyFunction.Accessor = accessor;
             
-            return ContractHandler.QueryAsync<GetKeyFunction, byte[]>(getKeyFunction, blockParameter);
+            return ContractHandler.QueryDeserializingToObjectAsync<GetKeyFunction, GetKeyOutputDTO>(getKeyFunction, blockParameter);
         }
 
         public Task<byte[]> LoginQueryAsync(LoginFunction loginFunction, BlockParameter blockParameter = null)
@@ -151,20 +150,22 @@ namespace Contracts.Contracts.DigitalHealth
              return ContractHandler.SendRequestAndWaitForReceiptAsync(setKeyFunction, cancellationToken);
         }
 
-        public Task<string> SetKeyRequestAsync(string user, byte[] key)
+        public Task<string> SetKeyRequestAsync(string user, byte[] key, byte[] iv)
         {
             var setKeyFunction = new SetKeyFunction();
                 setKeyFunction.User = user;
                 setKeyFunction.Key = key;
+                setKeyFunction.Iv = iv;
             
              return ContractHandler.SendRequestAsync(setKeyFunction);
         }
 
-        public Task<TransactionReceipt> SetKeyRequestAndWaitForReceiptAsync(string user, byte[] key, CancellationTokenSource cancellationToken = null)
+        public Task<TransactionReceipt> SetKeyRequestAndWaitForReceiptAsync(string user, byte[] key, byte[] iv, CancellationTokenSource cancellationToken = null)
         {
             var setKeyFunction = new SetKeyFunction();
                 setKeyFunction.User = user;
                 setKeyFunction.Key = key;
+                setKeyFunction.Iv = iv;
             
              return ContractHandler.SendRequestAndWaitForReceiptAsync(setKeyFunction, cancellationToken);
         }

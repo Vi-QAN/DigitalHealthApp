@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DigitalHealthContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IInformationService, InformationService>();

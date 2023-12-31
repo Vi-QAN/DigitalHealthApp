@@ -16,10 +16,10 @@ const File1 = React.lazy(() => import("./pages/File1.jsx"));
 function App() {
 
   return (
-    <Web3Provider>
-      <AuthProvider>
-        <Suspense >
-            <Router>
+    <Router>
+      <Web3Provider>
+        <AuthProvider>
+          <Suspense fallback={<div>Loading...</div>}>
               <Routes>
                 <Route exact path={"/"} element={
                   <Home />} 
@@ -32,9 +32,9 @@ function App() {
                 <Route exact path={"/login"} element={
                   <Login />
                 } />
-                {/* <Route exact path={"/"} element={
+                <Route path={"/file"} element={
                   <File1 />} 
-                /> */}
+                />
 
 
 
@@ -42,11 +42,11 @@ function App() {
             
                 {/* <Route path="profile" component={UserIsAuthenticated(Profile)} /> */}
               </Routes>
-            </Router>
+            
           </Suspense>
-      </AuthProvider>
-    </Web3Provider>
-        
+        </AuthProvider>
+      </Web3Provider>
+    </Router>
 
   );
 }

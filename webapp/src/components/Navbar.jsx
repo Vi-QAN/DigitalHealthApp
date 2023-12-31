@@ -31,7 +31,8 @@ const NavComponent = ({userId}) => {
                     <Nav className="justify-content-end flex-grow-1 pe-3">
                       <Nav.Link href="/">Home</Nav.Link>
                       <Nav.Link href="/test">Test</Nav.Link>
-                      
+                      <Nav.Link href="/file">File</Nav.Link>
+
                     </Nav>
                   </Offcanvas.Body>
                 </Navbar.Offcanvas>

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { authContext } from '../hooks/useAuth';
 import { useNavigate } from "react-router-dom";
 import useWeb3Context from '../hooks/useWeb3Context';
@@ -10,12 +10,12 @@ const Login = () => {
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const { register, login, logout  } = useContext(authContext);
   const [ DigitalHealthContract, getLocalProvider ] = useWeb3Context();
+  const [ accountList, setAccountList ] = useState(null);
   const navigate = useNavigate();
 
   const getCredential = async () => {
     const result = await getLocalProvider().eth.getAccounts();
-    setSignupForm((prevForm) => ({ ...prevForm, ['account']: result[1] }));
-    setLoginForm((prevForm) => ({ ...prevForm, ['account']: result[1] }));
+    setAccountList(result);
   };  
 
   const handleSignupChange = (e) => {
@@ -40,16 +40,40 @@ const Login = () => {
     e.preventDefault();
     console.log('Login form submitted:', loginForm);
     login(loginForm);
-    navigate('/');
     // Add logic to send login data to the server
   };
 
-  useEffect(() => {
+  const handleSelect = (account) => {
+    setSignupForm((prevForm) => ({ ...prevForm, ['account']: account}));
+    setLoginForm((prevForm) => ({ ...prevForm, ['account']: account }));
+
+    // You can perform additional actions here when an option is selected
+    console.log(`Selected option: ${account}`);
+  };
+
+  useEffect(() => {  
     getCredential();
   },[])
 
   return (
     <Container className="mt-5">
+      {accountList ? (
+        <Dropdown onSelect={handleSelect}>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Select an Option
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            {accountList.map(account => {
+              
+              return <Dropdown.Item eventKey={account}>{account}</Dropdown.Item>
+            })}
+            
+          </Dropdown.Menu>
+        </Dropdown>
+        ) : (
+          <p>Loading...</p>)}
+      
       <Row>
         <Col md={6}>
           <h2>Sign Up</h2>

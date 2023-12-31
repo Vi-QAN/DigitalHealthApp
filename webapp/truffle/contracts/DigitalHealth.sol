@@ -14,6 +14,7 @@ contract DigitalHealth is Ownable {
         bytes32 email;
         bytes32 password;
         bytes32 key;
+        bytes16 iv;
         mapping(address => Doctor) doctors;
     }
 
@@ -44,13 +45,14 @@ contract DigitalHealth is Ownable {
     }
 
     modifier onlyAuthenticatedUser(bytes32 password){
-        require(users[msg.sender].password == password);
+        require(users[msg.sender].password == password, 'Only authenticated user');
         _;
     }
 
     function login(bytes32 password) view public onlyExistingUser returns (bytes32 name) {
         if (users[msg.sender].password == password)
             return (users[msg.sender].name);
+        return 0x0;
     }
 
     function signup(bytes32 name, bytes32 email, bytes32 password) public onlyValidName(name) returns (bytes32) {
@@ -80,19 +82,22 @@ contract DigitalHealth is Ownable {
         }
     }
     
-    function setKey(address _user, bytes32 _key) public onlyExistingUser onlyOwner {
+    function setKey(address _user, bytes32 _key, bytes16 _iv) public onlyExistingUser onlyOwner {
         users[_user].key = _key;
+        users[_user].iv = _iv;
     }
 
-    function getKey(address _user, address accessor) public view onlyOwner onlyAuthorizedAccessor(_user, accessor)  returns(bytes32) {
-        return users[_user].key;
+    function getKey(address _user, address accessor) public view onlyOwner onlyAuthorizedAccessor(_user, accessor)  returns(bytes32, bytes16) {
+        return (users[_user].key, users[_user].iv);
     }
 
-    function removeAccessor(address accessor, bytes32 password) public onlyExistingUser onlyAuthenticatedUser(password) {
+    // add modifier to check existence of accessor
+
+    function removeAccessor(address accessor, bytes32 password) public onlyExistingUser onlyValidPassword(password) onlyAuthenticatedUser(password) {
         users[msg.sender].doctors[accessor].authorized = false;
     }
 
-    function addAccessor(address accessor, bytes32 password) public onlyExistingUser onlyAuthenticatedUser(password) {
+    function addAccessor(address accessor, bytes32 password) public onlyExistingUser onlyValidPassword(password) onlyAuthenticatedUser(password) {
         users[msg.sender].doctors[accessor].authorized = true;
     }
 
@@ -104,4 +109,11 @@ contract DigitalHealth is Ownable {
         require(getAccessor(_user, accessor).authorized, "Only Authorized Accessor");
         _;
     }
+
+    modifier onlyValidPassword(bytes32 password){
+        require(!(password == 0x0), 'Invalid password');
+        _;
+    }
+
+
 }

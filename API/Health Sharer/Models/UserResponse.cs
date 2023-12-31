@@ -3,7 +3,7 @@
     public class GetUserResponse
     {
         public int UserId { get; set; }
-        public string ContractAddress { get; set; }
+        public string Key { get; set; }
     }
 
     public class GetAuthorizationResponse

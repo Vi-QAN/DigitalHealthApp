@@ -1,61 +1,47 @@
 import * as React from "react";
 import useWeb3Context from "./useWeb3Context";
+import { useNavigate} from 'react-router-dom';
+import { convertToBytes32 } from "../utils";
+
 
 const authContext = React.createContext();
 
 function useAuth() {
   const [authed, setAuthed] = React.useState(false);
-  const [ userId, setUserId ] = React.useState(null);
+  const [ user, setUser ] = React.useState({userId: 0, key: '', account: ''});
   const [ contract, setContract ] = React.useState(null);
   const [ DigitalHealthContract ] = useWeb3Context();
-
-  const convertToBytes32 = (value) => {
-    if (value.length > 32) {
-        throw new Error('Input string exceeds 32 characters');
-    }
-    
-    // Convert the string to UTF-8 bytes
-    const utf8Bytes = new TextEncoder().encode(value);
-
-    // Create a Uint8Array with 32 bytes (bytes32)
-    const bytes32 = new Uint8Array(32);
-
-    // Copy the UTF-8 bytes to the bytes32 array
-    bytes32.set(utf8Bytes);
-
-    return '0x' + Buffer.from(bytes32).toString('hex');
-  }
-
+  const navigate = useNavigate();
+  
   return {
     contract,
     authed,
-    userId,
+    user,
     register(form) {
         return new Promise((res) => {
             DigitalHealthContract
             .deployed()
             .then(async function(instance) {
-                await instance.signup(convertToBytes32(form.name), convertToBytes32(form.email),convertToBytes32(form.password), {from: form.account})
-            //     try {
-            //     const response = await fetch('http://localhost:5273/api/User', {
-            //         method: "POST",
-            //         headers: {
-            //         "Content-type": "application/json"
-            //         },
-            //         body: JSON.stringify({
-            //         "userName": "User 1",
-            //         "contractAddress": result[0]
-            //         })
-            //     }).then((res) => res.json());
-            // } catch (error) {
-            // // Failed to connect to server.
-            // console.error(error);
-            // }
+              await instance.signup(convertToBytes32(form.name), convertToBytes32(form.email),convertToBytes32(form.password), {from: form.account})
+              try {
+                const response = await fetch('http://localhost:5273/api/User/signup', {
+                    method: "POST",
+                    headers: {
+                    "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                    "userName": form.name,
+                    "key": form.account
+                    })
+                }).then((res) => res.json());
+              } catch (error) {
+                // Failed to connect to server.
+                console.error(error);
+              }
             }).catch(e => {
                 // Failed to load web3, accounts, or contract.
                 console.error(e);
             });
-            setAuthed(true);
             res();
         });
     },
@@ -64,35 +50,44 @@ function useAuth() {
             DigitalHealthContract
             .deployed()
             .then(async function(instance) {
-                const email = await instance.login(convertToBytes32(form.password), {from: form.account});
-                console.log(email);
+              try {
+                const name = await instance.login(convertToBytes32(form.password), {from: form.account});
+                console.log(name);
                 setContract(instance);
-            //     try {
-            //     const response = await fetch('http://localhost:5273/api/User/' + result[0], {
-            //         method: "GET",
-            //         headers: {
-            //         "Content-type": "application/json"
-            //         },
-            //     }).then((res) => res.json()).then(result => result);
-            
-                
-            //     setUserId(response.userId);
-            // } catch (error) {
-            //     // Failed to connect to server.
-            //     console.error(error);
-            // }
+
+                try {
+                  const response = await fetch('http://localhost:5273/api/User/' + form.account, {
+                      method: "GET",
+                      headers: {
+                        "Content-type": "application/json"
+                      },
+                  }).then((res) => res.json()).then(result => result);
+                  console.log(response);
+                  
+                  setUser({userId: response.userId, key: response.key, account: form.account});
+                  setAuthed(true);
+                  navigate('/');
+                } catch (error) {
+                    // Failed to connect to server.
+                    console.error(error);
+                }
+
+              } catch(e) {
+                console.error(e);
+              }
+                 
             }).catch(e => {
                 // Failed to load web3, accounts, or contract.
                 console.error(e);
             });
-            setAuthed(true);
+            
             res();
         });
     },
     logout() {
         return new Promise((res) => {
-            setAuthed(false);
-            res();
+          setAuthed(false);
+          res();
       });
     },
   };
@@ -100,6 +95,13 @@ function useAuth() {
 
 function AuthProvider({ children }) {
   const auth = useAuth();
+
+  React.useEffect(() => {
+    console.log('Auth state changed:', auth.authed);
+    return () => {
+      console.log('AuthProvider unmounted');
+    };
+  }, [auth.authed]);
 
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }

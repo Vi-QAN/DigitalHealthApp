@@ -1,15 +1,15 @@
 ﻿namespace HealthSharer.Models
 {
-    public class AddUserRequest
+    public class SignupRequest
     {
         public string UserName { get; set; }
-        public string ContractAddress { get; set; }
+        public string Key { get; set; }
     }
 
     public class AuthorizationRequest
     {
-        public int OwnerId { get; set; }
-        public int AccesserId { get; set; }
+        public string OwnerId { get; set; }
+        public string AccesserId { get; set; }
     }
 
 }

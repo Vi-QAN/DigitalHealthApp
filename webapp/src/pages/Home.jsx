@@ -7,29 +7,29 @@ import { authContext } from "../hooks/useAuth";
 import { create } from 'ipfs-http-client'
 
 import NavComponent from "../components/Navbar"
+import PasswordConfirmationModal from "../components/PasswordConfirmModal";
 import { SaveFile, FileList} from "./File";
 
-const name  = "0xb2840da3ac4e2057915102bc9dc97c336fbf2701c5444522e3490383f524db59";
+import { convertToBytes32 } from "../utils";
 
+const AuthorizationList = ({user, contract, authorizationList, setAuthorizationList}) => {
+  const handleRevoke = async (accessor) => {
+    if (user.userId == null) return;
 
-const AuthorizationList = ({userId, accounts, contract, authorizationList, setAuthorizationList}) => {
-  const handleRevoke = async (accessorid) => {
-    if (userId == null) return;
-
-    await contract.removeAccesser(accounts[0], accessorid, {from: accounts[0]})
-    const accesser = await contract.getAccesser(accounts[0], accessorid, {from: accounts[0]})
+    await contract.removeAccesser(accessor, convertToBytes32("password"), {from: user.account})
+    // const accesser = await contract.getAccesser(accounts[0], accessorid, {from: accounts[0]})
     const result = await fetch('http://localhost:5273/api/user/authorization', {
       method: "PUT",
       headers: {
         "Content-type": "application/json"
       },
       body: JSON.stringify({
-        "OwnerId": userId,
-        "AccesserId": accessorid,
+        "OwnerId": user.account,
+        "AccesserId": accessor,
       })
     }).then(response => response.json())
     setAuthorizationList(authorizationList.map(item => {
-      const newItem = (item.accessorId === accessorid) ? { ...item, isAuthorized: false} : item
+      const newItem = (item.accessorId === accessor) ? { ...item, isAuthorized: false} : item
         
       return newItem;   
     }))
@@ -59,26 +59,29 @@ const Home = () => {
   const [ input, setInput ] = useState(null);
   const [ authorizationList, setAuthorizationList ] = useState([]);
   const [ fileList, setFileList] = useState([]);
-  const [ accounts, setAccounts] = useState([]);
-  const { contract, authed, userId } = useContext(authContext);
+  const [ confirmedPassword, setConfirmedPassword] = useState('');
+  const { contract, authed, user } = useContext(authContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const navigate = useNavigate();
   
   const handleAuthorize = async (e) => {
-    e.preventDefault();
-    if (userId == null || input == null) return;
-    if (input == userId) return    
-    await contract.addAccesser(accounts[0],input, {from: accounts[0]});
-    const accesser = await contract.getAccesser(accounts[0], input, {from: accounts[0]})
+    if (user.userId == null || input == null) return;
+    if (input == user.account) return  
+    console.log(input, confirmedPassword, user.userId);
+    await contract.addAccessor(input, convertToBytes32(confirmedPassword), {from: user.account});
+    // const accesser = await contract.getAccesser(accounts[0], input, {from: accounts[0]})
     const result = await fetch('http://localhost:5273/api/user/authorization', {
       method: "POST",
       headers: {
         "Content-type": "application/json"
       },
       body: JSON.stringify({
-        "OwnerId": userId,
+        "OwnerId": user.account,
         "AccesserId": input,
       })
     }).then(response => response.json())  
+    console.log('here')
     setAuthorizationList(authorizationList.map(item => {
       const newItem = (item.accessorId === input) ? { ...item, isAuthorized: true} : item
         
@@ -86,37 +89,21 @@ const Home = () => {
     }))  
   }
 
-  // const setupBlockChain = () =>{
-  //   DigitalHealthContract
-  //     .deployed()
-  //     .then(async function(instance) {
-  //       setContract(instance);
-  //       const result = await getLocalProvider().eth.getAccounts()
-  //       setAccounts(result);
-  //       await instance.signup(name, {from: result[0]})
-  //       try {
-  //         const response = await fetch('http://localhost:5273/api/User', {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-type": "application/json"
-  //           },
-  //           body: JSON.stringify({
-  //             "userName": "User 1",
-  //             "contractAddress": result[0]
-  //           })
-  //         }).then((res) => res.json());
-    
-  //         const id = await response;
-  //         setUserId(id);
-  //       } catch (error) {
-  //         // Failed to connect to server.
-  //         console.error(error);
-  //       }
-  //      }).catch(e => {
-  //         // Failed to load web3, accounts, or contract.
-  //         console.error(e);
-  //       });
-  // }
+  const handleOpenModal = (e) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleConfirmPassword = (password) => {
+    setConfirmedPassword(password);
+    // Handle password confirmation logic here
+    console.log('Confirmed password:', password);
+    handleAuthorize();
+  };
 
   const setupIPFS = async () => {
     try {
@@ -134,7 +121,7 @@ const Home = () => {
 
   const getAuthorizationList = async () => {
     try {
-      const res = await fetch('http://localhost:5273/api/user/' + userId +'/authorization/', {
+      const res = await fetch('http://localhost:5273/api/user/' + user.userId +'/authorization/', {
         method: "GET",
         headers: {
           "Content-type": "application/json"
@@ -152,7 +139,7 @@ const Home = () => {
 
   const getFileList = async () => {
     try {
-      const res = await fetch('http://localhost:5273/api/information/' + userId, {
+      const res = await fetch('http://localhost:5273/api/information/' + user.userId, {
       method: "GET",
       headers: {
         "Content-type": "application/json"
@@ -172,19 +159,13 @@ const Home = () => {
       navigate('/login');
     }
     //setupBlockChain();
-    setupIPFS();
+    if (!user.userId) return;
+      getFileList();
+      getAuthorizationList();
+      setupIPFS();
   },[]);
 
-  useEffect(() => {
-    if (!userId) return;
-    getFileList();
-    getAuthorizationList();
-  }, [userId])
-
-  useEffect(() => {
-
-  },[authorizationList])
-
+  
   
   return (
     <>
@@ -193,16 +174,16 @@ const Home = () => {
         <Form>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Authorization</Form.Label>
-            <Form.Control type="number" placeholder="id" onChange={(e) => setInput(e.target.value)}/>
+            <Form.Control type="text" placeholder="id" onChange={(e) => setInput(e.target.value)}/>
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={(e) => handleAuthorize(e)}>
+          <Button variant="primary" type="submit" onClick={(e) => handleOpenModal(e)}>
             Authorize
           </Button>
         </Form>
       </Container>
       
       { authorizationList.length > 0 ? 
-        <AuthorizationList userId={userId} accounts={accounts} contract={contract} authorizationList={authorizationList} setAuthorizationList={setAuthorizationList}/>
+        <AuthorizationList user={user} contract={contract} authorizationList={authorizationList} setAuthorizationList={setAuthorizationList}/>
         :
         <Container>
           <Alert variant='light'>You have not authorized anyone</Alert> 
@@ -219,9 +200,18 @@ const Home = () => {
         
       }
       
-      { ipfs && userId &&
-        <SaveFile ipfs={ipfs} userId={userId} setFileList={setFileList}/> 
+      { ipfs && user.userId &&
+        <SaveFile ipfs={ipfs} userId={user.userId} setFileList={setFileList}/> 
       }
+
+      <Container>
+      <button onClick={handleOpenModal}>Open Password Modal</button>
+      <PasswordConfirmationModal
+        show={isModalOpen}
+        onHide={handleCloseModal}
+        onConfirm={handleConfirmPassword}
+      />
+    </Container>
     </>
       
      

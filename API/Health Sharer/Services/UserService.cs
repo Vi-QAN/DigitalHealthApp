@@ -13,30 +13,11 @@ namespace HealthSharer.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository) {
+        private readonly IContractService _contractService;
+       
+        public UserService(IUserRepository userRepository, IContractService contractService) {
             _userRepository = userRepository;
-        }
-
-        public int AddUser(AddUserRequest request)
-        {
-            var user = _userRepository.GetUserByContract(request.ContractAddress);
-            if (user != default)
-            {
-                return user.UserId;
-            }
-            
-            var newUser = new User()
-            {
-                Name = request.UserName,
-                ContractAddress = request.ContractAddress,
-            };
-            _userRepository.AddUser(newUser);
-            
-            _userRepository.SaveChanges();
-
-            return newUser.UserId;
-
+            _contractService = contractService;
         }
 
         public GetUserResponse GetUser(string address)
@@ -51,11 +32,11 @@ namespace HealthSharer.Services
             return new GetUserResponse()
             {
                 UserId = user.UserId,
-                ContractAddress = user.ContractAddress,
+                Key = user.ContractAddress,
             };
         }
 
-        public int UpdateUser(AddUserRequest request)
+        /*public int UpdateUser(AddUserRequest request)
         {
             var user = _userRepository.GetUserByContract(request.ContractAddress);
 
@@ -69,29 +50,29 @@ namespace HealthSharer.Services
             _userRepository.UpdateUser(user);
 
             return user.UserId;
-        }
+        }*/
 
         public int AddAuthorization(AuthorizationRequest request)
         {
-            var owner = _userRepository.GetUserById(request.OwnerId);
-            var accesser = _userRepository.GetUserById(request.AccesserId);
+            var owner = _userRepository.GetUserByAddress(request.OwnerId);
+            var accessor = _userRepository.GetUserByAddress(request.AccesserId);
             
             if (owner == default)                
                 throw new NotFoundException("Owner Not Found");
 
-            if (accesser == default)
+            if (accessor == default)
                 throw new NotFoundException("Accesser Not Found");
 
             var record = _userRepository.GetAllAuthorizationRecords()
-                .FirstOrDefault(r => r.AccessorId == request.AccesserId 
-                                    && r.OwnerId == request.OwnerId);
+                .FirstOrDefault(r => r.AccessorId == accessor.UserId 
+                                    && r.OwnerId == owner.UserId);
 
             if (record == default)
             {
                 var newRecord = new AuthorizationRecord()
                 {
-                    OwnerId = request.OwnerId,
-                    AccessorId = request.AccesserId,
+                    OwnerId = owner.UserId,
+                    AccessorId = accessor.UserId,
                     IsAuthorized = true
                 };
 
@@ -105,23 +86,23 @@ namespace HealthSharer.Services
             _userRepository.UpdateAuthorizationRecord(record);
             _userRepository.SaveChanges();
 
-            return request.AccesserId;
+            return accessor.UserId;
         }
 
         public int RemoveAuthorization(AuthorizationRequest request)
         {
-            var owner = _userRepository.GetUserById(request.OwnerId);
-            var accesser = _userRepository.GetUserById(request.AccesserId);
+            var owner = _userRepository.GetUserByAddress(request.OwnerId);
+            var accessor = _userRepository.GetUserByAddress(request.AccesserId);
 
             if (owner == default)
                 throw new NotFoundException("Owner Not Found");
 
-            if (accesser == default)
+            if (accessor == default)
                 throw new NotFoundException("Accesser Not Found");
 
             var record = _userRepository.GetAllAuthorizationRecords()
-                .FirstOrDefault(r => r.AccessorId == request.AccesserId
-                                    && r.OwnerId == request.OwnerId);
+                .FirstOrDefault(r => r.AccessorId == accessor.UserId
+                                    && r.OwnerId == owner.UserId);
 
             if (record == default)
                 throw new NotFoundException("User has never been authorized");
@@ -130,7 +111,7 @@ namespace HealthSharer.Services
             _userRepository.UpdateAuthorizationRecord(record);
             _userRepository.SaveChanges();
 
-            return request.AccesserId;
+            return accessor.UserId;
         }
 
         public List<GetAuthorizationResponse> GetAuthorization(int userId)
@@ -157,6 +138,35 @@ namespace HealthSharer.Services
                 ).ToList();
         }
 
-        
+        public GetUserResponse Signup(SignupRequest request)
+        {
+            var user = _userRepository.GetUserByContract(request.Key);
+            if (user != default)
+            {
+                return new GetUserResponse()
+                {
+                    UserId = user.UserId,
+                    Key = request.Key,
+                };
+            }
+
+            var random = CryptographicService.GenerateRandom();
+            _contractService.SetKey(request.Key, random);
+
+            var newUser = new User()
+            {
+                Name = request.UserName,
+                ContractAddress = request.Key,
+            };
+            _userRepository.AddUser(newUser);
+
+            _userRepository.SaveChanges();
+
+            return new GetUserResponse()
+            {
+                UserId = newUser.UserId,
+                Key = request.Key,
+            };
+        }
     }
 }
