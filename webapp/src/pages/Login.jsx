@@ -66,7 +66,7 @@ const Login = () => {
           <Dropdown.Menu>
             {accountList.map(account => {
               
-              return <Dropdown.Item eventKey={account}>{account}</Dropdown.Item>
+              return <Dropdown.Item key={account} eventKey={account}>{account}</Dropdown.Item>
             })}
             
           </Dropdown.Menu>

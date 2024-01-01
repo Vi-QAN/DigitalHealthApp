@@ -22,12 +22,12 @@ namespace HealthSharer.Services
 
         public GetInformationResponse AddInformation(AddInformationRequest addInformationRequest)
         {
-            var user = _userRepository.GetUserById(addInformationRequest.UserId);
+            var user = _userRepository.GetUserById(addInformationRequest.OwnerId);
             if (user == default) {
                 throw new NotFoundException("User not found");
             }
 
-            var information = _informationRepository.GetInformation(addInformationRequest.UserId, addInformationRequest.FileHash);
+            var information = _informationRepository.GetInformation(addInformationRequest.OwnerId, addInformationRequest.FileHash);
 
             if (information != default) {
                 throw new BadRequestException("Information existed");
@@ -35,7 +35,7 @@ namespace HealthSharer.Services
 
             var newInformation = new Information()
             {
-                UserId = addInformationRequest.UserId,
+                UserId = addInformationRequest.OwnerId,
                 FileHash = addInformationRequest.FileHash,  
                 MultiAddress = addInformationRequest.MultiAddress,
                 FileName = addInformationRequest.FileName.Split('.')[0],
@@ -113,6 +113,7 @@ namespace HealthSharer.Services
                     (record, user) => new GetAllInformationResponse()
                     {
                         OwnerId = record.OwnerId,
+                        Key = user.ContractAddress,
                         UserName = user.Name,
                         IsAuthorized = record.IsAuthorized,
                         InformationList = record.InformationList

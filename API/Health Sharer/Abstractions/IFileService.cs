@@ -4,7 +4,8 @@ namespace HealthSharer.Abstractions
 {
     public interface IFileService
     {
-        void uploadFile(IFormFile file, GetUserResponse user);
+        Task uploadFiles(List<IFormFile> files, GetUserResponse owner, GetUserResponse accessor);
+        void uploadFile(IFormFile file);
         void convertHL7(IFormFile file);
     }
 }

@@ -2,41 +2,28 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { authContext } from '../hooks/useAuth';
-import { useNavigate} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const File1 = () => {
   const [file, setFile] = useState(null);
-  
-  const { contract, authed, user } = useContext(authContext);
-  const navigate = useNavigate();
-
+  const location = useLocation();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 
   const handleUpload = () => {
-    console.log(user);
+    console.log(location);
     console.log(file);
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('user', JSON.stringify(user));
+    formData.append('user', JSON.stringify(location.state));
 
-    fetch('http://localhost:5273/api/File/upload', {
-      method: 'POST',
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
+    
   };
 
   useEffect(() => {
-    // if (!authed){
-    //   navigate('/login');
-    // }
-    //setupBlockChain();
-    //setupIPFS();
+    console.log(location.state)
   },[]);
 
   return (

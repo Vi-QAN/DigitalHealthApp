@@ -5,7 +5,7 @@ import "./Ownable.sol";
 
 contract DigitalHealth is Ownable {
     
-    struct Doctor {
+    struct Accessor {
         bool authorized;
     }
 
@@ -15,7 +15,7 @@ contract DigitalHealth is Ownable {
         bytes32 password;
         bytes32 key;
         bytes16 iv;
-        mapping(address => Doctor) doctors;
+        mapping(address => Accessor) accessors;
     }
 
     mapping (address => User) private users;
@@ -82,7 +82,7 @@ contract DigitalHealth is Ownable {
         }
     }
     
-    function setKey(address _user, bytes32 _key, bytes16 _iv) public onlyExistingUser onlyOwner {
+    function setKey(address _user, bytes32 _key, bytes16 _iv) public onlyOwner {
         users[_user].key = _key;
         users[_user].iv = _iv;
     }
@@ -94,19 +94,22 @@ contract DigitalHealth is Ownable {
     // add modifier to check existence of accessor
 
     function removeAccessor(address accessor, bytes32 password) public onlyExistingUser onlyValidPassword(password) onlyAuthenticatedUser(password) {
-        users[msg.sender].doctors[accessor].authorized = false;
+        users[msg.sender].accessors[accessor].authorized = false;
     }
 
     function addAccessor(address accessor, bytes32 password) public onlyExistingUser onlyValidPassword(password) onlyAuthenticatedUser(password) {
-        users[msg.sender].doctors[accessor].authorized = true;
+        users[msg.sender].accessors[accessor].authorized = true;
     }
 
-    function getAccessor(address _user, address accessor) public view onlyOwner returns (Doctor memory ){
-        return users[_user].doctors[accessor];
+    function getAccessorAuthorization(address _user, address accessor) public view onlyOwner returns (bool authorized){
+        if (_user == accessor){
+            return true;
+        }
+        return users[_user].accessors[accessor].authorized;
     }
 
     modifier onlyAuthorizedAccessor(address _user, address accessor) {
-        require(getAccessor(_user, accessor).authorized, "Only Authorized Accessor");
+        require(getAccessorAuthorization(_user, accessor), "Only Authorized Accessor");
         _;
     }
 
