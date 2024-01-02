@@ -70,18 +70,19 @@ namespace Contracts.Contracts.DigitalHealth
              return ContractHandler.SendRequestAndWaitForReceiptAsync(addAccessorFunction, cancellationToken);
         }
 
-        public Task<GetAccessorOutputDTO> GetAccessorQueryAsync(GetAccessorFunction getAccessorFunction, BlockParameter blockParameter = null)
+        public Task<bool> GetAccessorAuthorizationQueryAsync(GetAccessorAuthorizationFunction getAccessorAuthorizationFunction, BlockParameter blockParameter = null)
         {
-            return ContractHandler.QueryDeserializingToObjectAsync<GetAccessorFunction, GetAccessorOutputDTO>(getAccessorFunction, blockParameter);
+            return ContractHandler.QueryAsync<GetAccessorAuthorizationFunction, bool>(getAccessorAuthorizationFunction, blockParameter);
         }
 
-        public Task<GetAccessorOutputDTO> GetAccessorQueryAsync(string user, string accessor, BlockParameter blockParameter = null)
+        
+        public Task<bool> GetAccessorAuthorizationQueryAsync(string user, string accessor, BlockParameter blockParameter = null)
         {
-            var getAccessorFunction = new GetAccessorFunction();
-                getAccessorFunction.User = user;
-                getAccessorFunction.Accessor = accessor;
+            var getAccessorAuthorizationFunction = new GetAccessorAuthorizationFunction();
+                getAccessorAuthorizationFunction.User = user;
+                getAccessorAuthorizationFunction.Accessor = accessor;
             
-            return ContractHandler.QueryDeserializingToObjectAsync<GetAccessorFunction, GetAccessorOutputDTO>(getAccessorFunction, blockParameter);
+            return ContractHandler.QueryAsync<GetAccessorAuthorizationFunction, bool>(getAccessorAuthorizationFunction, blockParameter);
         }
 
         public Task<GetKeyOutputDTO> GetKeyQueryAsync(GetKeyFunction getKeyFunction, BlockParameter blockParameter = null)

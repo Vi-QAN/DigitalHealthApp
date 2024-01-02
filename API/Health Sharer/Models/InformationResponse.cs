@@ -3,6 +3,7 @@
     public class GetAllInformationResponse
     {
         public int OwnerId { get; set; }
+        public string Key { get; set; }
         public bool IsAuthorized { get; set; }
         public string? UserName { get; set; }
         public List<GetInformationResponse> InformationList { get; set; }

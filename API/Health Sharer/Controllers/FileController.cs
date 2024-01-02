@@ -19,22 +19,30 @@ namespace HealthSharer.Controllers
         }
 
         [HttpPost("upload")]
-        public IActionResult UploadFile()
+        public IActionResult UploadFile([FromForm] List<IFormFile> files, [FromForm] string owner, [FromForm] string accessor)
         {
             try
             {
-                var file = Request.Form.Files[0]; // Assumes the file is the first form entry
-
-                if (file == null || file.Length == 0)
+                if (files == null || files.Count == 0)
                 {
                     return BadRequest("Invalid file");
                 }
 
-                var additionalData = Request.Form["user"];
+                var ownerInfo = JsonConvert.DeserializeObject<GetUserResponse>(owner);
 
-                var dataObject = JsonConvert.DeserializeObject<GetUserResponse>(additionalData);
+                if (ownerInfo == null)
+                {
+                    return BadRequest("Missing owner information");
+                }
 
-                _fileService.uploadFile(file, dataObject);
+                var accessorInfo = JsonConvert.DeserializeObject<GetUserResponse>(accessor);
+
+                if (accessorInfo == null)
+                {
+                    return BadRequest("Missing owner information");
+                }
+
+                _fileService.uploadFiles(files, ownerInfo, accessorInfo);
 
                 return Ok("File uploaded, encrypted, and decrypted successfully");
             }

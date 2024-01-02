@@ -8,7 +8,7 @@ import { Web3Provider } from "./hooks/useWeb3Context";
 
 const Login = React.lazy(() => import("./pages/Login.jsx"));
 const Home = React.lazy(() => import("./pages/Home.jsx"));
-const Test = React.lazy(() => import("./pages/Test.jsx"));
+// const Test = React.lazy(() => import("./pages/Test.jsx"));
 const File1 = React.lazy(() => import("./pages/File1.jsx"));
 
 
@@ -25,9 +25,9 @@ function App() {
                   <Home />} 
                 />
 
-                <Route exact path={"/test"} element={
+                {/* <Route exact path={"/test"} element={
                   <Test />} 
-                />
+                /> */}
 
                 <Route exact path={"/login"} element={
                   <Login />

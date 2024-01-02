@@ -8,9 +8,9 @@ import { create } from 'ipfs-http-client'
 
 import NavComponent from "../components/Navbar"
 import PasswordConfirmationModal from "../components/PasswordConfirmModal";
-import { SaveFile, FileList} from "./File";
+import {  OwnedFileList, AuthorizedFileList } from "../components/File";
 
-import { convertToBytes32 } from "../utils";
+import { convertToBytes32 } from "../utils/general";
 
 const AuthorizationList = ({user, contract, authorizationList, setAuthorizationList}) => {
   const handleRevoke = async (accessor) => {
@@ -48,8 +48,6 @@ const AuthorizationList = ({user, contract, authorizationList, setAuthorizationL
         ))}
       </ListGroup>
     </Container>
-      
-      
   )
 }
 
@@ -58,7 +56,6 @@ const Home = () => {
   const [ ipfs, setIpfs ] = useState(null);
   const [ input, setInput ] = useState(null);
   const [ authorizationList, setAuthorizationList ] = useState([]);
-  const [ fileList, setFileList] = useState([]);
   const [ confirmedPassword, setConfirmedPassword] = useState('');
   const { contract, authed, user } = useContext(authContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,7 +65,6 @@ const Home = () => {
   const handleAuthorize = async (e) => {
     if (user.userId == null || input == null) return;
     if (input == user.account) return  
-    console.log(input, confirmedPassword, user.userId);
     await contract.addAccessor(input, convertToBytes32(confirmedPassword), {from: user.account});
     // const accesser = await contract.getAccesser(accounts[0], input, {from: accounts[0]})
     const result = await fetch('http://localhost:5273/api/user/authorization', {
@@ -101,7 +97,6 @@ const Home = () => {
   const handleConfirmPassword = (password) => {
     setConfirmedPassword(password);
     // Handle password confirmation logic here
-    console.log('Confirmed password:', password);
     handleAuthorize();
   };
 
@@ -129,7 +124,6 @@ const Home = () => {
       }).then(response => response.json())
 
       const list = await res;
-      console.log(list)
       setAuthorizationList(list);
     } catch (err){
       console.log("Cannot get authorization list" + err)
@@ -137,22 +131,7 @@ const Home = () => {
     
   }
 
-  const getFileList = async () => {
-    try {
-      const res = await fetch('http://localhost:5273/api/information/' + user.userId, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json"
-      },
-      }).then(response => response.json())
-      const list = await res;
-      console.log(list)
-      setFileList(list);
-    } catch (err){
-      console.log("Cannot get file list" + err);
-    }
-    
-  }
+
 
   useEffect(() => {
     if (!authed){
@@ -160,16 +139,15 @@ const Home = () => {
     }
     //setupBlockChain();
     if (!user.userId) return;
-      getFileList();
       getAuthorizationList();
-      setupIPFS();
+      //setupIPFS();
   },[]);
 
   
   
   return (
     <>
-      <NavComponent />
+      <NavComponent user={user} />
       <Container className="mb-3">
         <Form>
           <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -191,27 +169,16 @@ const Home = () => {
         
       }
 
-      { fileList.length > 0 ? 
-        <FileList ipfs={ipfs} fileList={fileList}/>
-        :
-        <Container>
-          <Alert variant='light'>You have not added any file</Alert> 
-        </Container>
-        
-      }
-      
-      { ipfs && user.userId &&
-        <SaveFile ipfs={ipfs} userId={user.userId} setFileList={setFileList}/> 
-      }
+      { user && <OwnedFileList ipfs={ipfs} owner={{ userId: user.userId, key: user.key}}/> }
 
-      <Container>
-      <button onClick={handleOpenModal}>Open Password Modal</button>
+      { user && <AuthorizedFileList ipfs={ipfs} accessor={{ userId: user.userId, key: user.key}}/>}
+      
       <PasswordConfirmationModal
         show={isModalOpen}
         onHide={handleCloseModal}
         onConfirm={handleConfirmPassword}
       />
-    </Container>
+      
     </>
       
      

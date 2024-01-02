@@ -6,7 +6,8 @@
         public string MultiAddress { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }
-        public int UserId { get; set; }
+        public int OwnerId { get; set; }
+        public int? AccessorId { get; set; }
     }
 
     public class GetInformationRequest
