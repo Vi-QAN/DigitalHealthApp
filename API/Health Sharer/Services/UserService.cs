@@ -151,7 +151,7 @@ namespace HealthSharer.Services
             }
 
             var random = CryptographicService.GenerateRandom();
-            _contractService.SetKey(request.Key, random);
+            _contractService.SetKey(request.Key, random).Wait();
 
             var newUser = new User()
             {
