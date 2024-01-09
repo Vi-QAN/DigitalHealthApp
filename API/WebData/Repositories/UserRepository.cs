@@ -67,6 +67,11 @@ namespace WebData.Repositories
             return _context.Users;
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
         /*public void AddDoctor(Doctor doctor)
         {
             _context.Doctors.Add(doctor);

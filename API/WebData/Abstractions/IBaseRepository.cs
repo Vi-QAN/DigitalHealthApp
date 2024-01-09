@@ -3,5 +3,6 @@
     public interface IBaseRepository
     {
         void SaveChanges();
+        Task SaveChangesAsync();
     }
 }

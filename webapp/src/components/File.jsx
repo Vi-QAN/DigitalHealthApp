@@ -6,7 +6,7 @@ import { Lock, Unlock } from 'react-bootstrap-icons';
 import FileUploadModal from './FileUploadModal';
 
 import { downloadFromIPFS, saveToIpfs } from '../utils/IPFSHandler';
-import { saveEncryptedFiles, getFileInfoByOwner, getFileInfoByAccessor } from '../utils/fileHandler';
+import { saveEncryptedFiles, getFileInfoByOwner, getFileInfoByAccessor, getEncryptedFile } from '../utils/fileHandler';
 import { Fragment } from 'react';
 
 export const AuthorizedFileList = ({ipfs, accessor}) => {
@@ -23,9 +23,8 @@ export const AuthorizedFileList = ({ipfs, accessor}) => {
   };
 
   const handleClick = (e, item) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      downloadFromIPFS(ipfs, item);
     } catch (err) {
       console.error(err)
     }
@@ -151,10 +150,23 @@ export const OwnedFileList  = ({ipfs, owner}) => {
     const [fileList, setFileList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleClick = (e, item) => {
+    const handleDownloadFile = async (e, item) => {
         e.preventDefault()
         try {
-            downloadFromIPFS(ipfs, item);
+          const { blob, fileName} = await getEncryptedFile(item.fileHash, owner.key, owner.key);
+
+          const file = new File([blob], fileName, { type: blob.type });
+
+          // Create a URL for the File
+          const fileUrl = URL.createObjectURL(file);
+
+          // Open the URL in a new window or tab
+          window.open(fileUrl, '_blank');
+
+          // Optionally, revoke the URL after opening
+          // This is important to release resources
+          URL.revokeObjectURL(fileUrl);
+
         } catch (err) {
             console.error(err)
         }
@@ -170,8 +182,6 @@ export const OwnedFileList  = ({ipfs, owner}) => {
     };
   
     const handleAddFile = (files, encrypt) => {
-      console.log(encrypt);
-      console.log(files);
       const formData = new FormData();
       
       for (let i = 0; i < files.length; i++) {
@@ -221,7 +231,7 @@ export const OwnedFileList  = ({ipfs, owner}) => {
                       item.fileName
                     } </a>
                     
-                  <Button onClick={(e) => handleClick(e, item)}>Download</Button>
+                  <Button onClick={(e) => handleDownloadFile(e, item)}>Download</Button>
                 </ListGroup.Item>
               ))}
             </ListGroup>

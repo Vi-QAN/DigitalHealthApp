@@ -12,6 +12,11 @@ namespace WebData.Repositories
             _context = context;
         }
 
+        public void AddAllInformation(IEnumerable<Information> information)
+        {
+            _context.Information.AddRange(information);
+        }
+
         public void AddInformation(Information information)
         {
             _context.Information.Add(information);
@@ -41,5 +46,12 @@ namespace WebData.Repositories
         {
             _context.SaveChanges();
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        
     }
 }
