@@ -14,12 +14,35 @@ namespace HealthSharer.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
+        
         public FileController(IFileService fileService) { 
             _fileService = fileService;
         }
 
+        [HttpGet]
+        [Route("download/{fileHash}")]
+        public async Task<IActionResult> DownloadFile(
+            [FromRoute] string fileHash, 
+            [FromQuery] string owner,
+            [FromQuery] string accessor)
+        {
+            try
+            { 
+                var file = await _fileService.downloadFile(fileHash, owner, accessor);
+
+                Response.Headers.Add("Content-Disposition", $"attachment;filename={file.FileName}");
+                Response.Headers.ContentType = file.ContentType;
+
+                return File(file.Content, file.ContentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
         [HttpPost("upload")]
-        public IActionResult UploadFile([FromForm] List<IFormFile> files, [FromForm] string owner, [FromForm] string accessor)
+        public async Task<IActionResult> UploadFile([FromForm] List<IFormFile> files, [FromForm] string owner, [FromForm] string accessor)
         {
             try
             {
@@ -42,7 +65,7 @@ namespace HealthSharer.Controllers
                     return BadRequest("Missing owner information");
                 }
 
-                _fileService.uploadFiles(files, ownerInfo, accessorInfo);
+                await _fileService.uploadFiles(files, ownerInfo, accessorInfo);
 
                 return Ok("File uploaded, encrypted, and decrypted successfully");
             }

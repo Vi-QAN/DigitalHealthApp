@@ -20,6 +20,22 @@ namespace HealthSharer.Services
             _contractService = contractService;
         }
 
+        public GetUserResponse GetUser(int id)
+        {
+            var user = _userRepository.GetUserById(id);
+
+            if (user == default)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            return new GetUserResponse()
+            {
+                UserId = user.UserId,
+                Key = user.ContractAddress
+            };
+        }
+
         public GetUserResponse GetUser(string address)
         {
             var user = _userRepository.GetUserByAddress(address);

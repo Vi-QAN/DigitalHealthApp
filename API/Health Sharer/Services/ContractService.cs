@@ -38,36 +38,13 @@ namespace HealthSharer.Services
         {
             try
             {
-                //var iv = "0x" + BitConverter.ToString(random.iv).Replace("-", "");
-                //var key = "0x" + BitConverter.ToString(random.key).Replace("-", "");
-                var gasPrice = Web3.Convert.ToWei(5, UnitConversion.EthUnit.Gwei);
                 var result = await _service.SetKeyRequestAndWaitForReceiptAsync(
                     new Contracts.Contracts.DigitalHealth.ContractDefinition.SetKeyFunction()
                     {
                         User = user,
                         Key = random.key,
                         Iv = random.iv,
-                        
                     });
-
-                Console.WriteLine($"Finished storing an int: Tx Hash: {result.TransactionHash}");
-                Console.WriteLine($"Finished storing an int: Tx Status: {result.Status.Value}");
-                Console.WriteLine("");
-
-                Console.WriteLine("Calling the function get()...");
-                var intValueFromGetFunctionCall = await _service.GetKeyQueryAsync(user,user);
-                Console.WriteLine($"Int value: {intValueFromGetFunctionCall} (expecting value 42)");
-                Console.WriteLine("");
-                // Check if the transaction was successful
-                if (result.Status == null || result.Status.Value != 1)
-                {
-                    // Transaction failed
-                    Console.WriteLine("Transaction failed. Status: " + result.Status?.ToString());
-                }
-                else
-                {
-                    Console.WriteLine("Transaction successful. Transaction hash: " + result.TransactionHash);
-                }
             }
             catch (Exception ex)
             {

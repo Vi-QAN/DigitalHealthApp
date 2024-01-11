@@ -120,5 +120,27 @@ namespace HealthSharer.Services
                     }).ToList();
 
         }
+
+        public void AddAllInformation(List<AddInformationRequest> requests)
+        {
+            var user = _userRepository.GetUserById(requests[0].OwnerId);
+            if (user == default)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var list = requests.Select(request => new Information()
+            {
+                UserId = request.OwnerId,
+                FileHash = request.FileHash,
+                MultiAddress = request.MultiAddress,
+                FileName = request.FileName.Split('.')[0],
+                FileExtension = request.FileName.Split('.')[1],
+                FileType = request.FileType
+            });
+
+            _informationRepository.AddAllInformation(list);
+            _informationRepository.SaveChanges();
+        }
     }
 }
