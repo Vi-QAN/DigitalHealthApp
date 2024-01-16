@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment} from 'react';
+import { createPortal } from 'react-dom';
 import {Button, Container, Form, ListGroup, Alert, Collapse } from 'react-bootstrap';
 import { Lock, Unlock } from 'react-bootstrap-icons';
 
 import FileUploadModal from './FileUploadModal';
-
 import { downloadFromIPFS, saveToIpfs } from '../utils/IPFSHandler';
 import { saveEncryptedFiles, getFileInfoByOwner, getFileInfoByAccessor, getEncryptedFile } from '../utils/fileHandler';
-import { Fragment } from 'react';
+import DWVModal from './DWVModal';
 
 export const AuthorizedFileList = ({ipfs, accessor}) => {
   const [ fileList, setFileList ] = useState([]);
@@ -149,28 +149,8 @@ export const AuthorizedFileList = ({ipfs, accessor}) => {
 export const OwnedFileList  = ({ipfs, owner}) => {
     const [fileList, setFileList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleDownloadFile = async (e, item) => {
-        e.preventDefault()
-        try {
-          const { blob, fileName} = await getEncryptedFile(item.fileHash, owner.key, owner.key);
-
-          const file = new File([blob], fileName, { type: blob.type });
-
-          // Create a URL for the File
-          const fileUrl = URL.createObjectURL(file);
-
-          // Open the URL in a new window or tab
-          window.open(fileUrl, '_blank');
-
-          // Optionally, revoke the URL after opening
-          // This is important to release resources
-          URL.revokeObjectURL(fileUrl);
-
-        } catch (err) {
-            console.error(err)
-        }
-    }
+    const [isDWVModalOpen, setIsDWVModalOpen] = useState(false);
+    const [file, setFile] = useState(null);
 
     const handleOpenModal = (e) => {
       e.preventDefault();
@@ -180,6 +160,14 @@ export const OwnedFileList  = ({ipfs, owner}) => {
     const handleCloseModal = () => {
       setIsModalOpen(false);
     };
+
+    const handleOpenDWVModal = () =>{
+      setIsDWVModalOpen(true);
+    }
+
+    const handleCloseDWVModal = () => {
+      setIsDWVModalOpen(false);
+    }
   
     const handleAddFile = (files, encrypt) => {
       const formData = new FormData();
@@ -200,6 +188,40 @@ export const OwnedFileList  = ({ipfs, owner}) => {
       } 
       
     }
+
+    const handleDownloadFile = async (e, item) => {
+      e.preventDefault()
+      try {
+        const { blob, fileName} = await getEncryptedFile(item.fileHash, owner.key, owner.key);
+
+        const file = new File([blob], fileName, { type: blob.type });
+
+        // // Create a URL for the File
+        // const fileUrl = URL.createObjectURL(file);
+
+        // const serializedData = encodeURIComponent(fileUrl);
+        
+        // window.open(`/dwv?data=${serializedData}`, '_blank');
+
+        // try {
+        //   // Pass data to the ChildWindowComponent
+        //   childWindow.postMessage({command: 'loadFile', fileUrl: fileUrl}, window.origin);
+        // } catch (err) {
+        //   console.log(err);
+        // }
+        setFile(file);
+        handleOpenDWVModal();
+        
+
+        // Optionally, revoke the URL after opening
+        // This is important to release resources
+        // URL.revokeObjectURL(fileUrl);
+
+      } catch (err) {
+          console.error(err)
+      }
+    }
+
     const loadFileList = async () => {
       const list = await getFileInfoByOwner(owner.userId);
       setFileList(list)
@@ -248,6 +270,12 @@ export const OwnedFileList  = ({ipfs, owner}) => {
           onHide={handleCloseModal}
           onAddFile={handleAddFile}
         />
+
+        <DWVModal 
+         show={isDWVModalOpen}
+         onHide={handleCloseDWVModal}
+         file={file}
+         />
       </Container>        
     )
 }
