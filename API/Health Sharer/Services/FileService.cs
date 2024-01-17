@@ -2,8 +2,9 @@
 using HealthSharer.Exceptions;
 using HealthSharer.Models;
 using Newtonsoft.Json;
-using WebData.Abstractions;
-using WebData.Models;
+using System.Collections;
+using System.Text;
+using HealthSharer.Models;
 
 namespace HealthSharer.Services
 {
@@ -16,6 +17,7 @@ namespace HealthSharer.Services
         private const string IPFSBaseUrl = "http://127.0.0.1:5001/api/v0";
         private const string IPFSAddUrl = IPFSBaseUrl + "/add";
         private const string IPFSGetUrl = IPFSBaseUrl + "/cat?arg=";
+        private HL7ConversionService hl7Service = new HL7ConversionService();
 
         public FileService(IContractService contractService, IInformationService informationService, IUserService userService)
         {
@@ -23,9 +25,28 @@ namespace HealthSharer.Services
             _informationService = informationService;
             _userService = userService;
         }
-        public void convertHL7(IFormFile file)
+
+        private GetHL7FileResponse convertHL7(byte[] data)
         {
-            throw new NotImplementedException();
+            // Convert byte array to string using ASCII encoding
+            //string decoded= Encoding.ASCII.GetString(data);
+            string decoded = File.ReadAllText("C:\\Users\\35383\\Documents\\Final Year Project\\DigitalHealth\\File Samples\\ADT^A04.hl7");
+            GetHL7FileResponse result = null;
+            hl7Service.Message = decoded;
+            
+            switch (hl7Service.FileVersion)
+            {
+                case "2.4":
+                    result = hl7Service.ProcessHL7v24Message(decoded);
+                    break;
+                case "2.8.1":
+                    result = hl7Service.ProcessHL7v281Message(decoded);
+                    break;
+                default:
+                    throw new Exception("Message is not set");
+            }
+
+            return result;
         }
 
         private async Task<byte[]> downloadFile(string fileHash)
@@ -65,16 +86,31 @@ namespace HealthSharer.Services
             try
             {
                 var decrypted = await CryptographicService.DecryptFile(file, seed.iv, seed.key);
+                
+                if (fileInfo.FileExtension == "hl7")
+                {
+                    var converted = convertHL7(decrypted);
+                    if (converted == null)
+                    {
+                        throw new Exception("Fail to convert HL7");
+                    }
 
-                return new GetFileResponse()
+                    converted.FileName = fileInfo.FileName + '.' + fileInfo.FileExtension;
+                    converted.ContentType = fileInfo.FileType;
+
+                    return converted;
+                }
+                
+                return new GetRegularFileResponse()
                 {
                     Content = decrypted,
                     ContentType = fileInfo.FileType,
                     FileName = fileInfo.FileName + '.' + fileInfo.FileExtension,
                 };
+
             } catch (Exception ex)
             {
-
+                
             }
             return null;
             
@@ -137,11 +173,7 @@ namespace HealthSharer.Services
                 
             };
 
-            
             _informationService.AddAllInformation(informationList);
-
-
-
         }
     }
 }

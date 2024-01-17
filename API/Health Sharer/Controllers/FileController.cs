@@ -1,11 +1,8 @@
 ﻿using HealthSharer.Abstractions;
 using HealthSharer.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Security.Cryptography;
+using HealthSharer.Models;
 
 namespace HealthSharer.Controllers
 {
@@ -30,10 +27,16 @@ namespace HealthSharer.Controllers
             { 
                 var file = await _fileService.downloadFile(fileHash, owner, accessor);
 
-                Response.Headers.Add("Content-Disposition", $"attachment;filename={file.FileName}");
-                Response.Headers.ContentType = file.ContentType;
+                if (file is GetHL7FileResponse)
+                {
+                    var HL7File = file as GetHL7FileResponse;
+                    return Ok(HL7File);
+                }
 
-                return File(file.Content, file.ContentType);
+                var regularFile = file as GetRegularFileResponse;
+                Response.Headers.Add("Content-Disposition", $"attachment;filename={regularFile.FileName}");
+                Response.Headers.ContentType = regularFile.ContentType;
+                return File(regularFile.Content, regularFile.ContentType);
             }
             catch (Exception ex)
             {

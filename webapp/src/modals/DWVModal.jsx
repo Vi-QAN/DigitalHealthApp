@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Nav } from 'react-bootstrap';
 
-import DWVComponent from './DWV';
-import TagsTable from './DWVTagsTable';
+import DWVComponent from '../components/DWV';
+import TagsTable from '../components/DWVTagsTable';
 
 
 

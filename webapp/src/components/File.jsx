@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect, Fragment} from 'react';
-import { createPortal } from 'react-dom';
 import {Button, Container, Form, ListGroup, Alert, Collapse } from 'react-bootstrap';
 import { Lock, Unlock } from 'react-bootstrap-icons';
 
-import FileUploadModal from './FileUploadModal';
+import FileUploadModal from '../modals/FileUploadModal';
 import { downloadFromIPFS, saveToIpfs } from '../utils/IPFSHandler';
 import { saveEncryptedFiles, getFileInfoByOwner, getFileInfoByAccessor, getEncryptedFile } from '../utils/fileHandler';
-import DWVModal from './DWVModal';
+import DWVModal from '../modals/DWVModal';
+import HL7FileModal from '../modals/HL7FileModal';
 
 export const AuthorizedFileList = ({ipfs, accessor}) => {
   const [ fileList, setFileList ] = useState([]);
@@ -150,7 +150,9 @@ export const OwnedFileList  = ({ipfs, owner}) => {
     const [fileList, setFileList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDWVModalOpen, setIsDWVModalOpen] = useState(false);
+    const [isHL7FileModalOpen, setIsHL7FileModalOpen] = useState(false);
     const [file, setFile] = useState(null);
+    const [HL7Content, setHL7Content] = useState(null);
 
     const handleOpenModal = (e) => {
       e.preventDefault();
@@ -167,6 +169,14 @@ export const OwnedFileList  = ({ipfs, owner}) => {
 
     const handleCloseDWVModal = () => {
       setIsDWVModalOpen(false);
+    }
+
+    const handleOpenHL7Modal = () =>{
+      setIsHL7FileModalOpen(true);
+    }
+
+    const handleCloseHL7Modal = () => {
+      setIsHL7FileModalOpen(false);
     }
   
     const handleAddFile = (files, encrypt) => {
@@ -192,25 +202,19 @@ export const OwnedFileList  = ({ipfs, owner}) => {
     const handleDownloadFile = async (e, item) => {
       e.preventDefault()
       try {
-        const { blob, fileName} = await getEncryptedFile(item.fileHash, owner.key, owner.key);
+        if (item.fileExtension === 'hl7'){
+          const result = await getEncryptedFile(item.fileHash,item.fileExtension, owner.key, owner.key);
+          setHL7Content(result);
+          handleOpenHL7Modal();
+        } else {
+          const { blob, fileName} = await getEncryptedFile(item.fileHash, item.fileExtension, owner.key, owner.key);
 
-        const file = new File([blob], fileName, { type: blob.type });
+          const file = new File([blob], fileName, { type: blob.type });
 
-        // // Create a URL for the File
-        // const fileUrl = URL.createObjectURL(file);
-
-        // const serializedData = encodeURIComponent(fileUrl);
+          setFile(file);
+          handleOpenDWVModal();
+        }
         
-        // window.open(`/dwv?data=${serializedData}`, '_blank');
-
-        // try {
-        //   // Pass data to the ChildWindowComponent
-        //   childWindow.postMessage({command: 'loadFile', fileUrl: fileUrl}, window.origin);
-        // } catch (err) {
-        //   console.log(err);
-        // }
-        setFile(file);
-        handleOpenDWVModal();
         
 
         // Optionally, revoke the URL after opening
@@ -275,6 +279,12 @@ export const OwnedFileList  = ({ipfs, owner}) => {
          show={isDWVModalOpen}
          onHide={handleCloseDWVModal}
          file={file}
+         />
+
+         <HL7FileModal 
+          show={isHL7FileModalOpen}
+          onHide={handleCloseHL7Modal}
+          content={HL7Content}
          />
       </Container>        
     )

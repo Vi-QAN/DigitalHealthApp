@@ -12,11 +12,4 @@
         public string Hash { get; set; }
         public int Size { get; set; }
     }
-
-    public class GetFileResponse
-    {
-        public byte[] Content { get; set; }
-        public string ContentType { get; set; }
-        public string FileName { get; set; }
-    }
 }

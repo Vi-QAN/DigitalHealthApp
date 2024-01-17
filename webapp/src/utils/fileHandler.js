@@ -43,7 +43,8 @@ export const saveEncryptedFiles = (formData) => {
       .catch(error => console.error('Error:', error));
 }
 
-export const getEncryptedFile = async (fileHash, owner, accessor) => {
+export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor) => {
+    if (!owner || !accessor) return; 
     const queryParams = new URLSearchParams();
     queryParams.append("owner", owner);
     queryParams.append("accessor", accessor);
@@ -54,16 +55,14 @@ export const getEncryptedFile = async (fileHash, owner, accessor) => {
             method: 'GET',
         }).catch(err => console.log(err));
     
-        console.log(response);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        // for await (const chunk of response.body) {
-        //     // Do something with each "chunk"
-        //     console.log(chunk)
-        // }
-
+        if (fileExtension === 'hl7'){
+            return await response.json();
+        }
+        
         // Parse content disposition header to get the file name
         const contentDisposition = response.headers.get('Content-Disposition');
         const fileName = contentDisposition
