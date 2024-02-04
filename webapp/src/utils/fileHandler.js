@@ -1,13 +1,43 @@
 import fetch from 'node-fetch'
 
-const baseUrl = 'http://localhost:5273/api';
+const baseUrl = 'https://bd84-2a02-8084-2162-e200-11ad-5293-67a7-eb4.ngrok-free.app/api';
 
+const headers = {
+    "Content-type": "application/json",
+    "ngrok-skip-browser-warning" : "0"
+};
+
+////////////////////////////////////////
+// Authentication Requests
+////////////////////////////////////////
+export const loginRequest = async ({account}) => {
+    return await fetch(`${baseUrl}/User/` + account, {
+        method: "GET",
+        headers: headers
+    })
+    .then((res) => res.json())
+    .then(result => result)
+    .catch(err => console.error(err)); 
+}
+
+export const registerRequest = async ({name, account}) => {
+    return await fetch(`${baseUrl}/User/signup`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+            "userName": name,
+            "key": account
+        })
+    }).catch(err => console.error(err))
+}
+
+////////////////////////////////////////
+// File Information Requests
+////////////////////////////////////////
 export const getFileInfoByOwner = async (owner) => {
     return await fetch(baseUrl + '/information/' + owner, {
         method: "GET",
-        headers: {
-            "Content-type": "application/json"
-        },
+        headers: headers
     }).then(response => response.json())
     .catch(err => {throw new Error("Failed to get file information by owner: ", err)})
 }
@@ -15,18 +45,19 @@ export const getFileInfoByOwner = async (owner) => {
 export const getFileInfoByAccessor = async (accessor) => {
     return await fetch(baseUrl + '/information/accessor/' + accessor, {
         method: "GET",
-        headers: {
-            "Content-type": "application/json"
-        },
+        headers: headers,
     }).then(response => response.json())
     .catch(err => {throw new Error("Failed to get file information by accessor: ", err)})
 }
 
+///////////////////////////////////
+// File Content Requests //////////
+///////////////////////////////////
 export const savePlainFilesInformation = (metadata) => {
     fetch('http://localhost:5273/api/Information', {
         method: "POST",
         headers: {
-        "Content-type": "application/json"
+            "Content-type": "application/json"
         },
         body: JSON.stringify(metadata)
     }).then(response => response.json()).then(result => result)
@@ -53,6 +84,7 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     try {
         const response = await fetch(url, {
             method: 'GET',
+            headers: headers,
         }).catch(err => console.log(err));
     
         if (!response.ok) {
@@ -76,6 +108,5 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     } catch (err) {
         console.log(err)
     }
-   
-    
 }
+

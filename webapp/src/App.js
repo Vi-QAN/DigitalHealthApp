@@ -4,7 +4,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import { AuthProvider } from "./hooks/useAuth";
-import { Web3Provider } from "./hooks/useWeb3Context";
+import { Web3Modal } from "./hooks/useWalletConnect";
 
 const Login = React.lazy(() => import("./pages/Login.jsx"));
 const Home = React.lazy(() => import("./pages/Home.jsx"));
@@ -16,7 +16,7 @@ function App() {
 
   return (
     <Router>
-      <Web3Provider>
+      <Web3Modal>
         <AuthProvider>
           <Suspense fallback={<div>Loading...</div>}>
               <Routes>
@@ -31,15 +31,13 @@ function App() {
                 <Route exact path={"/login"} element={
                   <Login />
                 } />
-
-                {/* <Route path="dashboard" component={UserIsAuthenticated(Dashboard)}  /> */}
-            
-                {/* <Route path="profile" component={UserIsAuthenticated(Profile)} /> */}
               </Routes>
             
           </Suspense>
+        
+        
         </AuthProvider>
-      </Web3Provider>
+      </Web3Modal>
     </Router>
 
   );

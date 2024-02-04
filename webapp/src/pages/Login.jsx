@@ -1,22 +1,28 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Row, Col, Dropdown } from 'react-bootstrap';
-import { authContext } from '../hooks/useAuth';
+import { AuthConsumer } from '../hooks/useAuth';
 import { useNavigate } from "react-router-dom";
-import useWeb3Context from '../hooks/useWeb3Context';
+import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useReadContract } from 'wagmi';
+
+function ConnectButton() {
+  // 4. Use modal hook
+  const { open } = useWeb3Modal()
+
+  return (
+    <>
+      <button onClick={() => open()}>Open Connect Modal</button>
+      <button onClick={() => open({ view: 'Networks' })}>Open Network Modal</button>
+    </>
+  )
+}
 
 
 const Login = () => {
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '' });
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const { register, login, logout  } = useContext(authContext);
-  const [ DigitalHealthContract, getLocalProvider ] = useWeb3Context();
-  const [ accountList, setAccountList ] = useState(null);
+  const { register, login } = AuthConsumer();
   const navigate = useNavigate();
-
-  const getCredential = async () => {
-    const result = await getLocalProvider().eth.getAccounts();
-    setAccountList(result);
-  };  
 
   const handleSignupChange = (e) => {
     const { name, value } = e.target;
@@ -43,37 +49,11 @@ const Login = () => {
     // Add logic to send login data to the server
   };
 
-  const handleSelect = (account) => {
-    setSignupForm((prevForm) => ({ ...prevForm, ['account']: account}));
-    setLoginForm((prevForm) => ({ ...prevForm, ['account']: account }));
-
-    // You can perform additional actions here when an option is selected
-    console.log(`Selected option: ${account}`);
-  };
-
   useEffect(() => {  
-    getCredential();
   },[])
 
   return (
     <Container className="mt-5">
-      {accountList ? (
-        <Dropdown onSelect={handleSelect}>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Select an Option
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            {accountList.map(account => {
-              
-              return <Dropdown.Item key={account} eventKey={account}>{account}</Dropdown.Item>
-            })}
-            
-          </Dropdown.Menu>
-        </Dropdown>
-        ) : (
-          <p>Loading...</p>)}
-      
       <Row>
         <Col md={6}>
           <h2>Sign Up</h2>
@@ -143,6 +123,7 @@ const Login = () => {
           </Form>
         </Col>
       </Row>
+      <ConnectButton />
     </Container>
   );
 };

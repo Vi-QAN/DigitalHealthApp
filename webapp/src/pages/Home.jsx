@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState} from "react";
 import { useNavigate} from 'react-router-dom';
 import {Button, Container, Form, ListGroup, Alert } from 'react-bootstrap';
 
-import { authContext } from "../hooks/useAuth";
+import { AuthConsumer } from "../hooks/useAuth";
 
 import { create } from 'ipfs-http-client'
 
 import NavComponent from "../components/Navbar"
 import PasswordConfirmationModal from "../components/PasswordConfirmModal";
-import {  OwnedFileList, AuthorizedFileList } from "../components/File";
+import OwnedFileList from "../components/OwnedFileList"; 
+import AuthorizedFileList from "../components/AuthorizedFileList";
 
 import { convertToBytes32 } from "../utils/general";
 
@@ -17,7 +18,6 @@ const AuthorizationList = ({user, contract, authorizationList, setAuthorizationL
     if (user.userId == null) return;
 
     await contract.removeAccesser(accessor, convertToBytes32("password"), {from: user.account})
-    // const accesser = await contract.getAccesser(accounts[0], accessorid, {from: accounts[0]})
     const result = await fetch('http://localhost:5273/api/user/authorization', {
       method: "PUT",
       headers: {
@@ -57,7 +57,7 @@ const Home = () => {
   const [ input, setInput ] = useState(null);
   const [ authorizationList, setAuthorizationList ] = useState([]);
   const [ confirmedPassword, setConfirmedPassword] = useState('');
-  const { contract, authed, user } = useContext(authContext);
+  const { contract, authed, user } = AuthConsumer();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const navigate = useNavigate();
