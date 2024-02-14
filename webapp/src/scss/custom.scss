@@ -1,0 +1,97 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "~bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+
+// 6. Optionally include any other parts as needed
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/helpers";
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "~bootstrap/scss/utilities/api";
+
+// 8. Add additional custom code here
+@mixin name {
+    
+}
+
+.btn {
+    display: flex;
+    --bs-btn-hover-bg: #2c3144;
+    --bs-btn-hover-color: white;
+    box-shadow: rgba(5, 10, 24, 0.75) 2px 3px 11px 0px;
+    background-color: #070f25;
+    border: none;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn::before {
+    background-color: #070f25;
+}
+svg {
+    margin-left: 0.3rem;
+    margin-right: 0.7rem;
+}
+
+.list-group-item {
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+    border: none;
+    border-bottom: solid 0.1rem #d1d2d7;
+    align-items: center;
+}
+
+.list-group-item:hover {
+    background-color: #d1d2d7;
+}
+
+.navbar {
+    background-color: #070f25;
+}
+.nav-pills .nav-link.active {
+    background-color: #2c3144;
+}
+
+.navbar-expand .navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: large;
+}
+
+.navbar-brand {
+    font-weight: 500;
+    color: white;
+}
+
+.navbar-brand:hover {
+    color: white;
+}
+
+
+
+
+.custom-container {
+    @include make-container();
+    height: 100%;
+    padding-left: 0;
+}

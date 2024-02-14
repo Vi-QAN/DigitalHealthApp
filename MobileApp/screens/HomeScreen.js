@@ -1,11 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Chart from '../components/Screens/ChartComponent';
+import { AuthConsumer } from '../hooks/useAuth';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default function HomeScreen({navigation}) {
     const data=[ {value:50}, {value:80}, {value:90}, {value:70} ]
+    const { logout } = AuthConsumer();
+
     return (
         <View style={styles.container}>
+<           TouchableOpacity onPress={() => logout()}>
+                <MaterialCommunityIcons name={'logout'} size={18} color={'black'}/>
+            </TouchableOpacity>
             <Text>Home Screen</Text>
             <Chart data={data} chartStyle={styles.chart} gradient={styles.gradient}/>
         </View>

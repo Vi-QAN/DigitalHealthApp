@@ -1,3 +1,8 @@
+import { WagmiConfig } from 'wagmi';
+import { localhost, mainnet } from "wagmi/chains";
+
+import { createWeb3Modal, defaultWagmiConfig  } from '@web3modal/wagmi-react-native'
+
 import { StyleSheet, AppState, AppStateStatus } from 'react-native';
 import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,27 +11,90 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import { AuthConsumer, AuthProvider } from "./hooks/useAuth";
+
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
-import ChatScreen from './screens/ChatScreen';
 import AlertsScreen from './screens/AlertsScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import FileScreen from './screens/FileScreen';
+import ConversationScreen from './screens/ConversationScreen';
+
+import SearchBar from './components/Common/SearchBar';
+
+
+
+// Web 3
+const projectId = '0caac0cf0fc25f80bea5b3fdbd2af07f';
+
+
+
+const metadata = {
+  name: 'Web3Modal RN',
+  description: 'Web3Modal RN Example',
+  url: 'https://web3modal.com',
+  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  redirect: {
+    native: 'digitalhealth://',
+    universal: 'YOUR_APP_UNIVERSAL_LINK.com'
+  }
+}
+
+const customLocalhost = { 
+  ...localhost, 
+  rpcUrls: {
+    public: {
+      http: [`${process.env.EXPO_PUBLIC_CHAIN_URL}`]
+    },
+    default: {
+      http: [`${process.env.EXPO_PUBLIC_CHAIN_URL}`]
+    }
+  }
+}
+
+const chains = [customLocalhost]
+
+const wagmiConfig = defaultWagmiConfig({
+  chains, // required
+  projectId, // required
+  metadata, // required
+})
+
+
+
+// 3. Create modal
+createWeb3Modal({
+  projectId,
+  chains,
+  wagmiConfig,
+})
+
+// Others
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const AuthNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator 
+      initialRouteName={"Login"} 
+      screenOptions={({route}) => ({
+        headerShown: false
+      })}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
     </Stack.Navigator>
   );
 };
 
-const MainNavigator = () => {
+const Navigator = () => {
+  const { authed } = AuthConsumer();
+  return authed ? (<AppNavigator /> ) : (<AuthNavigator /> ) 
+}
+
+const AppNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -61,7 +129,7 @@ const MainNavigator = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Details" component={DetailScreen} />
+      <Tab.Screen name="Details" component={gestureHandlerRootHOC(ConversationScreen)} />
       <Tab.Screen name='Chat' component={gestureHandlerRootHOC(FileScreen)} />
       <Tab.Screen name="Alerts" component={AlertsScreen} />
     </Tab.Navigator>
@@ -69,10 +137,6 @@ const MainNavigator = () => {
 }
 
 export default function App() {
-
-  const [userAuthenticated, setUserAuthenticated] = useState(false);
-
-
 
   useEffect(() => {
     // const subscription = AppState.addEventListener('change', handleAppState);
@@ -87,29 +151,17 @@ export default function App() {
   };
 
   // Simulate checking user authentication status
-  useEffect(() => {
-    // Implement your authentication logic here
-    // For simplicity, consider user authenticated if some condition is met
-    const isUserAuthenticated = true; // Replace with your authentication logic
-    setUserAuthenticated(isUserAuthenticated);
-
-
-    
-      
-  }, []);
 
 
   return (
-    
-    <NavigationContainer>
-      {userAuthenticated ? (
-        <MainNavigator />
-      ) : (
-        <AuthNavigator />
-      )}
-    
-    </NavigationContainer>
+    <WagmiConfig config={wagmiConfig}>
+      <AuthProvider>
+        <NavigationContainer>
+          <Navigator />        
+        </NavigationContainer>
+      </AuthProvider>
       
+    </WagmiConfig>
   );
 }
 

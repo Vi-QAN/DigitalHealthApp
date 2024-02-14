@@ -140,7 +140,7 @@ namespace HealthSharer.Services
 
             return _userRepository
                 .GetAllAuthorizationRecords()
-                .Where(r => r.OwnerId == userId)
+                .Where(r => r.OwnerId == userId && r.IsAuthorized == true)
                 .Join(
                     users,
                     record => record.AccessorId,
@@ -148,6 +148,7 @@ namespace HealthSharer.Services
                     (record, user) => new GetAuthorizationResponse()
                     {
                         AccessorId = record.AccessorId,
+                        AccessorKey = user.ContractAddress,
                         Name = user.Name,
                         IsAuthorized = record.IsAuthorized,
                     }
@@ -183,6 +184,19 @@ namespace HealthSharer.Services
                 UserId = newUser.UserId,
                 Key = request.Key,
             };
+        }
+
+        public List<GetUserResponse> GetUsers()
+        {
+            var users = _userRepository.GetAllUsers()
+                .Select(u => new GetUserResponse()
+                {
+                    UserId = u.UserId,
+                    Key = u.ContractAddress,
+                    Name = u.Name,
+                }).ToList();
+
+            return users;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace HealthSharer.Services
         public ContractService()
         {
             var privateKey = "0x3144042202ba5c60d38815e8742b6a04891e57c65c4508f9f2d0ff5fc666a2eb";
-            string url = "http://localhost:7545";
+            string url = "http://localhost:8545";
             var contractAddress = "0x0dd1a267A7ceAb740E436Fb6978dDBB5b9205584";
             var account = new Account(privateKey, 1337);
             var web3 = new Web3(account, url);

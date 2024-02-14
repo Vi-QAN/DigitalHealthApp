@@ -3,6 +3,7 @@
     "name": "DigitalHealth",
     "slug": "DigitalHealth",
     "version": "1.0.0",
+    "scheme": "digitalhealth",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +18,15 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets."
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "LSApplicationQueriesSchemes": [
+          "metamask",
+          "trust",
+          "safe",
+          "rainbow",
+          "uniswap"
+          // Add other wallet schemes names here
+        ]
       }
     },
     "android": {

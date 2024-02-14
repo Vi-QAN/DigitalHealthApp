@@ -1,19 +1,23 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect, Fragment} from 'react';
-import {Button, Container, Form, ListGroup, Alert, Collapse } from 'react-bootstrap';
-import { Lock, Unlock } from 'react-bootstrap-icons';
+import {Button, Container, Form, ListGroup, Alert, Collapse} from 'react-bootstrap';
 
 import FileUploadModal from '../modals/FileUploadModal';
 import { downloadFromIPFS, saveToIpfs } from '../utils/IPFSHandler';
 import { saveEncryptedFiles, getEncryptedFile } from '../utils/fileHandler';
 import DWVModal from '../modals/DWVModal';
 import HL7FileModal from '../modals/HL7FileModal';
+import { LiaFileUploadSolid } from "react-icons/lia";
+
+import { useNavigate } from "react-router-dom";
+
 
 export const FileList = ({fileList, ipfs, owner, accessor}) => {
     const [isDWVModalOpen, setIsDWVModalOpen] = useState(false);
     const [isHL7FileModalOpen, setIsHL7FileModalOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [HL7Content, setHL7Content] = useState(null);
+    const navigate = useNavigate();
 
     const handleOpenDWVModal = () =>{
         setIsDWVModalOpen(true);
@@ -39,13 +43,15 @@ export const FileList = ({fileList, ipfs, owner, accessor}) => {
             setHL7Content(result);
             handleOpenHL7Modal();
           } else {
-            const { blob, fileName} = await getEncryptedFile(item.fileHash, item.fileExtension, owner.key, accessor.key);
-            console.log(blob.type)
+            const uri = `/dicom/?fileHash=${item.fileHash}&owner=${owner.key}&accessor=${accessor.key}`;
+            navigate(uri);
+            // const { blob, fileName} = await getEncryptedFile(item.fileHash, item.fileExtension, owner.key, accessor.key);
+            // console.log(blob.type)
   
-            const file = new File([blob], fileName, { type: blob.type });
+            // const file = new File([blob], fileName, { type: blob.type });
   
-            setFile(file);
-            handleOpenDWVModal();
+            // setFile(file);
+            // handleOpenDWVModal();
           }
           
           // Optionally, revoke the URL after opening
@@ -62,19 +68,28 @@ export const FileList = ({fileList, ipfs, owner, accessor}) => {
     }, [fileList])
 
     return (
-        <Fragment>
-            {fileList && <ListGroup>
+        <Container style={{height: '85%'}}>
+            <Container fluid className="d-flex flex-row mb-2">
+                <Container className="col-3">Date Added</Container>
+                <Container className="col-6">File Name</Container>
+                <Container className="col-3">Actions</Container>
+            </Container>
+            {fileList && <ListGroup >
                 {fileList.map((item) => (
-                    <ListGroup.Item key={item.fileHash} className="d-flex justify-content-between">      
+                    <ListGroup.Item key={item.fileHash} className="d-flex justify-content-around">  
+                        <Container className="d-flex align-items-center col-3">Today</Container>
                         
-                        <a href={'http://127.0.0.1:8080/ipfs/' + item.fileHash}> 
-                        { item.fileName.search(/\./) == -1 ? 
-                            item.fileName + '.' + item.fileExtension
-                            :
-                            item.fileName
-                        } </a>
+                        <Container className='col-6'>
+                            <a  href={'http://127.0.0.1:8080/ipfs/' + item.fileHash}> 
+                            { item.fileName.search(/\./) == -1 ? 
+                                item.fileName + '.' + item.fileExtension
+                                :
+                                item.fileName
+                            } </a>
+                        </Container>
                         
-                        <Button onClick={(e) => handleDownloadFile(e, item)}>Download</Button>
+                        
+                        <Button className='col-3' onClick={(e) => handleDownloadFile(e, item)}>Download</Button>
                     </ListGroup.Item>
                 ))}
             </ListGroup>}
@@ -91,7 +106,7 @@ export const FileList = ({fileList, ipfs, owner, accessor}) => {
                 onHide={handleCloseHL7Modal}
                 content={HL7Content}
             />
-        </Fragment>
+        </Container>
     )
 }
 
@@ -129,7 +144,7 @@ export const AddFile = ({ipfs, owner, accessor}) => {
     return (
         <Fragment>
             <Button onClick={(e) => handleOpenModal(e)}>
-                Add File
+                <LiaFileUploadSolid />Add File
             </Button>
             <FileUploadModal
                 show={isModalOpen}

@@ -21,21 +21,25 @@ const OwnedFileList  = ({ipfs, owner}) => {
       loadFileList();
     },[])
     return (
-      <Container className='mb-3'> 
-        {fileList.length > 0 ? 
-          <Fragment>
-            <Fragment>
-              <Form.Label>Owned File List</Form.Label>
-              <AddFile ipfs={ipfs} owner={owner} accessor={owner}/>
-            </Fragment>
-            <FileList fileList={fileList} ipfs={ipfs} owner={owner} accessor={owner} />
-            
-          </Fragment> : 
-            <Alert variant='light'>You have not been authorized for any file </Alert>
-            
-        }
+      <Fragment>
         
-      </Container>        
+        <Container className='d-flex flex-column mb-3' style={{height: '100%'}}>
+        { fileList.length > 0 ? 
+          <FileList fileList={fileList} ipfs={ipfs} owner={owner} accessor={owner} />
+          :
+          <Alert variant='light'>You have not been authorized for any file </Alert>
+        }
+        </Container>
+           
+            
+        
+        <AddFile ipfs={ipfs} owner={owner} accessor={owner}/>
+
+      </Fragment>
+       
+        
+        
+              
     )
 }
 

@@ -10,113 +10,14 @@ import {View,
         GridList,
         GridListItem} from 'react-native-ui-lib';
 
-
-export default function ContactComponent({navigation}){
+export default function ContactComponent({navigation, authorizationList, onRevokeAuthorization}){
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const { width, height } = Dimensions.get("screen");
-    const conversations = [
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      },
-      {
-        name: 'Vanessa Campbell',
-        text: 'Do you have these in other colors?',
-        timestamp: '1 Week',
-        count: '',
-        thumbnail:
-          'https://static.wixstatic.com/media/d4367b20ae2e4036b18c34262d5ed031.jpg/v1/fit/w_750,h_750/d4367b20ae2e4036b18c34262d5ed031.jpg',
-        isNew: true,
-        leftTitleBadge: 'twitterOn'
-      }
 
-    ]
+    const handleRevokeAuthorization = (item) => {
+      onRevokeAuthorization(item);
+    }
+
     useEffect(() => {
       const interval = setInterval(() => {
         setCurrentDateTime(new Date());
@@ -137,10 +38,10 @@ export default function ContactComponent({navigation}){
     const renderRow = ({item, key}) => {
       return (
         <Drawer
-          rightItems={[{text: 'Read', background: Colors.blue30, onPress: () => console.log('read pressed')}, ]}
+          rightItems={[{text: 'Revoke', background: Colors.blue30, onPress: () => handleRevokeAuthorization(item)}, ]}
           leftItem={{text: 'Delete', background: Colors.red30, onPress: () => console.log('delete pressed')}}
           itemsMinWidth={50}
-          style={{width: 345}}
+          style={{ marginRight: 20 }}
           key={key}
           
         >
@@ -154,7 +55,7 @@ export default function ContactComponent({navigation}){
             <ListItem.Part marginR-10 >
                 <Avatar></Avatar>
               </ListItem.Part>
-              <ListItem.Part containerStyle={{width: 210}} column  >
+              <ListItem.Part containerStyle={{width: '65%'}} column  >
                 <Text text80BO>{item.name}</Text>
                 <Text>{item.text}</Text>
               </ListItem.Part>
@@ -169,20 +70,20 @@ export default function ContactComponent({navigation}){
       )
     }
 
-    return (
+    return authorizationList ? (
       <GridList style={styles.container}
-          data={conversations}
+          data={authorizationList}
           numColumns={1}
           renderItem={(item, index) => renderRow(item, index)}
           itemSpacing={17}
       />
-    )
+    ) : null;
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
     flex: 1,
+    width: '100%',
   },
   messageCount: {
     backgroundColor: '#130f55',

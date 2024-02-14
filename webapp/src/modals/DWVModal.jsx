@@ -28,9 +28,9 @@ const DWVModal = ({ show, onHide, file }) => {
 
   return (
     <Modal show={show} fullscreen={true} onHide={onHide} >
-      <Modal.Header closeButton>
+      {/* <Modal.Header >
         <Modal.Title>Viewer</Modal.Title>
-      </Modal.Header>
+      </Modal.Header> */}
         <Modal.Body>
             <Nav fill variant="tabs" defaultActiveKey="viewer" onSelect={(key, e) => onSelect(key,e)}>
                 <Nav.Item>

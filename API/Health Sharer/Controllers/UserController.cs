@@ -49,8 +49,21 @@ namespace HealthSharer.Controllers
             
         }
 
+        [HttpGet]
+        public IActionResult GetUsers()
+        {
+            try
+            {
+                return Ok(_userService.GetUsers());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
-        [Route("authorization")]
+        [Route("{userId}/authorization")]
         public IActionResult AddAuthorization(AuthorizationRequest request)
         {
             try
@@ -64,7 +77,7 @@ namespace HealthSharer.Controllers
         }
 
         [HttpPut]
-        [Route("authorization")]
+        [Route("{userId}/authorization")]
         public IActionResult RemoveAuthorization(AuthorizationRequest request)
         {
             try

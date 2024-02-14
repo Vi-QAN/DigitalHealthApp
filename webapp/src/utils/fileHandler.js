@@ -1,11 +1,24 @@
 import fetch from 'node-fetch'
 
-const baseUrl = 'https://bd84-2a02-8084-2162-e200-11ad-5293-67a7-eb4.ngrok-free.app/api';
+const baseUrl = `${process.env.REACT_APP_SERVER_ENDPOINT}/api`;
 
 const headers = {
     "Content-type": "application/json",
     "ngrok-skip-browser-warning" : "0"
 };
+
+////////////////////////////////////////
+// User Requests
+////////////////////////////////////////
+export const getUserList = async () => {
+    return await fetch(`${baseUrl}/User`, {
+        method: "GET",
+        headers: headers
+    })
+    .then((res) => res.json())
+    .then(result => result)
+    .catch(err => console.error(err)); 
+}
 
 ////////////////////////////////////////
 // Authentication Requests
@@ -32,6 +45,45 @@ export const registerRequest = async ({name, account}) => {
 }
 
 ////////////////////////////////////////
+// Authorization Requests
+////////////////////////////////////////
+export const getAuthorizationList = async ({userId}) => {
+    return await fetch(`${baseUrl}/user/` + userId +'/authorization/', {
+        method: "GET",
+        headers: headers
+      })
+      .then(response => response.json())
+      .then(result => result)
+      .catch(err => console.error(err));
+}
+
+export const authorizeRequest = async ({ownerId, accessorId}) => {
+    return await fetch(`${baseUrl}/user/` + ownerId +'/authorization/', {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        "OwnerId": ownerId,
+        "AccesserId": accessorId,
+      })
+    })
+    .then(response => response.json())
+    .catch(err => console.error(err));
+}
+
+export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
+    return await fetch(`${baseUrl}/user/` + ownerId +'/authorization/', {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify({
+        "OwnerId": ownerId,
+        "AccesserId": accessorId,
+      })
+    })
+    .then(response => response.json())
+    .catch(err => console.error(err));
+}
+
+////////////////////////////////////////
 // File Information Requests
 ////////////////////////////////////////
 export const getFileInfoByOwner = async (owner) => {
@@ -39,7 +91,7 @@ export const getFileInfoByOwner = async (owner) => {
         method: "GET",
         headers: headers
     }).then(response => response.json())
-    .catch(err => {throw new Error("Failed to get file information by owner: ", err)})
+    .catch(err => console.error("Failed to get file information by owner: ", err));
 }
 
 export const getFileInfoByAccessor = async (accessor) => {
@@ -47,11 +99,11 @@ export const getFileInfoByAccessor = async (accessor) => {
         method: "GET",
         headers: headers,
     }).then(response => response.json())
-    .catch(err => {throw new Error("Failed to get file information by accessor: ", err)})
+    .catch(err => console.error("Failed to get file information by accessor: ", err))
 }
 
 ///////////////////////////////////
-// File Content Requests //////////
+// File Content Requests
 ///////////////////////////////////
 export const savePlainFilesInformation = (metadata) => {
     fetch('http://localhost:5273/api/Information', {

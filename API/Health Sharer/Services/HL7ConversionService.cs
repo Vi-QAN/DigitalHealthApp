@@ -6,7 +6,7 @@ namespace HealthSharer.Services
 {
     public class HL7ConversionService
     {
-        private readonly PipeParser _pipeParser = new PipeParser();
+        private readonly PipeParser _pipeParser = new();
 
         private IMessage? parsedMessage;
         private string? originalMessage;

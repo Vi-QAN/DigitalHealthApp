@@ -2,9 +2,6 @@
 using HealthSharer.Exceptions;
 using HealthSharer.Models;
 using Newtonsoft.Json;
-using System.Collections;
-using System.Text;
-using HealthSharer.Models;
 
 namespace HealthSharer.Services
 {
@@ -31,9 +28,9 @@ namespace HealthSharer.Services
             // Convert byte array to string using ASCII encoding
             //string decoded= Encoding.ASCII.GetString(data);
             string decoded = File.ReadAllText("C:\\Users\\35383\\Documents\\Final Year Project\\DigitalHealth\\File Samples\\ADT^A04.hl7");
-            GetHL7FileResponse result = null;
             hl7Service.Message = decoded;
-            
+
+            GetHL7FileResponse result;
             switch (hl7Service.FileVersion)
             {
                 case "2.4":

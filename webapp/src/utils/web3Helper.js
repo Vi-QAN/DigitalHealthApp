@@ -1,36 +1,39 @@
 
 import { convertToBytes32 } from "./general";
 import DigitalHealthContract from '../contracts/DigitalHealth.json';
-import { readContract, writeContract } from "@wagmi/core";
+import { readContract, writeContract, getAccount } from "@wagmi/core";
 import { http, createConfig } from 'wagmi'
-import { mainnet, arbitrum, localhost } from 'wagmi/chains'
-import { walletConnect } from 'wagmi/connectors'
-import { createClient } from 'viem'
-
+import { localhost } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 const abi = DigitalHealthContract['abi']
-const contractAddress = '0x0dd1a267A7ceAb740E436Fb6978dDBB5b9205584'
+const contractAddress = `${process.env.REACT_APP_CONTRACT_ADDRESS}`
+const chainId = 1337
 
-// 1. Get projectId at https://cloud.walletconnect.com
-const projectId = '0caac0cf0fc25f80bea5b3fdbd2af07f'
 
-// 2. Create wagmiConfig
-const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://7212-2a02-8084-2162-e200-353b-3c48-d3c8-181c.ngrok-free.app', // origin must match your domain & subdomain
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-}
 
+// // 1. Get projectId at https://cloud.walletconnect.com
+// const projectId = '0caac0cf0fc25f80bea5b3fdbd2af07f'
+
+// // 2. Create wagmiConfig
+// const metadata = {
+//   name: 'Web3Modal',
+//   description: 'Web3Modal Example',
+//   url: 'https://77f3-2a02-8084-2162-e200-9022-9327-7d33-f9b9.ngrok-free.app', // origin must match your domain & subdomain
+//   icons: ['https://avatars.githubusercontent.com/u/37784886']
+// }
+
+const chains = [localhost]
 const config = createConfig({
-    chains: [arbitrum, mainnet, localhost],
-    connectors: [
-      walletConnect({ projectId, metadata, showQrModal: false }),
-    ],
-    client({ chain }) {
-        return createClient({ chain, transport: http() })
-      },
-  })
+  chains,
+  connectors: [
+    injected(),
+  ],
+  transports: {
+    [localhost.id]: http(),
+  },
+
+})
 
 
 export const login = async ({password, account}) => {
@@ -41,7 +44,7 @@ export const login = async ({password, account}) => {
       functionName: 'login',
       args: [convertedPassword],
       account: account,
-      chainId: 1337,
+      chainId: chainId,
   })
 }
 
@@ -55,9 +58,29 @@ export const register = async ({name, email, password, account}) => {
     functionName: 'signup',
     args: [convertedName, convertedEmail, convertedPassword], 
     account: account,
+    chainId: chainId,
   })
 }
 
-export const authorizeAccessor = async () => {
+export const authorizeAccessor = ({accessor, password, owner}) => {
+  const convertedPassword = convertToBytes32(password);
+  return  {
+    abi,
+    address: contractAddress,
+    functionName: 'addAccessor',
+    args: [accessor, convertedPassword], 
+    account: owner,
+  }
+}
 
+export const revokeAccessor = ({accessor, password, owner}) => {
+  const convertedPassword = convertToBytes32(password);
+  return  {
+    abi,
+    address: contractAddress,
+    functionName: 'removeAccessor',
+    args: [accessor, convertedPassword], 
+    account: owner,
+    chainId: chainId,
+  }
 }

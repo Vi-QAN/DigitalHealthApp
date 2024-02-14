@@ -1,33 +1,115 @@
 import fetch from 'node-fetch'
 
-const baseUrl = 'https://7316-2a02-8084-2162-e200-382e-341-18d2-65bd.ngrok-free.app/api';
+const baseUrl =`${process.env.EXPO_PUBLIC_SERVER_ENDPOINT}/api`;
 
+const headers = {
+    "Content-type": "application/json",
+    "ngrok-skip-browser-warning" : "0"
+};
+
+////////////////////////////////////////
+// User Requests
+////////////////////////////////////////
+export const getUserList = async () => {
+    return await fetch(`${baseUrl}/User`, {
+        method: "GET",
+        headers: headers
+    })
+    .then((res) => res.json())
+    .then(result => result)
+    .catch(err => console.error(err)); 
+}
+
+////////////////////////////////////////
+// Authentication Requests
+////////////////////////////////////////
+export const loginRequest = async ({account}) => {
+    return await fetch(`${baseUrl}/User/` + account, {
+        method: "GET",
+        headers: headers
+    })
+    .then((res) => res.json())
+    .then(result => result)
+    .catch(err => console.error(err)); 
+}
+
+export const registerRequest = async ({name, account}) => {
+    return await fetch(`${baseUrl}/User/signup`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+            "userName": name,
+            "key": account
+        })
+    }).catch(err => console.error(err))
+}
+
+////////////////////////////////////////
+// Authorization Requests
+////////////////////////////////////////
+export const getAuthorizationList = async ({userId}) => {
+    return await fetch(`${baseUrl}/user/` + userId +'/authorization/', {
+        method: "GET",
+        headers: headers
+      })
+      .then(response => response.json())
+      .then(result => result)
+      .catch(err => console.error(err));
+}
+
+export const authorizeRequest = async ({ownerId, accessorId}) => {
+    return await fetch(`${baseUrl}/user/` + ownerId +'/authorization/', {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        "OwnerId": ownerId,
+        "AccesserId": accessorId,
+      })
+    })
+    .then(response => response.json())
+    .catch(err => console.error(err));
+}
+
+export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
+    return await fetch(`${baseUrl}/user/` + ownerId +'/authorization/', {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify({
+        "OwnerId": ownerId,
+        "AccesserId": accessorId,
+      })
+    })
+    .then(response => response.json())
+    .catch(err => console.error(err));
+}
+
+////////////////////////////////////////
+// File Information Requests
+////////////////////////////////////////
 export const getFileInfoByOwner = async (owner) => {
     return await fetch(baseUrl + '/information/' + owner, {
         method: "GET",
-        headers: {
-            "Content-type": "application/json",
-            "Accept": "*/*"
-        },
+        headers: headers
     }).then(response => response.json())
-    .catch(err => {throw new Error("Failed to get file information by owner: ", err)})
+    .catch(err => console.error("Failed to get file information by owner: ", err));
 }
 
 export const getFileInfoByAccessor = async (accessor) => {
     return await fetch(baseUrl + '/information/accessor/' + accessor, {
         method: "GET",
-        headers: {
-            "Content-type": "application/json"
-        },
+        headers: headers,
     }).then(response => response.json())
-    .catch(err => {throw new Error("Failed to get file information by accessor: ", err)})
+    .catch(err => console.error("Failed to get file information by accessor: ", err))
 }
 
+///////////////////////////////////
+// File Content Requests
+///////////////////////////////////
 export const savePlainFilesInformation = (metadata) => {
     fetch('http://localhost:5273/api/Information', {
         method: "POST",
         headers: {
-        "Content-type": "application/json"
+            "Content-type": "application/json"
         },
         body: JSON.stringify(metadata)
     }).then(response => response.json()).then(result => result)
@@ -54,6 +136,7 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     try {
         const response = await fetch(url, {
             method: 'GET',
+            headers: headers,
         }).catch(err => console.log(err));
     
         if (!response.ok) {
@@ -77,6 +160,4 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     } catch (err) {
         console.log(err)
     }
-   
-    
 }

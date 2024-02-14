@@ -2,7 +2,6 @@
 using HealthSharer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using HealthSharer.Models;
 
 namespace HealthSharer.Controllers
 {
@@ -34,9 +33,10 @@ namespace HealthSharer.Controllers
                 }
 
                 var regularFile = file as GetRegularFileResponse;
-                Response.Headers.Add("Content-Disposition", $"attachment;filename={regularFile.FileName}");
-                Response.Headers.ContentType = regularFile.ContentType;
-                return File(regularFile.Content, regularFile.ContentType);
+                Response.Headers.Add("Content-Disposition", $"attachment;filename={regularFile?.FileName}");
+                Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self'; connect-src 'none'; child-src 'none';");
+                Response.Headers.ContentType = regularFile?.ContentType;
+                return File(regularFile?.Content, regularFile.ContentType);
             }
             catch (Exception ex)
             {

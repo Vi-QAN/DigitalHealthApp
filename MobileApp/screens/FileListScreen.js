@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getFileInfoByOwner } from '../utils/fileHandler.js';
-import SearchBar from '../components/Common/SearchBar';
 import {View, 
     Text, 
     Drawer, 
@@ -57,8 +56,6 @@ function FileListComponent ({fileList, navigation}) {
         )
     }
 
-    useEffect(() => {
-    }, [fileList])
 
     return (
         <GridList style={styles.container}
@@ -82,8 +79,6 @@ export default function FileListScreen({navigation}) {
         } catch(error) {
             console.log(error)
         }
-        
-        //setFileList(data);
     }
 
     useEffect(() => {

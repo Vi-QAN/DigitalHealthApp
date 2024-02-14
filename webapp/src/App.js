@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import { AuthProvider } from "./hooks/useAuth";
 import { Web3Modal } from "./hooks/useWalletConnect";
+import DICOM from "./pages/DICOM";
 
 const Login = React.lazy(() => import("./pages/Login.jsx"));
 const Home = React.lazy(() => import("./pages/Home.jsx"));
@@ -24,9 +25,9 @@ function App() {
                   <Home />} 
                 />
 
-                {/* <Route exact path={"/test"} element={
-                  <Test />} 
-                /> */}
+                <Route exact path={"/dicom"} element={
+                  <DICOM />} 
+                />
 
                 <Route exact path={"/login"} element={
                   <Login />
