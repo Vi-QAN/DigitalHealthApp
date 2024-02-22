@@ -1,45 +1,72 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Chart from '../components/Screens/ChartComponent';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import ChartComponent from '../components/Screens/HomeScreen/ChartComponent';
+import InfoSection from '../components/Screens/HomeScreen/InfoSection';
+
 import { AuthConsumer } from '../hooks/useAuth';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
+
+
 export default function HomeScreen({navigation}) {
-    const data=[ {value:50}, {value:80}, {value:90}, {value:70} ]
     const { logout } = AuthConsumer();
 
     return (
-        <View style={styles.container}>
-<           TouchableOpacity onPress={() => logout()}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            <TouchableOpacity onPress={() => logout()}>
                 <MaterialCommunityIcons name={'logout'} size={18} color={'black'}/>
             </TouchableOpacity>
-            <Text>Home Screen</Text>
-            <Chart data={data} chartStyle={styles.chart} gradient={styles.gradient}/>
-        </View>
+            <InfoSection />
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonStyle}>
+                    <Text>Request Document</Text>    
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('ExportData')}}>
+                    <Text>Export Data</Text>    
+                </TouchableOpacity>                
+            </View>
+            <ChartComponent />
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+      display: 'flex',
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
       backgroundColor: 'white',
+      paddingHorizontal: 20,
+      paddingVertical: 20,
     },
-    chart: {
-      width: '97%',
-      height: 100,
-      marginTop: 20,
-      shadowColor: '#130f55',
+
+    contentContainer: {
+        justifyContent: 'space-between'
+
+    },
+
+    buttonContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginVertical: 30,
+        width: '100%',
+        backgroundColor: 'white',
+        justifyContent: 'space-between'
+    },
+
+    buttonStyle: {
+        backgroundColor: 'white',
+        paddingVertical: 20,
+        width: '48%',
+        alignItems: 'center',
+        shadowColor: '#050a18',
         shadowOffset: {
             width: 0,
             height: 1,
         },
+        backgroundColor: 'white',
         shadowOpacity: 1,
-        shadowRadius: 5,
-    },
-    gradient: {
-        width: '100%',
-        borderRadius: 5, // Half of the width and height to create a perfect circle
+        shadowRadius: 2,
+        borderRadius: 5,
     }
-  });
+    
+});

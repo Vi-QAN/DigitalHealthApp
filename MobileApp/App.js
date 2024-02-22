@@ -4,7 +4,7 @@ import { localhost, mainnet } from "wagmi/chains";
 import { createWeb3Modal, defaultWagmiConfig  } from '@web3modal/wagmi-react-native'
 
 import { StyleSheet, AppState, AppStateStatus } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,16 +14,13 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 
 import { AuthConsumer, AuthProvider } from "./hooks/useAuth";
 
-import HomeScreen from './screens/HomeScreen';
-import DetailScreen from './screens/DetailScreen';
 import AlertsScreen from './screens/AlertsScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import FileScreen from './screens/FileScreen';
 import ConversationScreen from './screens/ConversationScreen';
 
-import SearchBar from './components/Common/SearchBar';
-
+import HomeNavigator from './navigators/HomeNavigator';
 
 
 // Web 3
@@ -128,7 +125,7 @@ const AppNavigator = () => {
         
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={gestureHandlerRootHOC(HomeNavigator)} />
       <Tab.Screen name="Details" component={gestureHandlerRootHOC(ConversationScreen)} />
       <Tab.Screen name='Chat' component={gestureHandlerRootHOC(FileScreen)} />
       <Tab.Screen name="Alerts" component={AlertsScreen} />

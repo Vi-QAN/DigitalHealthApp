@@ -15,7 +15,7 @@ const authContext = React.createContext();
 
 function useAuth() {
   const [authed, setAuthed] = React.useState(false);
-  const [ user, setUser ] = React.useState({userId: 0, key: ''});
+  const [ user, setUser ] = React.useState({userId: 0, key: '', name: ''});
   const account = useAccount();
   const { data, writeAsync, error, isError } = useContractWrite({
     abi,

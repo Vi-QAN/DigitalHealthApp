@@ -12,6 +12,7 @@ import { useContractWrite } from 'wagmi';
 
 import DigitalHealthContract from '../contracts/DigitalHealth.json';
 import { AuthConsumer } from '../hooks/useAuth';
+import { Button } from 'react-native-ui-lib';
 const abi = DigitalHealthContract['abi']
 
 export default function ConversationScreen({navigation}){
@@ -118,9 +119,8 @@ export default function ConversationScreen({navigation}){
                     authorizationList={authorizationList}
                     onRevokeAuthorization={handleRevokeAuthorization}
                 />}
-            <TouchableOpacity style={styles.button} onPress={handleAuthorization}>
-                <Text style={styles.buttonText}>Authorize</Text>
-            </TouchableOpacity>
+            <Button style={styles.button} label="Authorize" onPress={handleAuthorization} />
+        
         </View>
 
     ) : null;
@@ -133,13 +133,6 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
     },
     button: {
-        backgroundColor: 'blue',
-        padding: 10,
-        width: '100%',
-        height: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 8,
         marginBottom: 10
     },
 
