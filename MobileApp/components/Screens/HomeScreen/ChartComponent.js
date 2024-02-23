@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { LineChart, PieChart, BarChart } from "react-native-gifted-charts";
 import { LinearGradient } from 'expo-linear-gradient';
-
-import sampleData from '../../../data/sample_data.json'
+import { ChartDataConsumer } from '../../../hooks/useChartData';
 
 const ColorMapping = {
   'Low': '#FF7F97',
@@ -339,46 +338,23 @@ function OxygenLevelChart ({data, chartStyle, gradient}) {
 
 
 export default function ChartComponent() {
-  const [ bloodPressureData, setBloodPressureData ] = useState([]);
-  const [ oxygenLevelData, setOxygenLevelData ] = useState([]);
-  const [ heartbeatData, setHeartbeatData ] = useState([]);
-  const [ filterMode, setFilterMode ] = useState('day');
+  const {heartbeatData, bloodPressureData, oxygenLevelData, filterMode } = ChartDataConsumer();
 
-  const subtractHours = (date, hours) => {
-    date.setHours(date.getHours() - hours);
-    return date;
-  }
-
-  const subtractDays = (date, days) => {
-    date.setDate(date.getDate() - days);
-    return date;
-  }
-
-  useEffect(() => {
-    const hourFilter = subtractHours(new Date(), 20);
-    const dayFilter = subtractDays(new Date(), 10);
-    const filteredData = filterMode === 'day' ? sampleData.filter(item => new Date(item.datetime) > dayFilter) : sampleData.filter(item => new Date(item.datetime) > hourFilter);
-
-    const bpData = filteredData.map((item, index) => { 
-        return { label: new Date(item.datetime).toLocaleString(), value: item.blood_pressure, datetime: item.datetime }
-    })
-    const olData = filteredData.map((item, index) => { 
-        return { label: new Date(item.datetime).toLocaleString(), value: item.oxygen_level, datetime: item.datetime }
-    })
-    const hbData = filteredData.map((item, index) => {
-        return { label: new Date(item.datetime).toLocaleString(), value: item.oxygen_level, datetime: item.datetime }
-    })
-    setBloodPressureData(bpData);
-    setOxygenLevelData(olData);
-    setHeartbeatData(hbData);
-  },[])
-
+  const bpData = bloodPressureData.map((item, index) => { 
+    return { label: new Date(item.datetime).toLocaleString(), ...item }
+  })
+  const olData = oxygenLevelData.map((item, index) => { 
+      return { label: new Date(item.datetime).toLocaleString(), ...item }
+  })
+  const hbData = heartbeatData.map((item, index) => {
+      return { label: new Date(item.datetime).toLocaleString(), ...item }
+  })
 
   return (
     <View style={styles.container}>
-      {heartbeatData.length > 0 && <HeartRateChart data={heartbeatData} chartStyle={styles.chart} gradient={styles.gradient} />}
-      {bloodPressureData.length > 0 && <BloodPressureChart data={bloodPressureData} chartStyle={styles.chart} gradient={styles.gradient}/>}
-      {oxygenLevelData.length > 0 && <OxygenLevelChart data={oxygenLevelData} chartStyle={styles.chart} gradient={styles.gradient} filterMode={filterMode}/> }
+      {hbData.length > 0 && <HeartRateChart data={hbData} chartStyle={styles.chart} gradient={styles.gradient} />}
+      {bpData.length > 0 && <BloodPressureChart data={bpData} chartStyle={styles.chart} gradient={styles.gradient}/>}
+      {olData.length > 0 && <OxygenLevelChart data={olData} chartStyle={styles.chart} gradient={styles.gradient} filterMode={filterMode}/> }
     </View>
   )
 }

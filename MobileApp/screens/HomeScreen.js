@@ -18,12 +18,12 @@ export default function HomeScreen({navigation}) {
             </TouchableOpacity>
             <InfoSection />
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonStyle}>
+                <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('RequestRecords')}} >
                     <Text>Request Document</Text>    
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('ExportData')}}>
                     <Text>Export Data</Text>    
-                </TouchableOpacity>                
+                </TouchableOpacity>
             </View>
             <ChartComponent />
         </ScrollView>

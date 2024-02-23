@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { TextField, Button, Dialog } from 'react-native-ui-lib';
+
+import DateTimePicker from '@react-native-community/datetimepicker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
-
+import { ChartDataConsumer } from '../hooks/useChartData';
 const DataTypeMapping = {
     'All' : 0,
     'Heart Rate' : 1,
@@ -19,12 +20,15 @@ const DropdownData = [
     {id: 3, name: 'Oxygen Level'}    
 ]
 
-export default function ExportDataScreen({navigation, data}){
+export default function ExportDataScreen({navigation}){
+    const { bloodPressureData,
+        oxygenLevelData,
+        heartbeatData,
+        filterMode} = ChartDataConsumer();
     const [ date, setDate ] = useState({state: 'from', from: '', to: ''});
-    const [ dataType, setDataType ] = useState([]);
     const [ pickerVisible, setPickerVisible ] = useState(false);
-    const [ pickedDate, setPickedDate ] = useState('')
-    const [ selectedDataType, setSelectedDataType ] = useState('');
+    const [ pickedDate, setPickedDate ] = useState(new Date())
+    const [ selectedDataType, setSelectedDataType ] = useState('All');
 
     const handleChangeDateFrom = (value) => {
         setDate(d => { return { ...d, from: value}});
@@ -43,29 +47,43 @@ export default function ExportDataScreen({navigation, data}){
         setPickerVisible(false)
     }
 
-    const handleExportData = () => {
-        let exportedData = { heart_rate: [], blood_pressure: [], oxygen_level: []};
-        switch(DataTypeMapping[dataType]){
-            case 0:
-                exportedData.heart_rate = data.map(item => {return {datetime: item.datetime, value: item.heart_rate}})
-                exportedData.blood_pressure = data.map(item => {return {datetime: item.datetime, value: item.blood_pressure}})
-                exportedData.oxygen_level = data.map(item => {return {datatime: item.datetime, value: item.oxygen_level}})
-                break;
-            case 1: 
-                exportedData.heart_rate = data.map(item => {return {datetime: item.datetime, value: item.heart_rate}})
-                break;
-            case 2: 
-                exportedData.blood_pressure = data.map(item => {return {datetime: item.datetime, value: item.blood_pressure}})
-                break;
-            case 3:
-                exportedData.oxygen_level = data.map(item => {return {datatime: item.datetime, value: item.oxygen_level}})
-                break;
-        }
-
+    const processData = (data, dateFrom, dateTo) => {
+        const filtered = data.filter(item => {
+            const itemDate = new Date(item.datetime);
+            if (itemDate < dateFrom || itemDate > dateTo) return false;
+            return true;
+        })
+        return filtered
     }
 
-    const onChangeText = () => {
+    const handleExportData = () => {
+        if (heartbeatData.length < 1) return;
+        const dateFrom = new Date(date.from);
+        const dateTo = new Date(date.to);
 
+        if (dateFrom > dateTo) return;
+        const current = new Date();
+        if (dateTo > current) return;
+      
+        let exportedData = { heart_rate: [], blood_pressure: [], oxygen_level: []};
+        switch(DataTypeMapping[selectedDataType]){
+            case 0:
+                exportedData.heart_rate = processData(heartbeatData, dateFrom, dateTo);
+                exportedData.blood_pressure = processData(bloodPressureData, dateFrom, dateTo);
+                exportedData.oxygen_level = processData(oxygenLevelData, dateFrom, dateTo);
+                break;
+            case 1: 
+                exportedData.heart_rate = processData(heartbeatData, dateFrom, dateTo);
+                break;
+            case 2: 
+                exportedData.blood_pressure = processData(bloodPressureData, dateFrom, dateTo);
+                break;
+            case 3:
+                exportedData.oxygen_level = processData(oxygenLevelData, dateFrom, dateTo);
+                break;
+            default:
+                console.log('Case not found');
+        }
     }
 
     const handleFocus = (state) => {
@@ -82,7 +100,13 @@ export default function ExportDataScreen({navigation, data}){
                     placeholder="Choose a date"
                     label="From"
                     labelStyle={{fontWeight: '500', marginBottom: 5}}
-                    onChangeText={onChangeText}
+                    enableErrors
+                    validate={['required' ]}
+                    validationMessage={['Field is required']}
+                    validationMessageStyle={{marginTop: 10}}
+                    retainValidationSpace={false}
+                    validateOnBlur
+                    validateOnChange
                     onFocus={() => handleFocus('from')}
                     value={date.from.toLocaleString()}
                 />
@@ -91,7 +115,13 @@ export default function ExportDataScreen({navigation, data}){
                     placeholder="Choose a date"
                     label="To"
                     labelStyle={{fontWeight: '500', marginBottom: 5}}
-                    onChangeText={onChangeText}
+                    enableErrors
+                    validate={['required' ]}
+                    validationMessage={['Field is required']}
+                    validationMessageStyle={{marginTop: 10}}
+                    retainValidationSpace={false}
+                    validateOnBlur
+                    validateOnChange
                     onFocus={() => handleFocus('to')}
                     value={date.to.toLocaleString()}
                 />
@@ -150,7 +180,7 @@ export default function ExportDataScreen({navigation, data}){
                 containerStyle={styles.dialogStyle}>
                 <DateTimePicker 
                     style={{marginBottom: 30}}
-                    value={new Date()} 
+                    value={pickedDate} 
                     mode={'datetime'} 
                     display={'spinner'}
                     onChange={handleDatePick}
