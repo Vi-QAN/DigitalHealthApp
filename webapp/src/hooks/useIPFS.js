@@ -9,7 +9,7 @@ const useIPFSContext = () => {
 
     const setupIPFS = async () => {
         try {
-            const http = create('/ip4/127.0.0.1/tcp/5001')
+            const http = create('/ip4/de97-2a02-8084-2162-e200-489f-dbe0-4154-5a57.ngrok-free.app/tcp/5001')
             const isOnline = await http.isOnline()
         
             if (isOnline) {
