@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/DigitalHealthApp/static/css/main.59117f05.css",
-    "main.js": "/DigitalHealthApp/static/js/main.4ed240f9.js",
+    "main.js": "/DigitalHealthApp/static/js/main.47b3e282.js",
     "static/css/278.ac73eaea.chunk.css": "/DigitalHealthApp/static/css/278.ac73eaea.chunk.css",
     "static/js/278.507b3075.chunk.js": "/DigitalHealthApp/static/js/278.507b3075.chunk.js",
     "static/js/413.12dfa4de.chunk.js": "/DigitalHealthApp/static/js/413.12dfa4de.chunk.js",
     "static/css/612.ac73eaea.chunk.css": "/DigitalHealthApp/static/css/612.ac73eaea.chunk.css",
-    "static/js/612.765485ad.chunk.js": "/DigitalHealthApp/static/js/612.765485ad.chunk.js",
+    "static/js/612.ca2f3af9.chunk.js": "/DigitalHealthApp/static/js/612.ca2f3af9.chunk.js",
     "static/js/13.07dd47aa.chunk.js": "/DigitalHealthApp/static/js/13.07dd47aa.chunk.js",
     "static/js/61.8b395a4a.chunk.js": "/DigitalHealthApp/static/js/61.8b395a4a.chunk.js",
     "static/js/432.c5f6dc77.chunk.js": "/DigitalHealthApp/static/js/432.c5f6dc77.chunk.js",
@@ -18,12 +18,12 @@
     "static/js/505.1b74c711.chunk.js": "/DigitalHealthApp/static/js/505.1b74c711.chunk.js",
     "static/js/267.da20b9f9.chunk.js": "/DigitalHealthApp/static/js/267.da20b9f9.chunk.js",
     "static/js/365.21000a31.chunk.js": "/DigitalHealthApp/static/js/365.21000a31.chunk.js",
-    "static/js/67.1cf9bd9a.chunk.js": "/DigitalHealthApp/static/js/67.1cf9bd9a.chunk.js",
+    "static/js/480.2d6bb266.chunk.js": "/DigitalHealthApp/static/js/480.2d6bb266.chunk.js",
     "static/js/640.ae7d7785.chunk.js": "/DigitalHealthApp/static/js/640.ae7d7785.chunk.js",
     "index.html": "/DigitalHealthApp/index.html"
   },
   "entrypoints": [
     "static/css/main.59117f05.css",
-    "static/js/main.4ed240f9.js"
+    "static/js/main.47b3e282.js"
   ]
 }
