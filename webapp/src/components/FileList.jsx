@@ -65,7 +65,7 @@ export const FileList = ({fileList, owner, accessor}) => {
             // } 
             // else {   
                 if (item.fileExtension === 'dcm') {
-                    const uri = `/dicom/?fileHash=${item.fileHash}&owner=${owner.key}&accessor=${accessor.key}`;
+                    const uri = `/DigitalHealthApp/dicom/?fileHash=${item.fileHash}&owner=${owner.key}&accessor=${accessor.key}`;
                     navigate(uri);
                     return;
                 } else if (item.fileExtension === 'hl7'){
