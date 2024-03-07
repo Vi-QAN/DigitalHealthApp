@@ -31,6 +31,37 @@
     
 }
 
+.theme {
+    color: #070f25;
+}
+.message {
+    width: 100%;
+}
+.span-message {
+    font-weight: 500;
+}
+
+.message-time {
+    width: 100px;
+}
+
+.icon {
+    margin-left: 0; 
+    margin-right: 0;
+}
+
+.action-icon {
+    background-color: 'transparent';
+}
+
+.action-icon:hover {
+    background-color: #d4dcf7;
+}
+
+.shadow {
+    box-shadow: rgba(5, 10, 24, 0.75) 2px 3px 11px 0px;
+}
+
 .btn {
     display: flex;
     --bs-btn-hover-bg: #2c3144;
@@ -42,6 +73,10 @@
     padding-bottom: 1rem;
     align-items: center;
     justify-content: center;
+}
+
+.overflow {
+    overflow-y: scroll;
 }
 
 .btn::before {

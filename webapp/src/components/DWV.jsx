@@ -236,10 +236,10 @@ const DWVComponent = ({file, onMetaDataChange}) => {
   }, [])
 
   useEffect(() => {
-    if (!file || !dwvApp) return;
-
+    if (!dwvApp) return;
     dwvApp.loadFiles([file]);
-  },[file, dwvApp])
+    
+  },[dwvApp])
 
 
 

@@ -19,18 +19,8 @@ const DWVModal = ({ show, onHide, file }) => {
       setMetaData(data)
     }
 
-    // Clear the password field when the modal opens
-    useEffect(() => {
-      if (!file) return;
-    }, [show, file, metaData]);
-
-
-
   return (
     <Modal show={show} fullscreen={true} onHide={onHide} >
-      {/* <Modal.Header >
-        <Modal.Title>Viewer</Modal.Title>
-      </Modal.Header> */}
         <Modal.Body>
             <Nav fill variant="tabs" defaultActiveKey="viewer" onSelect={(key, e) => onSelect(key,e)}>
                 <Nav.Item>

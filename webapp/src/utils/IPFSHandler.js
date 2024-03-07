@@ -4,7 +4,6 @@ import toBuffer from 'it-to-buffer'
 import Pako from 'pako'
 import all from 'it-all'
 import map from 'it-map'
-import { saveAs } from 'file-saver'
 
 // Add file to IPFS and return a CID
 export const saveToIpfs = async ([file], ipfs) => {
@@ -32,8 +31,7 @@ export const downloadFromIPFS = async(ipfs, item) => {
     // setContent(output[0].body)
     const blob = new Blob([output[0].body], {type: item.fileType})
     const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL)
-    saveAs(fileURL, item.fileName + '.' + item.fileExtension )
+    return fileURL;
 }
 
 // Add file to IPFS and wrap it in a directory to keep the original filename
@@ -50,10 +48,10 @@ export const saveToIpfsWithFilename = async ([file], ipfs) => {
 
     try {
         const added = await ipfs.add(fileDetails, options)
-
+        return { ...added, file: file}
         //setFileHashes((list) => [...list, added.cid.toString()])
     } catch (err) {
-        //setError(err.message)
+      console.log("IPFS failed to add file", err);
     }
 }
 

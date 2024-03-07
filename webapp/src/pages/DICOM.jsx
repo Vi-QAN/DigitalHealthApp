@@ -1,7 +1,7 @@
 import { Container } from '@mui/system';
 import { useEffect, useState } from 'react';
 import DWVModal from "../modals/DWVModal";
-import { getEncryptedFile } from '../utils/fileHandler';
+import { getRegularFile } from '../utils/fileHandler';
 const DICOM = () => {
   const [isDWVModalOpen, setIsDWVModalOpen] = useState(false);
   const [ file, setFile ] = useState(null);
@@ -21,7 +21,7 @@ const DICOM = () => {
     const owner = searchParams.get('owner');
     const accessor = searchParams.get('accessor')
     try {
-      const { blob, fileName } = await getEncryptedFile(fileHash, 'dcm', owner, accessor);
+      const { blob, fileName } = await getRegularFile(fileHash, owner, accessor);
       console.log(blob.type)
 
       const file = new File([blob], fileName, { type: blob.type });

@@ -1,5 +1,4 @@
 import * as React from "react";
-import useWeb3Context from "./useWeb3Context";
 import { useNavigate} from 'react-router-dom';
 import { login, register } from '../utils/web3Helper'
 import { registerRequest, loginRequest } from "../utils/fileHandler";

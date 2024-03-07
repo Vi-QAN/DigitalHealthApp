@@ -6,7 +6,7 @@ import { getFileInfoByAccessor, } from '../utils/fileHandler';
 
 import { AddFile, FileList } from './FileList';
 
-const AuthorizedFileList = ({ipfs, accessor}) => {
+const AuthorizedFileList = ({accessor}) => {
     const [ fileList, setFileList ] = useState([]);
   
     const loadFileList = async () => {
@@ -20,18 +20,19 @@ const AuthorizedFileList = ({ipfs, accessor}) => {
     }, [])
   
     return (
-      <Container className='mb-3'>
+      <Container className='mb-3 pt-4' style={{height: '100%', maxHeight: '100%', overflowY: 'scroll'}}>
         { fileList.length > 0 ? 
           <Fragment>
-            <Form.Label>Authorized File List</Form.Label>
-            <Accordion >
+            <Form.Label style={{ height: '50px', fontWeight: '500', fontSize: '18px'}}>Authorized File List</Form.Label>
+            <Accordion>
       
             {fileList.map((item, index) => (
-                <Accordion.Item key={index} eventKey={index}>
+              <Container style={{height: '200px'}}>
+                <Accordion.Item  key={index} eventKey={index} >
                     <Accordion.Header className='d-flex '>
                       <Container className='d-flex col'>{item.userName}</Container>
                       <Container className='d-flex col-10 justify-content-end'>
-                        <AddFile ipfs={ipfs} owner={{userId: item.ownerId, key: item.key}} accessor={accessor}/>
+                        <AddFile owner={{userId: item.ownerId, key: item.key}} accessor={accessor}/>
 
                       </Container>
                     </Accordion.Header>
@@ -39,6 +40,8 @@ const AuthorizedFileList = ({ipfs, accessor}) => {
                         <FileList fileList={item.informationList} owner={{userId: item.ownerId, key: item.key}} accessor={accessor} />
                     </Accordion.Body>
                 </Accordion.Item>
+              </Container>
+                
                 
             ))}
             </Accordion>

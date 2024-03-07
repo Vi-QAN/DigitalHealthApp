@@ -21,9 +21,9 @@ const OwnedFileList  = ({ipfs, owner}) => {
       loadFileList();
     },[])
     return (
-      <Fragment>
+      <Container fluid className="pt-5" style={{height: '100%'}}>
         
-        <Container className='d-flex flex-column mb-3' style={{height: '100%'}}>
+        <Container fluid className='d-flex flex-column mb-3' style={{height: '80%', overflowY: 'scroll'}}>
         { fileList.length > 0 ? 
           <FileList fileList={fileList} ipfs={ipfs} owner={owner} accessor={owner} />
           :
@@ -31,11 +31,11 @@ const OwnedFileList  = ({ipfs, owner}) => {
         }
         </Container>
            
-            
-        
-        <AddFile ipfs={ipfs} owner={owner} accessor={owner}/>
+        <Container fluid className='d-flex justify-content-end mb-3'>
+          <AddFile ipfs={ipfs} owner={owner} accessor={owner}/>
 
-      </Fragment>
+        </Container>   
+      </Container>
        
         
         

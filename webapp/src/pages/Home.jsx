@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate} from 'react-router-dom';
-import {Button, Container, Form, ListGroup, Alert } from 'react-bootstrap';
+import {Button, Container, ListGroup, Alert } from 'react-bootstrap';
 import Select from "react-select";
 
 import { AuthConsumer } from "../hooks/useAuth";
 
-import { create } from 'ipfs-http-client'
 
 import NavComponent from "../components/Navbar"
 import PasswordConfirmationModal from "../components/PasswordConfirmModal";
@@ -15,40 +14,22 @@ import AuthorizedFileList from "../components/AuthorizedFileList";
 import { authorizeRequest, getAuthorizationList, revokeAuthorizationRequest, getUserList } from "../utils/fileHandler";
 import { authorizeAccessor, revokeAccessor } from "../utils/web3Helper";
 import { useWriteContract, } from 'wagmi'
-import { convertToBytes32 } from "../utils/general";
 
-import { abi } from '../contracts/DigitalHealth';
-
-
+import ChartComponent from "../components/Charts";
+import Notification from "../components/NotificationComponent";
 
 
-const AuthorizationList = ({user, authorizationList, setAuthorizationList}) => {
-  const { writeContractAsync } = useWriteContract();
-  const handleRevoke = async (accessor) => {
-    console.log(accessor)
-    if (user.userId == null) return;
 
-    const revokeAccessorObject = revokeAccessor({accessor: accessor.accessorKey, password: "123", owner: user.key})
-    try {
-      await writeContractAsync(revokeAccessorObject)
-      await revokeAuthorizationRequest({ownerId: user.key, accessorId: accessor.accessorKey})
 
-    } catch (err) {
-      console.log(err);
-    }
-    
-    setAuthorizationList(list => list.filter((a) => a.accessorId !== accessor.accessorId))
-
-  }
+const AuthorizationList = ({authorizationList, handleOpenModal}) => {
   
-
   return (
-    <Container className="mb-3 mt-3"> 
+    <Container className="mb-3 mt-3" style={{height: '100%', maxHeight: '100%', overflowY: 'scroll'}}> 
       <ListGroup>
         {authorizationList.map((item) => (
-          <ListGroup.Item key={item.accessorId} className="d-flex justify-content-between text">
+          <ListGroup.Item key={item.accessorId} className="d-flex justify-content-between text mb-3 shadow rounded">
             {item.name}
-            <Button onClick={() => handleRevoke(item)}>Revoke</Button>
+            <Button onClick={(e) => handleOpenModal({event: e, accessor: item})}>Revoke</Button>
           </ListGroup.Item>
         ))}
       </ListGroup>
@@ -58,13 +39,13 @@ const AuthorizationList = ({user, authorizationList, setAuthorizationList}) => {
 
 
 const Home = () => {
-  const [ ipfs, setIpfs ] = useState(null);
   const [ authorizationList, setAuthorizationList ] = useState([]);
   const [ section, setSection ] = useState('authorization'); 
   const { authed, user } = AuthConsumer();
   const [ isModalOpen, setIsModalOpen] = useState(false);
   // React state to manage selected options
   const [ selectedUser, setSelectedUser] = useState();
+  const [ revokedAccessor, setRevokedAccessor ] = useState(null);
   const [ userList, setUserList ] = useState([]);
   const [ optionList, setOptionList ] = useState([]);
   const { 
@@ -86,20 +67,35 @@ const Home = () => {
     } catch (err){
       console.log(err);
     }
-    const newList = authorizationList;
-    newList.push(
-      {
-        accessorId: accessor.userId, 
-        accessorKey: accessor.key,
-        name: accessor.name,
-        isAuthorized: true
-      });
       
-    setAuthorizationList(newList); 
+    setAuthorizationList([...authorizationList, {
+      accessorId: accessor.userId, 
+      accessorKey: accessor.key,
+      name: accessor.name,
+      isAuthorized: true
+    }]); 
   }
 
-  const handleOpenModal = (e) => {
-    e.preventDefault();
+  const handleRevoke = async ({confirmedPassword}) => {
+    console.log(revokedAccessor);
+    if (user.userId == null) return;
+
+    const revokeAccessorObject = revokeAccessor({accessor: revokedAccessor.accessorKey, password: confirmedPassword, owner: user.key})
+    try {
+      await writeContractAsync(revokeAccessorObject)
+      await revokeAuthorizationRequest({ownerId: user.key, accessorId: revokedAccessor.accessorKey})
+
+    } catch (err) {
+      console.log(err);
+    }
+    
+    setAuthorizationList(list => list.filter((a) => a.accessorId !== revokedAccessor.accessorId))
+    setRevokedAccessor(null);
+  }
+
+  const handleOpenModal = ({event, accessor}) => {
+    event.preventDefault();
+    setRevokedAccessor(accessor);
     setIsModalOpen(true);
   }
 
@@ -109,26 +105,14 @@ const Home = () => {
 
   const handleConfirmPassword = (password) => {
     // Handle password confirmation logic here
-    handleAuthorize({confirmedPassword: password});
+    !revokedAccessor ? handleAuthorize({confirmedPassword: password}) : handleRevoke({confirmedPassword: password});
   };
 
   const handleSectionSelect = (sectionKey) => {
     setSection(sectionKey);
   }
 
-  const setupIPFS = async () => {
-    try {
-      const http = create('/ip4/127.0.0.1/tcp/5001')
-      const isOnline = await http.isOnline()
   
-      if (isOnline) {
-        setIpfs(http);
-      }
-    }
-    catch(err) {
-      console.log(err.message)
-    }
-  }
 
   const loadAuthorizationList = async () => {
     try {
@@ -164,7 +148,6 @@ const Home = () => {
     if (!user.userId) return;
     loadAuthorizationList();
     loadUserList();
-      //setupIPFS();
   },[]);
 
   useEffect(() => {
@@ -173,10 +156,10 @@ const Home = () => {
   return (
     <Container fluid className="custom-container d-flex flex-row mx-0">
         <NavComponent user={user} handleSelect={handleSectionSelect} />
-        <Container fluid className="d-flex flex-column mb-3 ms-5 pt-5">
+        <Container fluid className="d-flex flex-column mb-3 ms-5" style={{height: '100%'}}>
           
           { section === 'authorization' && optionList &&
-            <Container className="mb-3">
+            <Container className="mb-3 pt-4" style={{height: '80%'}}>
               
               <Select
                 options={optionList}
@@ -201,13 +184,13 @@ const Home = () => {
                 },}}
               />
               <Fragment>
-                <Button style={{width: '100%'}} variant="primary" type="submit" onClick={(e) => handleOpenModal(e)}>
+                <Button style={{width: '100%'}} variant="primary" type="submit" onClick={(e) => handleOpenModal({event: e})}>
                     Authorize
                 </Button>
               </Fragment>
                 
               {authorizationList.length > 0 ? 
-              <AuthorizationList user={user} authorizationList={authorizationList} setAuthorizationList={setAuthorizationList}/>
+              <AuthorizationList authorizationList={authorizationList} handleRevoke={handleRevoke} handleOpenModal={handleOpenModal}/>
               :
               <Container fluid className="mt-3">
                 <Alert variant='light'>You have not authorized anyone</Alert> 
@@ -215,9 +198,12 @@ const Home = () => {
           </Container>
           }
 
-          { section === 'my-files' && <OwnedFileList ipfs={ipfs} owner={{ userId: user.userId, key: user.key}}/> }
+          { section === 'my-files' && <OwnedFileList owner={{ userId: user.userId, key: user.key}}/> }
 
-          { section === 'authorized-files' && <AuthorizedFileList ipfs={ipfs} accessor={{ userId: user.userId, key: user.key}}/>}
+          { section === 'authorized-files' && <AuthorizedFileList accessor={{ userId: user.userId, key: user.key}}/>}
+        
+          { section === 'notification' && <Notification />}
+
         </Container>
       
       

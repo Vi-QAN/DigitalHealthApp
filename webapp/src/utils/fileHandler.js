@@ -126,8 +126,29 @@ export const saveEncryptedFiles = (formData) => {
       .catch(error => console.error('Error:', error));
 }
 
-export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor) => {
+export const getHL7File = async (fileHash, owner, accessor) => {
     if (!owner || !accessor) return; 
+    const response =  await getEncryptedFile(fileHash, owner, accessor)
+    return await response.json();
+}
+
+export const getRegularFile = async (fileHash, owner, accessor) => {
+    if (!owner || !accessor) return; 
+    const response =  await getEncryptedFile(fileHash, owner, accessor)
+    
+    // Parse content disposition header to get the file name
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const fileName = contentDisposition
+        ? contentDisposition.split('filename=')[1].trim()
+        : new URL(response.url).searchParams.get('fileName') || 'downloadedFile.txt';
+
+    // Create a new Blob from the response's body
+    const blob = await response.blob();
+
+    return { blob, fileName }
+}
+
+const getEncryptedFile = async (fileHash, owner, accessor) => {
     const queryParams = new URLSearchParams();
     queryParams.append("owner", owner);
     queryParams.append("accessor", accessor);
@@ -136,29 +157,59 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     try {
         const response = await fetch(url, {
             method: 'GET',
-            headers: headers,
+            headers: headers
         }).catch(err => console.log(err));
     
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        if (fileExtension === 'hl7'){
-            return await response.json();
-        }
-        
-        // Parse content disposition header to get the file name
-        const contentDisposition = response.headers.get('Content-Disposition');
-        const fileName = contentDisposition
-            ? contentDisposition.split('filename=')[1].trim()
-            : new URL(response.url).searchParams.get('fileName') || 'downloadedFile.txt';
+        return response;
 
-        // Create a new Blob from the response's body
-        const blob = await response.blob();
-    
-        return { blob, fileName }
+        
     } catch (err) {
         console.log(err)
     }
+}
+
+export const deleteFile = async (fileId) => {
+    const url = `${baseUrl}/file/${fileId}`;
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: headers
+        }).catch(err => console.log(err));
+    
+        if (!response.ok) {
+            return `Fail to delete the file ${response.status}`;
+        } else {
+            return `File Deleted Successfully`
+        }
+
+
+        
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+/////////////////////////////////////////
+// Notification Request 
+////////////////////////////////////////
+export const getNotifications = async (userId) => {
+    return await fetch(`${baseUrl}/notifications/?userId=${userId}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(result => result.json())
+    .catch(err => console.error(err));
+}
+
+export const updateNotification = async (id) => {
+    return await fetch(`${baseUrl}/notifications/${id}`, {
+        method: "PUT",
+        headers: headers,
+    })
+    .catch(err => console.error(err));
 }
 

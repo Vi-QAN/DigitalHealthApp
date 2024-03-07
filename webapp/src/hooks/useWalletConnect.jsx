@@ -20,7 +20,19 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
 
-const chains = [localhost]
+const customLocalhost = { 
+  ...localhost, 
+  rpcUrls: {
+    public: {
+      http: [`${process.env.REACT_APP_PUBLIC_CHAIN_URL}`]
+    },
+    default: {
+      http: [`${process.env.REACT_APP_PUBLIC_CHAIN_URL}`]
+    }
+  }
+}
+
+const chains = [customLocalhost]
 
 const config = defaultWagmiConfig({
   chains, // required
