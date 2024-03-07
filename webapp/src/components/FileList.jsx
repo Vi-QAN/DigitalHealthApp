@@ -32,7 +32,7 @@ const OpenableFileExtenstionMapping = {
 
 
 export const FileList = ({fileList, owner, accessor}) => {
-    const { ipfs } = IPFSConsumer();
+    // const { ipfs } = IPFSConsumer();
     const [isHL7FileModalOpen, setIsHL7FileModalOpen] = useState(false);
     const [HL7Content, setHL7Content] = useState(null);
     const [ isChartModalOpen, setIsChartModalOpen ] = useState()
@@ -58,12 +58,12 @@ export const FileList = ({fileList, owner, accessor}) => {
     const handleOpenFile = async (e, item) => {
         e.preventDefault();
         try {
-            if (item.fileMode === 'Public' && OpenableFileExtenstionMapping[item.fileExtension].ipfs){
-                const fileURL = await downloadFromIPFS(ipfs, item);
-                window.open(fileURL)
-                URL.revokeObjectURL(fileURL);
-            } 
-            else {   
+            // if (item.fileMode === 'Public' && OpenableFileExtenstionMapping[item.fileExtension].ipfs){
+            //     const fileURL = await downloadFromIPFS(ipfs, item);
+            //     window.open(fileURL)
+            //     URL.revokeObjectURL(fileURL);
+            // } 
+            // else {   
                 if (item.fileExtension === 'dcm') {
                     const uri = `/dicom/?fileHash=${item.fileHash}&owner=${owner.key}&accessor=${accessor.key}`;
                     navigate(uri);
@@ -88,7 +88,7 @@ export const FileList = ({fileList, owner, accessor}) => {
                     window.open(fileURL)
                     URL.revokeObjectURL(fileURL);
                 }
-            }
+            // }
   
         } catch (err) {
             console.error(err)
@@ -96,16 +96,16 @@ export const FileList = ({fileList, owner, accessor}) => {
     }
 
     const handleDownloadFile = async (e, item) => {
-        if (item.fileMode === 'Public'){
-            const fileURL = await downloadFromIPFS(ipfs, item);
-            window.open(fileURL)
-            saveAs(fileURL, item.fileName + '.' + item.fileExtension )
-        } else {
+        // if (item.fileMode === 'Public'){
+        //     const fileURL = await downloadFromIPFS(ipfs, item);
+        //     window.open(fileURL)
+        //     saveAs(fileURL, item.fileName + '.' + item.fileExtension )
+        // } else {
             const { blob, fileName } = await getRegularFile(item.fileHash, owner.key, accessor.key);
             const fileURL = URL.createObjectURL(blob);
             window.open(fileURL)
             URL.revokeObjectURL(fileURL);
-        }
+        // }
     }
 
     const handleDeleteFile = async (e, item) => {
@@ -198,7 +198,7 @@ export const FileList = ({fileList, owner, accessor}) => {
 }
 
 export const AddFile = ({owner, accessor}) => {
-    const { ipfs } = IPFSConsumer(); 
+    // const { ipfs } = IPFSConsumer(); 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = (e) => {
@@ -225,20 +225,20 @@ export const AddFile = ({owner, accessor}) => {
             formData.append('accessor', JSON.stringify(accessor));
             saveEncryptedFiles(formData)
         }
-        else {
-            const result = await saveToIpfs(files, ipfs)
-            const file = result.file;
-            const fileHash = result.path;
-            const metaData = {
-                fileHash: fileHash,
-                multiAddress: '/ip4/127.0.0.1/tcp/5001',
-                fileName: file.name,
-                fileType: file.type.length > 0 ? file.type : 'application/octet-stream',
-                ownerId: owner.userId,
-                accessorId: accessor.userId
-            }
-            savePlainFilesInformation(metaData);
-        }     
+        // else {
+        //     const result = await saveToIpfs(files, ipfs)
+        //     const file = result.file;
+        //     const fileHash = result.path;
+        //     const metaData = {
+        //         fileHash: fileHash,
+        //         multiAddress: '/ip4/127.0.0.1/tcp/5001',
+        //         fileName: file.name,
+        //         fileType: file.type.length > 0 ? file.type : 'application/octet-stream',
+        //         ownerId: owner.userId,
+        //         accessorId: accessor.userId
+        //     }
+        //     savePlainFilesInformation(metaData);
+        // }     
     }
 
     return (

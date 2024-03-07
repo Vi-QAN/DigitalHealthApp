@@ -20,7 +20,7 @@ function App() {
     <Router>
       <Web3Modal>
         <AuthProvider>
-          <IPFSProvider>
+          {/* <IPFSProvider> */}
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                   <Route exact path={"/DigitalHealthApp"} element={
@@ -38,7 +38,7 @@ function App() {
               
             </Suspense>
         
-          </IPFSProvider>
+          {/* </IPFSProvider> */}
         </AuthProvider>
       </Web3Modal>
     </Router>

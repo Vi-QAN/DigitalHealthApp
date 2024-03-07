@@ -28,7 +28,7 @@ function useAuth() {
       try {
         register({name: form.name, email: form.email, password: form.password, account: account.address})
         registerRequest({name: form.name, account: account.address})
-        navigate('/login');
+        navigate('/DigitalHealthApp/login');
       } catch (err) {
         console.error(err);
       }
@@ -42,7 +42,7 @@ function useAuth() {
         setAuthed(true);
         setUser(serverResult);
         localStorage.setItem('user', JSON.stringify(serverResult));
-        navigate('/');
+        navigate('/DigitalHealthApp/');
       } catch (err){
         console.error(err);
       }
@@ -52,7 +52,7 @@ function useAuth() {
     logout() {
       setAuthed(false);
       localStorage.removeItem('user');
-      navigate('/login');
+      navigate('/DigitalHealthApp/login');
       
     },
   };
