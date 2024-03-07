@@ -23,7 +23,7 @@ function App() {
           {/* <IPFSProvider> */}
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
-                  <Route exact path={"/DigitalHealthApp"} element={
+                  <Route path={"/DigitalHealthApp"} element={
                     <Home />} 
                   />
 
@@ -31,7 +31,7 @@ function App() {
                     <Dicom />} 
                   />
 
-                  <Route exact path={"/DigitalHealthApp/login"} element={
+                  <Route path={"/DigitalHealthApp/login"} element={
                     <Login />
                   } />
                 </Routes>

@@ -142,7 +142,7 @@ const Home = () => {
 
   useEffect(() => {
     if (!authed){
-      navigate('/login');
+      navigate('/DigitalHealthApp/login');
     }
 
     if (!user.userId) return;
