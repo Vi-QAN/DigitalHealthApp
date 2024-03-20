@@ -123,7 +123,7 @@ const DWVComponent = ({file, onMetaDataChange}) => {
       key={tool}
       title={tool}
       disabled={!dataLoaded || !canRunTool(tool)}
-      onChange={() => handleToolChange(tool)}
+      onChange={(e) => handleToolChange(e,tool)}
     >
       {getToolIcon(tool)}
     </ToggleButton>

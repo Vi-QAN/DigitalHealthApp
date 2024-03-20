@@ -35,7 +35,7 @@ function useAuth() {
     },
     async login(form) {
       try {
-        const blockchainResult = await login({password: form.password, account: account.address})
+        const blockchainResult = await login({email: form.email, password: form.password, account: account.address})
         if (blockchainResult == 0x0) return;
         const serverResult = await loginRequest({account: account.address});
         if (serverResult == undefined) return;

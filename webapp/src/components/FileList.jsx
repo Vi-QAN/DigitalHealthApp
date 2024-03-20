@@ -69,7 +69,8 @@ export const FileList = ({fileList, owner, accessor}) => {
                     navigate(uri);
                     return;
                 } else if (item.fileExtension === 'hl7'){
-                    const result = await getHL7File(item.fileHash, owner.key, accessor.key);
+                    const result = await getHL7File([item.fileId],item.fileExtension, owner.key, accessor.key,);
+                    console.log(result);
                     setHL7Content(result);
                     handleOpenHL7Modal();
                 } else if (item.fileExtension === 'json') {

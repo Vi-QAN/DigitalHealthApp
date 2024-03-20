@@ -12,16 +12,16 @@ const HL7FileModal = ({ show, onHide, content }) => {
     return (
         <Modal show={show} onHide={onHide} >
             <Modal.Header closeButton>
-                {content && <Modal.Title>{content.admissionContent.messageType}</Modal.Title>}
+                {content && <Modal.Title>{content[0].admissionContent.messageType}</Modal.Title>}
             </Modal.Header>
             <Modal.Body>
                 {content && (<Accordion>
-                    {Object.entries(content.admissionContent).map(([key, value]) => {
+                    {Object.entries(content[0].admissionContent).map(([key, value]) => {
                         return (
                             key !== "messageType" && <Accordion.Item key={key} eventKey={key}>
                                 <Accordion.Header>{key.charAt(0).toUpperCase() + key.slice(1)}</Accordion.Header>
                                 <Accordion.Body>
-                                    {key === "admissionReason" ? value : value.join(', ')}
+                                    {typeof value === "string" ? value : value.join(', ')}
                                 </Accordion.Body>
                             </Accordion.Item>
                         )

@@ -63,7 +63,7 @@ export const authorizeRequest = async ({ownerId, accessorId}) => {
       headers: headers,
       body: JSON.stringify({
         "OwnerId": ownerId,
-        "AccesserId": accessorId,
+        "AccessorId": accessorId,
       })
     })
     .then(response => response.json())
@@ -76,7 +76,7 @@ export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
       headers: headers,
       body: JSON.stringify({
         "OwnerId": ownerId,
-        "AccesserId": accessorId,
+        "AccessorId": accessorId,
       })
     })
     .then(response => response.json())
@@ -87,7 +87,7 @@ export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
 // File Information Requests
 ////////////////////////////////////////
 export const getFileInfoByOwner = async (owner) => {
-    return await fetch(baseUrl + '/information/' + owner, {
+    return await fetch(baseUrl + '/fileinformation/' + owner, {
         method: "GET",
         headers: headers
     }).then(response => response.json())
@@ -95,7 +95,7 @@ export const getFileInfoByOwner = async (owner) => {
 }
 
 export const getFileInfoByAccessor = async (accessor) => {
-    return await fetch(baseUrl + '/information/accessor/' + accessor, {
+    return await fetch(baseUrl + '/fileinformation/accessor/' + accessor, {
         method: "GET",
         headers: headers,
     }).then(response => response.json())
@@ -106,7 +106,7 @@ export const getFileInfoByAccessor = async (accessor) => {
 // File Content Requests
 ///////////////////////////////////
 export const savePlainFilesInformation = (metadata) => {
-    fetch('http://localhost:5273/api/Information', {
+    fetch('http://localhost:5273/api/fileInformation', {
         method: "POST",
         headers: {
             "Content-type": "application/json"
@@ -126,10 +126,31 @@ export const saveEncryptedFiles = (formData) => {
       .catch(error => console.error('Error:', error));
 }
 
-export const getHL7File = async (fileHash, owner, accessor) => {
+export const getHL7File = async (fileIds, fileExtension, owner, accessor) => {
     if (!owner || !accessor) return; 
-    const response =  await getEncryptedFile(fileHash, owner, accessor)
-    return await response.json();
+    const queryParams = new URLSearchParams();
+
+    const list = fileIds.join(',');
+    queryParams.append("owner", owner);
+    queryParams.append("accessor", accessor);
+    queryParams.append("fileExtension", fileExtension)
+    queryParams.append("fileIds", list);
+
+    const url = `${baseUrl}/file/open?${queryParams.toString()}`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+        })
+        .catch(err => console.log(err));
+    
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 export const getRegularFile = async (fileHash, owner, accessor) => {
