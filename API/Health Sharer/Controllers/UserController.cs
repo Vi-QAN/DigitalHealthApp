@@ -9,15 +9,18 @@ namespace HealthSharer.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<UserController> _Logger;
         private readonly IUserService _userService;
+        private readonly IAuthorizationService _authorizationService;
 
         public UserController(
-            ILogger<UserController> logger,
-            IUserService userService)
+            ILogger<UserController> Logger,
+            IUserService userService,
+            IAuthorizationService authorizationService)
         {
-            _logger = logger;
+            _Logger = Logger;
             _userService = userService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
@@ -68,7 +71,7 @@ namespace HealthSharer.Controllers
         {
             try
             {
-                return Ok(_userService.AddAuthorization(request));
+                return Ok(_authorizationService.AddAuthorization(request));
             }
             catch
             {
@@ -82,7 +85,7 @@ namespace HealthSharer.Controllers
         {
             try
             {
-                return Ok(_userService.RemoveAuthorization(request));
+                return Ok(_authorizationService.RemoveAuthorization(request));
             }
             catch
             {
@@ -95,7 +98,7 @@ namespace HealthSharer.Controllers
         public IActionResult GetAuthorization([FromRoute] int userId) {
             try
             {
-                return Ok(_userService.GetAuthorization(userId));
+                return Ok(_authorizationService.GetAuthorization(userId));
             }
             catch
             {

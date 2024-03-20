@@ -16,27 +16,20 @@ namespace HealthSharer.Controllers
         }
 
         [HttpGet]
-        [Route("download/{fileHash}")]
-        public async Task<IActionResult> DownloadFile(
-            [FromRoute] string fileHash, 
+        [Route("download")]
+        public async Task<IActionResult> DownloadFiles(
+            [FromQuery] List<int> fileIds, 
             [FromQuery] string owner,
-            [FromQuery] string accessor)
+            [FromQuery] string accessor,
+            [FromQuery] string fileExtension)
         {
             try
-            { 
-                var file = await _fileService.downloadFile(fileHash, owner, accessor);
+            {
+                var file = await _fileService.downloadFiles(fileIds, owner, accessor, fileExtension);
+                Response.Headers.Add("Content-Disposition", $"attachment;filename={file.FileName}");
+                Response.Headers.ContentType = file.ContentType;
+                return File(file.Content, file.ContentType);
 
-                if (file is GetHL7FileResponse)
-                {
-                    var HL7File = file as GetHL7FileResponse;
-                    return Ok(HL7File);
-                }
-
-                var regularFile = file as GetRegularFileResponse;
-                Response.Headers.Add("Content-Disposition", $"attachment;filename={regularFile?.FileName}");
-                Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self'; connect-src 'none'; child-src 'none';");
-                Response.Headers.ContentType = regularFile?.ContentType;
-                return File(regularFile?.Content, regularFile.ContentType);
             }
             catch (Exception ex)
             {
@@ -44,8 +37,51 @@ namespace HealthSharer.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("download/{fileHash}")]
+        public async Task<IActionResult> DownloadFile(
+            [FromRoute] string fileHash,
+            [FromQuery] string owner,
+            [FromQuery] string accessor)
+        {
+            try
+            {
+               var file = await _fileService.downloadFile(fileHash, owner, accessor);
+                Response.Headers.Add("Content-Disposition", $"attachment;filename={file.FileName}");
+                Response.Headers.ContentType = file.ContentType;
+                return File(file.Content, file.ContentType);
+            } catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+            
+        }
+
+        [HttpGet]
+        [Route("open")]
+        public async Task<IActionResult> OpenFiles(
+            [FromQuery] List<int> fileIds,
+            [FromQuery] string owner,
+            [FromQuery] string accessor,
+            [FromQuery] string fileExtension)
+        {
+            if (fileExtension == "hl7")
+            {
+                try
+                {
+                    var files = await _fileService.openHL7Files(fileIds, owner, accessor, fileExtension);
+                    return Ok(files);
+                } catch (Exception ex)
+                {
+                    return StatusCode(500, $"Error: {ex.Message}");
+                }
+            }
+
+            return BadRequest("File Extension Not Supported");
+        }
+
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile([FromForm] List<IFormFile> files, [FromForm] string owner, [FromForm] string accessor)
+        public async Task<IActionResult> UploadFiles([FromForm] List<IFormFile> files, [FromForm] string owner, [FromForm] string accessor)
         {
             try
             {
@@ -78,8 +114,70 @@ namespace HealthSharer.Controllers
             }
         }
 
-        
+        [HttpPost]
+        [Route("upload/medicalrequest")]
+        public async Task<IActionResult> UploadToPDFFile(
+            [FromForm] IFormFile file,
+            [FromForm] string request)
+        {
+            try
+            {
+                if (file == null)
+                {
+                    return BadRequest("Invalid file");
+                }
 
-       
+                var converted = JsonConvert.DeserializeObject<AddPDFFileFromTextRequest>(request);
+
+                if (converted == null)
+                {
+                    return BadRequest("Missing request information");
+                }
+
+                converted.Content.Patient.IDImage = file;
+
+                await _fileService.uploadFromText(converted);
+
+
+                return Ok("File uploaded, encrypted, and decrypted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [Route("upload/wearabledata")]
+        public async Task<IActionResult> UploadToJSONFile(AddJSONFileFromTextRequest request)
+        {
+            try
+            {
+                
+                await _fileService.uploadFromText(request);
+                
+                return Ok("File uploaded, encrypted, and decrypted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete]
+        [Route("{fileId}")]
+        public async Task<IActionResult> DeleteFile([FromRoute] int fileId)
+        {
+            try
+            {
+                await _fileService.deleteFile(fileId);
+                return Ok("File deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
     }
 }

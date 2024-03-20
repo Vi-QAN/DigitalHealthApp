@@ -1,5 +1,5 @@
 ﻿using HealthSharer.Models;
-using System.Collections.Generic;
+using WebData.Models;
 
 namespace HealthSharer.Abstractions
 {
@@ -9,8 +9,5 @@ namespace HealthSharer.Abstractions
         GetUserResponse GetUser(string address);
         GetUserResponse GetUser(int userId);
         List<GetUserResponse> GetUsers();
-        int AddAuthorization(AuthorizationRequest request);
-        int RemoveAuthorization(AuthorizationRequest request);
-        List<GetAuthorizationResponse> GetAuthorization(int userId);
     }
 }

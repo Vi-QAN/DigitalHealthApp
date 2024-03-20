@@ -1,6 +1,8 @@
 ﻿using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using HealthSharer.Models;
+using Microsoft.AspNetCore.SignalR.Protocol;
+using Azure;
 
 namespace HealthSharer.Services
 {
@@ -40,10 +42,9 @@ namespace HealthSharer.Services
 
         public HL7ConversionService() {}
 
-        public HL7ObservationResponseContent ProcessObservations(Varies[] varies)
+        public List<Observation> ProcessObservations(Varies[] varies)
         {
-            HL7ObservationResponseContent result = new HL7ObservationResponseContent();
-            List<string> values = new List<string>();
+            List<Observation> result = new List<Observation>();
 
             foreach (var varie in varies)
             {
@@ -51,50 +52,155 @@ namespace HealthSharer.Services
 
                 if (primitive != null)
                 {
-                    values.Add(primitive.Value);
+                    var newObservation = new Observation()
+                    {
+                        Value = primitive.Value,
+                        Type = primitive.TypeName
+                    };
+                    result.Add(newObservation);
                 }
             }
-
-            result.ObservationValues = values;
             return result;
         }
+
+        public GetHL7FileResponse ProcessHL7v23Message(string hl7Message)
+        {
+            var response = new GetHL7FileResponse();
+
+            var ormMessage = _pipeParser.Parse(hl7Message) as NHapi.Model.V23.Message.ORM_O01;
+            if (ormMessage != null)
+            {
+                var patient = ormMessage.PATIENT.PID;
+                var name = patient.GetPatientName()[0].FamilyName.Value + patient.GetPatientName()[0].GivenName.Value;
+                var dob = patient.DateOfBirth.DegreeOfPrecision.Value;
+                var sex = patient.Sex.Value;
+
+                List<string> allergies = new List<string>();
+                List<string> diagnosises = new List<string>();
+                List<Observation> observations = new List<Observation>();
+
+                foreach (var al in ormMessage.PATIENT.AL1s)
+                {
+                    allergies.Add(al.AllergyCodeMnemonicDescription.Text.Value);
+                }
+
+                foreach (var order in ormMessage.ORDERs)
+                {
+                    foreach (var dg in order.ORDER_DETAIL.DG1s)
+                    {
+                        diagnosises.Add(dg.DiagnosisDescription.Value);
+                    }
+
+                    foreach (var obx in order.ORDER_DETAIL.OBSERVATIONs)
+                    {
+                        var observation = ProcessObservations(obx.OBX.GetObservationValue());
+                        observations.AddRange(observation);
+                    }
+                }
+
+                // Implement further processing Logic for v2.4
+                var orderEntryResponse = new HL7OrderEntryResponseContent()
+                {
+                    Allergies = allergies,
+                    Diagnosises = diagnosises,
+                    MessageType = "Order Entry",
+                    Observations = observations,
+                    PatientName = name,
+                    Sex = sex,
+                    DOB = dob
+                };
+
+                response.OrderEntryContent = orderEntryResponse;
+                return response;
+            }
+
+            return response;
+        }
+
+        public GetHL7FileResponse ProcessHL7v25Message(string hl7Message)
+        {
+            var response = new GetHL7FileResponse();
+
+            var rdsMessage = _pipeParser.Parse(hl7Message) as NHapi.Model.V25.Message.RDS_O13;
+            if (rdsMessage != null)
+            {
+
+                List<Transaction> transactions = new List<Transaction>();
+                foreach (var order in rdsMessage.ORDERs)
+                {
+                    foreach (var transaction in order.FT1s)
+                    {
+                        var newTransaction = new Transaction()
+                        {
+                            Date = transaction.TransactionDate.RangeStartDateTime.Time.GetAsDate().Date.ToLocalTime().ToString(),
+                            Currency = transaction.TransactionAmountExtended.Price.Denomination.Value,
+                            Price = transaction.TransactionAmountExtended.Price.Quantity.Value,
+                            Code = transaction.TransactionCode.Text.Value
+                        };
+
+                        transactions.Add(newTransaction);
+                    }
+                }
+                var dispenseContent = new HL7PharmacyTreatmentDispenseResponseContent()
+                {
+                    Transactions = transactions,
+                    MessageType = "Pharmacy/Treatment Dispense"
+                };
+                response.DispenseContent = dispenseContent;
+                return response;
+            }
+            return response;
+        }
+
 
         public GetHL7FileResponse ProcessHL7v24Message(string hl7Message)
         {
             var response = new GetHL7FileResponse();
 
             // Parse and process HL7 v2.4 message using NHAPI
-            var adtMessage = parsedMessage as NHapi.Model.V24.Message.ADT_A05;
+            var adtAO5Message = _pipeParser.Parse(hl7Message) as NHapi.Model.V24.Message.ADT_A05;
 
-            if (adtMessage != null)
+            if (adtAO5Message != null)
             {
                 // Access specific segments and fields in v2.4 message
-                string admissionReason = adtMessage.PV2.AdmitReason.Text.Value;
+                string admissionReason = adtAO5Message.PV2.AdmitReason.Text.Value;
                 List<string> allergies = new List<string>();
                 List<string> diagnosises = new List<string>();
+                List<Observation> observations = new List<Observation>();
 
-                foreach (var obx in adtMessage.OBXs)
+                var patient = adtAO5Message.PID;
+                var name = patient.GetPatientName()[0].FamilyName.Surname.Value + " " + patient.GetPatientName()[0].GivenName.Value;
+                var dob = patient.DateTimeOfBirth.TimeOfAnEvent.Value;
+                var sex = patient.AdministrativeSex.Value;
+
+
+                foreach (var obx in adtAO5Message.OBXs)
                 {
-                    var observations = ProcessObservations(obx.GetObservationValue());
+                    var observation = ProcessObservations(obx.GetObservationValue());
+                    observations.AddRange(observation);
                 }
 
-                foreach (var al in adtMessage.AL1s)
+                foreach (var al in adtAO5Message.AL1s)
                 {
                     allergies.Add(al.AllergenCodeMnemonicDescription.Text.Value);
                 }
 
-                foreach (var dg in adtMessage.DG1s)
+                foreach (var dg in adtAO5Message.DG1s)
                 {
                     diagnosises.Add(dg.DiagnosisDescription.Value);
                 }
 
-                // Implement further processing logic for v2.4
+                // Implement further processing Logic for v2.4
                 var admissionResponse = new HL7AdmissionResponseContent()
                 {
                     AdmissionReason = admissionReason,
                     Allergies = allergies,
                     Diagnosises = diagnosises,
-                    MessageType = "Admission"
+                    MessageType = "Admission",
+                    Observations = observations,
+                    PatientName = name,
+                    Sex = sex,
+                    DOB = dob
                 };
 
                 response.AdmissionContent = admissionResponse;
@@ -104,7 +210,7 @@ namespace HealthSharer.Services
             var oruMessage = _pipeParser.Parse(hl7Message) as NHapi.Model.V24.Message.ORU_R01;
             if (oruMessage != null)
             {
-                List<string> observations = new List<string>();
+                List<Observation> observations = new List<Observation>();
 
                 foreach (var result in oruMessage.PATIENT_RESULTs)
                 {
@@ -112,23 +218,27 @@ namespace HealthSharer.Services
                     {
                         foreach (var observation in oobservation.OBSERVATIONs)
                         {
-                            var content = ProcessObservations(observation.OBX.GetObservationValue());
-                            observations.AddRange(content.ObservationValues);
+                            var o = ProcessObservations(observation.OBX.GetObservationValue());
+                            observations.AddRange(o);
                         }
                     }
                 }
 
-                var observationContent = new HL7ObservationResponseContent()
+                var observationContent = new HL7ObservationResultResponseContent()
                 {
-                    ObservationValues = observations,
+                    Observations = observations,
+                    MessageType = "Observation Result"
                 };
 
                 response.ObservationContent = observationContent;
                 return response;
             }
 
+            
+
             return response;
         }
+
 
         public GetHL7FileResponse ProcessHL7v281Message(string hl7Message)
         {
@@ -143,10 +253,11 @@ namespace HealthSharer.Services
                 string admissionReason = adtMessage.PV2.AdmitReason.Text.Value;
                 List<string> allergies = new List<string>();
                 List<string> diagnosises = new List<string>();
+                List<Observation> observations = new List<Observation>();
 
                 foreach (var obx in adtMessage.OBXs)
                 {
-                    var observations = ProcessObservations(obx.GetObservationValue());
+                    observations = ProcessObservations(obx.GetObservationValue());
                 }
 
                 foreach (var al in adtMessage.AL1s)
@@ -159,12 +270,13 @@ namespace HealthSharer.Services
                     diagnosises.Add(dg.DiagnosisDescription.Value);
                 }
 
-                // Implement further processing logic for v2.4
+                // Implement further processing Logic for v2.4
                 var admissionResponse = new HL7AdmissionResponseContent()
                 {
                     AdmissionReason = admissionReason,
                     Allergies = allergies,
-                    Diagnosises= diagnosises,
+
+                    Diagnosises = diagnosises,
                     MessageType = "Admission"
                 };
 
@@ -175,7 +287,7 @@ namespace HealthSharer.Services
             var oruMessage = _pipeParser.Parse(hl7Message) as NHapi.Model.V281.Message.ORU_R01;
             if (oruMessage != null)
             {
-                List<string> observations = new List<string>();
+                List<Observation> observations = new List<Observation>();
 
                 foreach (var result in oruMessage.PATIENT_RESULTs)
                 {
@@ -183,15 +295,15 @@ namespace HealthSharer.Services
                     {
                         foreach (var observation in oobservation.OBSERVATIONs)
                         {
-                            var content = ProcessObservations(observation.OBX.GetObservationValue());
-                            observations.AddRange(content.ObservationValues);
+                            observations = ProcessObservations(observation.OBX.GetObservationValue());
+
                         }
                     }
                 }
 
-                var observationContent = new HL7ObservationResponseContent()
+                var observationContent = new HL7ObservationResultResponseContent()
                 {
-                    ObservationValues = observations,
+                    Observations = observations,
                     MessageType = "Observation"
                 };
 

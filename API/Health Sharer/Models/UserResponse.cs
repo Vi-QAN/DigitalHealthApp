@@ -14,4 +14,11 @@
         public string Name { get; set; }
         public bool IsAuthorized { get; set; }
     }
+
+    public class GetFileAuthorizationReponse
+    {
+        public int AccessorId { get; set; }
+        public string AccessorName { get; set; }
+        public DateTime AuthorizedDate { get; set; }
+    }
 }

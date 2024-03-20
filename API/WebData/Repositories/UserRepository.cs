@@ -29,17 +29,12 @@ namespace WebData.Repositories
 
         public User GetUserByAddress(string address)
         {
-            return _context.Users.FirstOrDefault(u => u.ContractAddress == address);
+            return _context.Users.FirstOrDefault(u => u.PublicKey == address);
         }
        
         public User GetUserById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.UserId == id);
-        }
-
-        public User GetUserByContract(string contract)
-        {
-            return _context.Users.FirstOrDefault(u => u.ContractAddress == contract);
+            return _context.Users.FirstOrDefault(u => u.Id == id);
         }
 
         public IQueryable<AuthorizationRecord> GetAuthorizationRecordsByAccessor(int accessorId)
@@ -70,6 +65,49 @@ namespace WebData.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public IQueryable<FileAuthorizationRecord> GetFileAuthorizationRecordsByAccessor(int userId)
+        {
+            return _context.FileAuthorizationRecords.Where(r => r.AccessorId == userId);
+        }
+
+        public IQueryable<FileAuthorizationRecord> GetFileAuthorizationRecordsByOwner(int userId)
+        {
+            return _context.FileAuthorizationRecords.Where(r => r.OwnerId == userId);
+        }
+
+        public IQueryable<FileAuthorizationRecord> GetFileAuthorizationRecordsByFile(int fileId)
+        {
+            return _context.FileAuthorizationRecords.Where(r => r.FileInformationId == fileId);
+        }
+
+        public FileAuthorizationRecord GetFileAuthorizationRecord(int recordId)
+        {
+            return _context.FileAuthorizationRecords.FirstOrDefault(r => r.Id == recordId);
+        }
+
+        public void AddFileAuthorizationRecord(FileAuthorizationRecord fileAuthorizationRecord)
+        {
+            _context.FileAuthorizationRecords.Add(fileAuthorizationRecord);
+        }
+
+        public void UpdateFileAuthorizationRecord(FileAuthorizationRecord fileAuthorizationRecord)
+        {
+            _context.FileAuthorizationRecords.Update(fileAuthorizationRecord);
+        }
+
+        public void UpdateFileAuthorizationRecords(List<FileAuthorizationRecord> fileAuthorizationRecords)
+        {
+            _context.FileAuthorizationRecords.UpdateRange(fileAuthorizationRecords);
+        }
+
+        public FileAuthorizationRecord GetFileAuthorizationRecord(int ownerId, int accessorId, int fileId)
+        {
+            return _context.FileAuthorizationRecords.FirstOrDefault(r => 
+                r.AccessorId ==  accessorId &&
+                r.OwnerId == ownerId &&
+                r.FileInformationId == fileId);
         }
 
         /*public void AddDoctor(Doctor doctor)

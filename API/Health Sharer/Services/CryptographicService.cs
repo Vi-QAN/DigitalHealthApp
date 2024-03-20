@@ -1,6 +1,4 @@
 ﻿using HealthSharer.Models;
-using System.IO;
-using System.Reflection.Emit;
 using System.Security.Cryptography;
 
 namespace HealthSharer.Services
@@ -13,6 +11,33 @@ namespace HealthSharer.Services
                 key = RandomNumberGenerator.GetBytes(32),
                 iv = RandomNumberGenerator.GetBytes(16)
             };
+        }
+
+        public static async Task<byte[]> EncryptFile(byte[] file, byte[] iv, byte[] key)
+        {
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = key;
+                aesAlg.IV = iv;
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                using (ICryptoTransform encryptor = aesAlg.CreateEncryptor())
+                using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                {
+                    try
+                    {
+                        cryptoStream.Write(file, 0, file.Length);
+                        cryptoStream.FlushFinalBlock();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+
+                    cryptoStream.Close();
+                    return memoryStream.ToArray();
+                }
+            }
         }
 
         public static async Task<byte[]> EncryptFile(IFormFile file, byte[] iv, byte[] key)

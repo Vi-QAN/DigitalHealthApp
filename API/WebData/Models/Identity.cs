@@ -5,6 +5,6 @@ namespace WebData.Models
     public class Identity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
+        public int Id { get; set; }
     }
 }

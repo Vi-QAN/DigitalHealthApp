@@ -10,10 +10,13 @@
         public int? AccessorId { get; set; }
     }
 
-    public class GetInformationRequest
+    public class AddFileNoteRequest
     {
-        public int UserId { get; set; }
+        public string OwnerKey { get; set; }
+        public string AccessorKey { get; set; }
+        public string Content { get; set; }
     }
+
     /*public class ConversationRequest
     {
         public Guid DoctorId { get; set; }

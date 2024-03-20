@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Hosting;
+using System.Xml;
 using WebData.Models;
 
 namespace WebData.Configurations
@@ -10,22 +11,39 @@ namespace WebData.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable("Users").HasKey(x => x.UserId);
-            builder.Property(x => x.UserId).ValueGeneratedOnAdd();
+            builder.ToTable("Users").HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.Property(x => x.PublicKey).IsRequired();
 
             builder
-                .HasMany(x => x.AccessedRecords)
-                .WithMany(x => x.OwnedRecords)
+                .HasMany(x => x.AsOwnerRecords)
+                .WithMany(x => x.AsAccessorRecords)
                 .UsingEntity<AuthorizationRecord>(
-                    r => { 
-                        r.HasKey(x => new { x.OwnerId, x.AccessorId });
-                        r.HasOne<User>().WithMany(e => e.AuthorizationRecords);
-                        r.HasOne<User>().WithMany(e => e.AuthorizationRecords);
+                    l => l.HasOne<User>().WithMany().HasForeignKey("AccessorId").OnDelete(DeleteBehavior.NoAction),
+                    r => r.HasOne<User>().WithMany().HasForeignKey("OwnerId").OnDelete(DeleteBehavior.NoAction),
+                    t =>
+                    {
+                        t.HasKey(t => t.Id);
+                        t.Property(t => t.Id).ValueGeneratedOnAdd(); 
                     }
-                     
                 ) ;
+
+            builder
+                .HasMany(x => x.AsOwnerRecords)
+                .WithMany(x => x.AsAccessorRecords)
+                .UsingEntity<FileAuthorizationRecord>(
+                    l => l.HasOne<User>().WithMany().HasForeignKey("AccessorId").OnDelete(DeleteBehavior.NoAction),
+                    r => r.HasOne<User>().WithMany().HasForeignKey("OwnerId").OnDelete(DeleteBehavior.NoAction),
+                    t =>
+                    {
+                        t.HasKey(t => t.Id);
+                        t.Property(t => t.Id).ValueGeneratedOnAdd();
+                    }
+                ); 
         }
     }
+
+
 
     /*public class DoctorConfiguration : IEntityTypeConfiguration<Doctor>
     {

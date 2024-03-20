@@ -9,7 +9,15 @@
     public class AuthorizationRequest
     {
         public string OwnerId { get; set; }
-        public string AccesserId { get; set; }
+        public string AccessorId { get; set; }
     }
+
+    public class FileAuthorizationRequest
+    {
+        public int OwnerId { get; set; }
+        public int AccessorId { get; set; }
+        public int FileId { get; set; }
+    }
+
 
 }

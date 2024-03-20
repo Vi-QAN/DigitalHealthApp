@@ -11,21 +11,36 @@ namespace WebData.Models
         public string? HomeAddress { get; set; }
         public string? Phone { get; set; }
         
-        public string ContractAddress { get; set; }
+        public string PublicKey { get; set; }
         
         /*public virtual IEnumerable<Conversation> Conversations { get; set; }*/
-        public virtual IEnumerable<Information> Information { get; set; }
-        public virtual IEnumerable<User> OwnedRecords { get; set; }
-        public virtual IEnumerable<User> AccessedRecords { get; set; }
-        public virtual IEnumerable<AuthorizationRecord> AuthorizationRecords { get; set; }
+        public virtual IEnumerable<FileInformation> FileInformation { get; set; }
+        public virtual IEnumerable<User> AsOwnerRecords { get; set; }
+        public virtual IEnumerable<User> AsAccessorRecords { get; set; }
+
+        public virtual IEnumerable<ActionLog> ActionLogs { get; set; }
+        public virtual IEnumerable<Notification> Notifications { get; set; }
+        public virtual IEnumerable<FileNote> FileNotes { get; set; }
     }
 
-    public class AuthorizationRecord
+    public class AuthorizationRecord : Identity
     {
         public int OwnerId { get; set; }
         public int AccessorId { get; set; }
+        public bool IsAuthorized { get; set; }  
+        public DateTime AuthorizedDate { get; set; }
+    }
+
+    public class FileAuthorizationRecord : Identity
+    {
+        public int OwnerId { get; set; }
+        public int AccessorId { get; set; }
+        public DateTime AuthorizedDate { get; set ; }
+
         public bool IsAuthorized { get; set; }
-        
+        public int FileInformationId { get; set; }
+
+        public virtual FileInformation FileInformation { get; set; }
     }
 
     /*public class Patient : User { 

@@ -1,4 +1,5 @@
 ﻿using HealthSharer.Models;
+using System.Text.Json;
 using WebData.Models;
 
 namespace HealthSharer.Extensions
@@ -28,5 +29,18 @@ namespace HealthSharer.Extensions
                     .ToList()
             };
         }
+
+        public static string Serialize(this List<AddJSONFileFromTextContent> content)
+        {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(content, options);
+            return jsonString;
+        }
+
+        public static List<AddJSONFileFromTextContent> Deserialize(this string content)
+        {
+            return JsonSerializer.Deserialize<List<AddJSONFileFromTextContent>>(content);
+        }
+
     }
 }

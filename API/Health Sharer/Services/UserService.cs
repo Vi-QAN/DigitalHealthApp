@@ -14,13 +14,14 @@ namespace HealthSharer.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IContractService _contractService;
-       
-        public UserService(IUserRepository userRepository, IContractService contractService) {
+
+        public UserService(IUserRepository userRepository, IContractService contractService)
+        {
             _userRepository = userRepository;
             _contractService = contractService;
         }
 
-        public GetUserResponse GetUser(int id)
+            public GetUserResponse GetUser(int id)
         {
             var user = _userRepository.GetUserById(id);
 
@@ -31,8 +32,9 @@ namespace HealthSharer.Services
 
             return new GetUserResponse()
             {
-                UserId = user.UserId,
-                Key = user.ContractAddress
+                UserId = user.Id,
+                Key = user.PublicKey,
+                Name = user.Name,
             };
         }
 
@@ -47,122 +49,38 @@ namespace HealthSharer.Services
 
             return new GetUserResponse()
             {
-                UserId = user.UserId,
-                Key = user.ContractAddress,
+                UserId = user.Id,
+                Key = user.PublicKey,
+                Name = user.Name,
             };
         }
 
         /*public int UpdateUser(AddUserRequest request)
         {
-            var user = _userRepository.GetUserByContract(request.ContractAddress);
+            var user = _userRepository.GetUserByContract(request.PublicKey);
 
             if (user == default)
             {
                 throw new NotFoundException("User not found");
             }
 
-            user.ContractAddress = request.ContractAddress;
+            user.PublicKey = request.PublicKey;
             
             _userRepository.UpdateUser(user);
 
             return user.UserId;
         }*/
 
-        public int AddAuthorization(AuthorizationRequest request)
-        {
-            var owner = _userRepository.GetUserByAddress(request.OwnerId);
-            var accessor = _userRepository.GetUserByAddress(request.AccesserId);
-            
-            if (owner == default)                
-                throw new NotFoundException("Owner Not Found");
 
-            if (accessor == default)
-                throw new NotFoundException("Accesser Not Found");
-
-            var record = _userRepository.GetAllAuthorizationRecords()
-                .FirstOrDefault(r => r.AccessorId == accessor.UserId 
-                                    && r.OwnerId == owner.UserId);
-
-            if (record == default)
-            {
-                var newRecord = new AuthorizationRecord()
-                {
-                    OwnerId = owner.UserId,
-                    AccessorId = accessor.UserId,
-                    IsAuthorized = true
-                };
-
-                _userRepository.AddAuthorizationRecord(newRecord);
-                _userRepository.SaveChanges();
-                
-                return newRecord.AccessorId;
-            }
-            
-            record.IsAuthorized = true;
-            _userRepository.UpdateAuthorizationRecord(record);
-            _userRepository.SaveChanges();
-
-            return accessor.UserId;
-        }
-
-        public int RemoveAuthorization(AuthorizationRequest request)
-        {
-            var owner = _userRepository.GetUserByAddress(request.OwnerId);
-            var accessor = _userRepository.GetUserByAddress(request.AccesserId);
-
-            if (owner == default)
-                throw new NotFoundException("Owner Not Found");
-
-            if (accessor == default)
-                throw new NotFoundException("Accesser Not Found");
-
-            var record = _userRepository.GetAllAuthorizationRecords()
-                .FirstOrDefault(r => r.AccessorId == accessor.UserId
-                                    && r.OwnerId == owner.UserId);
-
-            if (record == default)
-                throw new NotFoundException("User has never been authorized");
-
-            record.IsAuthorized = false;
-            _userRepository.UpdateAuthorizationRecord(record);
-            _userRepository.SaveChanges();
-
-            return accessor.UserId;
-        }
-
-        public List<GetAuthorizationResponse> GetAuthorization(int userId)
-        {
-            var user = _userRepository.GetUserById(userId);
-            var users = _userRepository.GetAllUsers();
-
-            if (user == default)
-                throw new NotFoundException("User not found");
-
-            return _userRepository
-                .GetAllAuthorizationRecords()
-                .Where(r => r.OwnerId == userId && r.IsAuthorized == true)
-                .Join(
-                    users,
-                    record => record.AccessorId,
-                    user => user.UserId,
-                    (record, user) => new GetAuthorizationResponse()
-                    {
-                        AccessorId = record.AccessorId,
-                        AccessorKey = user.ContractAddress,
-                        Name = user.Name,
-                        IsAuthorized = record.IsAuthorized,
-                    }
-                ).ToList();
-        }
 
         public GetUserResponse Signup(SignupRequest request)
         {
-            var user = _userRepository.GetUserByContract(request.Key);
+            var user = _userRepository.GetUserByAddress(request.Key);
             if (user != default)
             {
                 return new GetUserResponse()
                 {
-                    UserId = user.UserId,
+                    UserId = user.Id,
                     Key = request.Key,
                 };
             }
@@ -173,7 +91,7 @@ namespace HealthSharer.Services
             var newUser = new User()
             {
                 Name = request.UserName,
-                ContractAddress = request.Key,
+                PublicKey = request.Key,
             };
             _userRepository.AddUser(newUser);
 
@@ -181,7 +99,7 @@ namespace HealthSharer.Services
 
             return new GetUserResponse()
             {
-                UserId = newUser.UserId,
+                UserId = newUser.Id,
                 Key = request.Key,
             };
         }
@@ -191,12 +109,13 @@ namespace HealthSharer.Services
             var users = _userRepository.GetAllUsers()
                 .Select(u => new GetUserResponse()
                 {
-                    UserId = u.UserId,
-                    Key = u.ContractAddress,
+                    UserId = u.Id,
+                    Key = u.PublicKey,
                     Name = u.Name,
                 }).ToList();
 
             return users;
         }
+
     }
 }

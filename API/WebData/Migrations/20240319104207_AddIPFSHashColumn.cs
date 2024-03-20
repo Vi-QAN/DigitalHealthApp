@@ -5,14 +5,14 @@
 namespace WebData.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFileTypeToInformation : Migration
+    public partial class AddIPFSHashColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "FileType",
-                table: "Information",
+                name: "IPFSHash",
+                table: "Attachments",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -22,8 +22,8 @@ namespace WebData.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "FileType",
-                table: "Information");
+                name: "IPFSHash",
+                table: "Attachments");
         }
     }
 }
