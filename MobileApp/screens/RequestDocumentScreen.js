@@ -6,9 +6,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 
 export default function RequestDocumentScreen({navigation}) {
-    
-
-    
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ flex: 1, width: '100%', alignItems: 'center'}}>

@@ -6,8 +6,8 @@ export default function DICOMScreen ({navigation, route}) {
     const webViewRef = useRef(null);
     const owner = route.params.key;
     const fileHash = route.params.fileHash;
-    const baseURI = process.env.EXPO_PUBLIC_WEB_ENDPOINT;
-    const uri = `${baseURI}?owner=${owner}&accessor=${owner}&fileHash=${fileHash}`;
+    const baseURI = "https://vi-qan.github.io/DicomViewer";
+    const uri = `${baseURI}/?fileHash=${fileHash}&owner=${owner}&accessor=${owner}`;
     const encodedUri = encodeURI(uri);
     
     useEffect(() => {
@@ -18,14 +18,15 @@ export default function DICOMScreen ({navigation, route}) {
          <WebView
             ref={webViewRef}
             style={styles.container}
-            source={{ uri:  uri}}
+            source={{ uri: uri }}
+            originWhitelist={["*"]}
             javaScriptEnabled={true}
-            onMessage={(event) => {
-                const data = JSON.parse(event.nativeEvent.data);
-                alert(data.key);
-            }}
-            onHttpError={err => console.log(err)}
-        />
+            domStorageEnabled={true}
+            pullToRefreshEnabled={true}        
+            webviewDebuggingEnabled={true}
+            mixedContentMode={'always'}
+            allowUniversalAccessFromFileURLs={true}
+            scrollEnabled={true}/>
       );
 }
 

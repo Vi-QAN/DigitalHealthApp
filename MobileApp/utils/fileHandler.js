@@ -87,7 +87,7 @@ export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
 // File Information Requests
 ////////////////////////////////////////
 export const getFileInfoByOwner = async (owner) => {
-    return await fetch(baseUrl + '/information/' + owner, {
+    return await fetch(baseUrl + '/fileinformation/' + owner, {
         method: "GET",
         headers: headers
     }).then(response => response.json())
@@ -95,7 +95,7 @@ export const getFileInfoByOwner = async (owner) => {
 }
 
 export const getFileInfoByAccessor = async (accessor) => {
-    return await fetch(baseUrl + '/information/accessor/' + accessor, {
+    return await fetch(baseUrl + '/fileinformation/accessor/' + accessor, {
         method: "GET",
         headers: headers,
     }).then(response => response.json())
@@ -106,7 +106,7 @@ export const getFileInfoByAccessor = async (accessor) => {
 // File Content Requests
 ///////////////////////////////////
 export const savePlainFilesInformation = (metadata) => {
-    fetch('http://localhost:5273/api/Information', {
+    fetch('http://localhost:5273/api/fileinformation', {
         method: "POST",
         headers: {
             "Content-type": "application/json"
@@ -126,8 +126,29 @@ export const saveEncryptedFiles = (formData) => {
       .catch(error => console.error('Error:', error));
 }
 
-export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor) => {
+export const getHL7File = async (fileHash, owner, accessor) => {
     if (!owner || !accessor) return; 
+    const response =  await getEncryptedFile(fileHash, owner, accessor)
+    return await response.json();
+}
+
+export const getRegularFile = async (fileHash, owner, accessor) => {
+    if (!owner || !accessor) return; 
+    const response =  await getEncryptedFile(fileHash, owner, accessor)
+    
+    // Parse content disposition header to get the file name
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const fileName = contentDisposition
+        ? contentDisposition.split('filename=')[1].trim()
+        : new URL(response.url).searchParams.get('fileName') || 'downloadedFile.txt';
+    const contentType = response.headers.get('Content-Type');
+    // Create a new Blob from the response's body
+    const blob = await response.blob();
+
+    return { blob, fileName, contentType }
+}
+
+const getEncryptedFile = async (fileHash, owner, accessor) => {
     const queryParams = new URLSearchParams();
     queryParams.append("owner", owner);
     queryParams.append("accessor", accessor);
@@ -136,28 +157,76 @@ export const getEncryptedFile = async (fileHash, fileExtension, owner, accessor)
     try {
         const response = await fetch(url, {
             method: 'GET',
-            headers: headers,
+            headers: {
+                "ngrok-skip-browser-warning" : "0"
+            },
         }).catch(err => console.log(err));
     
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        if (fileExtension === 'hl7'){
-            return await response.json();
-        }
-        
-        // Parse content disposition header to get the file name
-        const contentDisposition = response.headers.get('Content-Disposition');
-        const fileName = contentDisposition
-            ? contentDisposition.split('filename=')[1].trim()
-            : new URL(response.url).searchParams.get('fileName') || 'downloadedFile.txt';
+        return response;
 
-        // Create a new Blob from the response's body
-        const blob = await response.blob();
-    
-        return { blob, fileName }
+        
     } catch (err) {
         console.log(err)
     }
+}
+
+export const uploadMedicalRequest = async ({data}) => {
+    return await fetch(`${baseUrl}/file/upload/medicalrequest`, {
+        method: "POST",
+        headers: headers,
+        body: data
+    })
+    .then(data => console.log(data))
+    .catch(err => console.error(err));
+}
+
+export const uploadWearableData = async (data) => {
+    return await fetch(`${baseUrl}/file/upload/wearabledata`, {
+        method: "POST",
+        headers: headers,
+        body: data
+    })
+    .then(result => console.log(result.status))
+    .catch(err => console.error(err));
+}
+
+export const deleteFile = async (fileId) => {
+    const url = `${baseUrl}/file/${fileId}`;
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: headers
+        }).catch(err => console.log(err));
+    
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+/////////////////////////////////////////
+// Notification Request 
+////////////////////////////////////////
+export const getNotifications = async (userId) => {
+    return await fetch(`${baseUrl}/notifications/?userId=${userId}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(result => result.json())
+    .catch(err => console.error(err));
+}
+
+export const updateNotification = async (id) => {
+    return await fetch(`${baseUrl}/notifications/${id}`, {
+        method: "PUT",
+        headers: headers,
+    })
+    .catch(err => console.error(err));
 }

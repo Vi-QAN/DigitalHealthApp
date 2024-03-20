@@ -7,23 +7,23 @@ function useChartDataContext () {
     const [ bloodPressureData, setBloodPressureData ] = useState([]);
     const [ oxygenLevelData, setOxygenLevelData ] = useState([]);
     const [ heartbeatData, setHeartbeatData ] = useState([]);
-    const [ filterMode, setFilterMode ] = useState('day');
-
-    const subtractHours = (date, hours) => {
-        date.setHours(date.getHours() - hours);
-        return date;
-    }
+    const [ filterMode, setFilterMode ] = useState('Daily');
 
     const subtractDays = (date, days) => {
         date.setDate(date.getDate() - days);
         return date;
     }
 
-    useEffect(() => {
-        const hourFilter = subtractHours(new Date(), 20);
-        const dayFilter = subtractDays(new Date(), 10);
-        const filteredData = filterMode === 'day' ? sampleData.filter(item => new Date(item.datetime) > dayFilter) : sampleData.filter(item => new Date(item.datetime) > hourFilter);
+    const subtractMonths = (date, months) => {
+        date.setMonth(date.getMonth() - months);
+        return date;
+    }
 
+    const filterData = (date) => {
+        return sampleData.filter(item => new Date(item.datetime) > date);
+    }
+
+    const mapData = (filteredData) => {
         const bpData = filteredData.map((item, index) => { 
             return { value: item.blood_pressure, datetime: item.datetime }
         })
@@ -36,13 +36,45 @@ function useChartDataContext () {
         setBloodPressureData(bpData);
         setOxygenLevelData(olData);
         setHeartbeatData(hbData);
+    }
+
+    const handleChangeFilter = (filter) => {
+        const currentDateTime = new Date();
+        let date;
+
+        switch(filter){
+            case 'Daily':
+                date = subtractDays(currentDateTime, 1);
+                break;
+            case 'Weekly':
+                date = subtractDays(currentDateTime, 7);
+                break;
+            case 'Monthly':
+                date = subtractMonths(currentDateTime, 1);
+                break;
+            case 'Yearly':
+                date = subtractMonths(currentDateTime, 12);
+                break;
+            default:
+                break;
+        }
+
+        const filteredData = filterData(date);
+        mapData(filteredData);
+        setFilterMode(filter); 
+    }
+
+    useEffect(() => {
+        handleChangeFilter(filterMode);
     },[])
 
     return {
+        sampleData,
         bloodPressureData,
         oxygenLevelData,
         heartbeatData,
-        filterMode
+        filterMode,
+        handleChangeFilter
     }
 }
 

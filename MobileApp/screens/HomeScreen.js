@@ -1,53 +1,67 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import ChartComponent from '../components/Screens/HomeScreen/ChartComponent';
 import InfoSection from '../components/Screens/HomeScreen/InfoSection';
-
-import { AuthConsumer } from '../hooks/useAuth';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-
-
+import { ChartDataConsumer } from '../hooks/useChartData';
+import { DefaultColors, DefaultShadow } from '../constants/styles';
 
 export default function HomeScreen({navigation}) {
-    const { logout } = AuthConsumer();
-
+    const { handleChangeFilter, filterMode } = ChartDataConsumer();
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            <TouchableOpacity onPress={() => logout()}>
-                <MaterialCommunityIcons name={'logout'} size={18} color={'black'}/>
-            </TouchableOpacity>
-            <InfoSection />
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('RequestRecords')}} >
-                    <Text>Request Document</Text>    
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('ExportData')}}>
-                    <Text>Export Data</Text>    
-                </TouchableOpacity>
-            </View>
-            <ChartComponent />
-        </ScrollView>
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.contentContainer}>
+                
+                <InfoSection />
+                
+                <ScrollView style={{paddingVertical: 10}}  horizontal showsHorizontalScrollIndicator={false}>
+                    {['Daily', 'Weekly','Monthly','Yearly'].map((item,index) => 
+                        <TouchableOpacity key={index} 
+                            style={{
+                                ...styles.filterContainer,
+                                backgroundColor: filterMode === item ? DefaultColors.navy : DefaultColors.whiteNavy,
+                                shadowColor: filterMode === item ? DefaultColors.navy : DefaultColors.lighterNavy
+                            }} 
+                            onPress={() => handleChangeFilter(item)} >
+                            <Text style={{
+                                color: filterMode === item ? 'white' : DefaultColors.navy
+                            }}>{item}</Text>    
+                        </TouchableOpacity>
+                    )}   
+                </ScrollView>
+                <ChartComponent />
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-      display: 'flex',
       flex: 1,
       backgroundColor: 'white',
-      paddingHorizontal: 20,
-      paddingVertical: 20,
     },
 
     contentContainer: {
-        justifyContent: 'space-between'
+        paddingHorizontal: 10
 
+    },
+
+    filterContainer: {
+        marginLeft: 5,
+        marginRight: 7, 
+        marginTop: 20, 
+        paddingHorizontal: 20, 
+        paddingVertical: 10, 
+        backgroundColor: DefaultColors.whiteNavy,
+        ...DefaultShadow,
+        shadowColor: DefaultColors.lighterNavy,
+        shadowRadius: 5,
+        borderRadius: '30%', 
     },
 
     buttonContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginVertical: 30,
+        marginTop: 20,
         width: '100%',
         backgroundColor: 'white',
         justifyContent: 'space-between'
@@ -58,15 +72,13 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         width: '48%',
         alignItems: 'center',
-        shadowColor: '#050a18',
+        ...DefaultShadow,
+        shadowColor: DefaultColors.navy,
+        shadowOpacity: 0.5,
         shadowOffset: {
             width: 0,
             height: 1,
         },
-        backgroundColor: 'white',
-        shadowOpacity: 1,
-        shadowRadius: 2,
-        borderRadius: 5,
     }
     
 });

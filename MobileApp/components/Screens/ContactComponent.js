@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import {View, 
         Text, 
         Drawer, 
@@ -9,6 +9,8 @@ import {View,
         GridView,
         GridList,
         GridListItem} from 'react-native-ui-lib';
+
+import { DefaultShadow, DefaultColors } from '../../constants/styles';
 
 export default function ContactComponent({navigation, authorizationList, onRevokeAuthorization}){
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -38,10 +40,10 @@ export default function ContactComponent({navigation, authorizationList, onRevok
     const renderRow = ({item, key}) => {
       return (
         <Drawer
-          rightItems={[{text: 'Revoke', background: Colors.blue30, onPress: () => handleRevokeAuthorization(item)}, ]}
-          leftItem={{text: 'Delete', background: Colors.red30, onPress: () => console.log('delete pressed')}}
+          
+          rightItems={[{text: 'Revoke', background: DefaultColors.navy, onPress: () => handleRevokeAuthorization(item)}, ]}
           itemsMinWidth={50}
-          style={{ marginRight: 20 }}
+          style={{marginHorizontal: 10}}
           key={key}
           
         >
@@ -50,7 +52,6 @@ export default function ContactComponent({navigation, authorizationList, onRevok
             paddingH-10
             paddingV-10
             br20
-            onPress={() => navigation.navigate("Message")}
             >
             <ListItem.Part marginR-10 >
                 <Avatar></Avatar>
@@ -72,6 +73,7 @@ export default function ContactComponent({navigation, authorizationList, onRevok
 
     return authorizationList ? (
       <GridList style={styles.container}
+          contentContainerStyle={styles.drawer}
           data={authorizationList}
           numColumns={1}
           renderItem={(item, index) => renderRow(item, index)}
@@ -83,7 +85,7 @@ export default function ContactComponent({navigation, authorizationList, onRevok
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    paddingTop: 10,
   },
   messageCount: {
     backgroundColor: '#130f55',
@@ -92,5 +94,9 @@ const styles = StyleSheet.create({
     height: 20,
     marginTop: 10,
     alignSelf: 'flex-end'
+  },
+  drawer: {
+    ...DefaultShadow,
+    marginRight: 10,
   }
 });

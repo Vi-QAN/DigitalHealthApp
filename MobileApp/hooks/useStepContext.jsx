@@ -11,7 +11,7 @@ function useStepContext() {
     const [ steps, setSteps ] = useState([]);
     const [ currentStep, setCurrentStep ] = useState(null);
     const [ provider, setProvider ] = useState({id: '',name: '', address: ''});
-    const [ patient, setPatient ] = useState({name: user.name, address: '', phone: ''});
+    const [ patient, setPatient ] = useState({id: user.userId, name: user.name, address: '', phone: '', idImage: null});
     const [ documentList, setDocumentList ] = useState([]);
 
     return {

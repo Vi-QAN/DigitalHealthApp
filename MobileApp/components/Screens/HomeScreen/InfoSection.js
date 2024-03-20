@@ -4,6 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { AuthConsumer } from '../../../hooks/useAuth';
 import { Image } from 'react-native-ui-lib';
 
+import { DefaultColors, DefaultShadow } from '../../../constants/styles';
+
 export default function InfoSection () {
     const { user } = AuthConsumer();
 
@@ -13,7 +15,7 @@ export default function InfoSection () {
 
     return (
         <View style={styles.container}>
-                <Image style={styles.image} source={{uri: 'https://github.com/wix/react-native-ui-lib/blob/master/demo/src/assets/images/card-example.jpg?raw=true'}} />
+                <Image style={styles.image} source={{uri: 'https://images.unsplash.com/photo-1707655096648-1655344fc4d5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}} />
                 <View style={styles.infoContainer}>
                     <Text style={{fontSize: 24, color: '#070f25'}}>{user.name}</Text>
                     <Text style={{fontSize: 12, color: '#2c3144'}}>{'Patient'}</Text>
@@ -29,15 +31,9 @@ const styles = StyleSheet.create({
         display: 'flex',
         height: 140,
         width: '100%',
-        shadowColor: '#050a18',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
+        ...DefaultShadow,
+        marginTop: 15,
         backgroundColor: 'white',
-        shadowOpacity: 1,
-        shadowRadius: 5,
-        borderRadius: 5,
         flexDirection: 'row',
     },
 

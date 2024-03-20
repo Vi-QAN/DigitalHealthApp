@@ -1,5 +1,5 @@
 
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, TouchableOpacity, View } from 'react-native';
 
 import ContactComponent from '../components/Screens/ContactComponent';
 
@@ -12,7 +12,10 @@ import { useContractWrite } from 'wagmi';
 
 import DigitalHealthContract from '../contracts/DigitalHealth.json';
 import { AuthConsumer } from '../hooks/useAuth';
-import { Button } from 'react-native-ui-lib';
+import { DefaultColors, DefaultShadow } from '../constants/styles';
+
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 const abi = DigitalHealthContract['abi']
 
 export default function ConversationScreen({navigation}){
@@ -47,9 +50,7 @@ export default function ConversationScreen({navigation}){
         try {
             await writeAsync(authorizeAccessorObject);
             await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
-            const list = authorizationList;
-            list.push({ accessorId: accessorInfo.userId, accessorKey: accessorInfo.key, name: accessorInfo.name, isAuthorized: true});
-            setAuthorizationList(list);
+            setAuthorizationList([...authorizationList, { accessorId: accessorInfo.userId, accessorKey: accessorInfo.key, name: accessorInfo.name, isAuthorized: true}]);
         } catch(err) {
             console.log(err);
         }
@@ -74,21 +75,21 @@ export default function ConversationScreen({navigation}){
     },[])
 
     return dropdownData ? (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <SearchableDropdown 
                 items={dropdownData}
                 onItemSelect={(item) => {
                     setText(item.name);
                     setSelectedItem(item);
                 }}
-                containerStyle={{ padding: 5 }}
+                containerStyle={{ padding: 5, marginHorizontal: 5 }}
                 itemsContainerStyle={{ maxHeight: 140 }}
                 resetValue={false}
                 itemStyle={{
                     padding: 10,
                     marginTop: 2,
-                    backgroundColor: '#ddd',
-                    borderColor: '#bbb',
+                    backgroundColor: 'white',
+                    borderColor: DefaultColors.whiteNavy,
                     borderWidth: 1,
                     borderRadius: 5,
                 }}
@@ -99,7 +100,7 @@ export default function ConversationScreen({navigation}){
                         style: {
                             padding: 12,
                             borderWidth: 1,
-                            borderColor: '#ccc',
+                            borderColor: DefaultColors.gray,
                             borderRadius: 5,
                         },
                         value: text,
@@ -119,9 +120,13 @@ export default function ConversationScreen({navigation}){
                     authorizationList={authorizationList}
                     onRevokeAuthorization={handleRevokeAuthorization}
                 />}
-            <Button style={styles.button} label="Authorize" onPress={handleAuthorization} />
+            {text.length !== 0 && <TouchableOpacity style={styles.button}onPress={handleAuthorization} >
+                <View style={{justifyContent: 'center', flex: 1, alignItems: 'center'}}>
+                    <AntDesign name={'check'} size={20} color={'white'} />
+                </View>
+            </TouchableOpacity>}
         
-        </View>
+        </SafeAreaView>
 
     ) : null;
 }
@@ -131,9 +136,19 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         paddingHorizontal:10,
+        backgroundColor: "white"
     },
     button: {
-        marginBottom: 10
+        marginBottom: 10,
+        width: 55,
+        height: 55,
+        backgroundColor: DefaultColors.navy,
+        position: 'absolute',
+        bottom: 3,
+        right: 10,
+        ...DefaultShadow,
+        borderRadius: '50%',
+
     },
 
     buttonText: {

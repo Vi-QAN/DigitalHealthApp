@@ -1,13 +1,12 @@
-import { ScrollView, View, StyleSheet, Text } from "react-native"
+import { ScrollView, View, StyleSheet, Text, Image } from "react-native"
 import { StepContextConsumer } from "../../../hooks/useStepContext"
 import { TextField, Button } from "react-native-ui-lib";
+
 
 export default function SubmitSection ({navigation}) {
     const { provider, patient, documentList} = StepContextConsumer();
 
-    const handleSendRequest = () => {
-
-    } 
+     
 
     return (
         <ScrollView>
@@ -51,6 +50,12 @@ export default function SubmitSection ({navigation}) {
                     editable={false}
                     value={patient.phone}
                 />
+                <View style={styles.textFieldContainer}>
+                    <Text style={{fontWeight: '500', marginBottom: 5}}>Identification Document</Text>
+
+                    {patient.idImage && <Image source={{ uri: patient.idImage.assets[0].uri }} style={{ width: '100%', height: 200 }} /> }
+
+                </View>
             </View>
             <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Requested Documents</Text>
@@ -73,21 +78,6 @@ export default function SubmitSection ({navigation}) {
                         )
                     }) 
                 }
-            </View>
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
-                <Button 
-                    backgroundColor='white' 
-                    color='black' 
-                    outlineColor='black' 
-                    label="Cancel" 
-                    onPress={navigation.goBack}
-                    style={styles.buttonStyle}
-
-                />
-                <Button
-                    style={styles.buttonStyle}
-                    label="Send" 
-                    onPress={handleSendRequest}/>
             </View>
         </ScrollView>
     )

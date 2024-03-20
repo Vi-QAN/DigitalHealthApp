@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
 import { TextField, Button, Dialog } from 'react-native-ui-lib';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import { ChartDataConsumer } from '../hooks/useChartData';
+
+import { uploadWearableData } from '../utils/fileHandler';
+import { AuthConsumer } from '../hooks/useAuth';
+import { DefaultColors } from '../constants/styles';
 const DataTypeMapping = {
     'All' : 0,
     'Heart Rate' : 1,
@@ -21,10 +25,8 @@ const DropdownData = [
 ]
 
 export default function ExportDataScreen({navigation}){
-    const { bloodPressureData,
-        oxygenLevelData,
-        heartbeatData,
-        filterMode} = ChartDataConsumer();
+    const { user } = AuthConsumer();
+    const { sampleData } = ChartDataConsumer();
     const [ date, setDate ] = useState({state: 'from', from: '', to: ''});
     const [ pickerVisible, setPickerVisible ] = useState(false);
     const [ pickedDate, setPickedDate ] = useState(new Date())
@@ -47,7 +49,7 @@ export default function ExportDataScreen({navigation}){
         setPickerVisible(false)
     }
 
-    const processData = (data, dateFrom, dateTo) => {
+    const filterData = (data, dateFrom, dateTo) => {
         const filtered = data.filter(item => {
             const itemDate = new Date(item.datetime);
             if (itemDate < dateFrom || itemDate > dateTo) return false;
@@ -56,34 +58,64 @@ export default function ExportDataScreen({navigation}){
         return filtered
     }
 
-    const handleExportData = () => {
-        if (heartbeatData.length < 1) return;
+    const mapData = (option, data) => {
+        let result = null;
+        switch(DataTypeMapping[option]){
+            case 0:
+                result = data.map((item => { 
+                    return {
+                        dateTime: item.datetime, 
+                        bloodPressure: item.blood_pressure,
+                        heartRate: item.heart_rate,
+                        oxygenLevel: item.oxygen_level
+                    }}
+                ));
+                break;
+            case 1:
+                result = data.map((item => { 
+                    return {
+                        dateTime: item.datetime, 
+                        heartRate: item.heart_rate,
+                    }}
+                ));
+                break;
+            case 2: 
+                result = data.map((item => { 
+                    return {
+                        dateTime: item.datetime, 
+                        bloodPressure: item.blood_pressure,
+                    }}
+                ));
+                break;
+            case 3:
+                result = data.map((item => { 
+                    return {
+                        dateTime: item.datetime, 
+                        oxygenLevel: item.oxygen_level
+                    }}
+                ));
+                break;
+            default:
+                console.log('Case not found');
+        }
+        return result;
+    }
+
+    const handleExportData = async () => {
         const dateFrom = new Date(date.from);
         const dateTo = new Date(date.to);
 
         if (dateFrom > dateTo) return;
         const current = new Date();
         if (dateTo > current) return;
-      
-        let exportedData = { heart_rate: [], blood_pressure: [], oxygen_level: []};
-        switch(DataTypeMapping[selectedDataType]){
-            case 0:
-                exportedData.heart_rate = processData(heartbeatData, dateFrom, dateTo);
-                exportedData.blood_pressure = processData(bloodPressureData, dateFrom, dateTo);
-                exportedData.oxygen_level = processData(oxygenLevelData, dateFrom, dateTo);
-                break;
-            case 1: 
-                exportedData.heart_rate = processData(heartbeatData, dateFrom, dateTo);
-                break;
-            case 2: 
-                exportedData.blood_pressure = processData(bloodPressureData, dateFrom, dateTo);
-                break;
-            case 3:
-                exportedData.oxygen_level = processData(oxygenLevelData, dateFrom, dateTo);
-                break;
-            default:
-                console.log('Case not found');
+        
+        const filteredData = filterData(sampleData, dateFrom, dateTo);
+        const mappedData = mapData(selectedDataType, filteredData);
+        const submission = {
+            ownerId: user.userId,
+            content: mappedData
         }
+        uploadWearableData(submission)
     }
 
     const handleFocus = (state) => {
@@ -92,9 +124,9 @@ export default function ExportDataScreen({navigation}){
     }
 
     return (
-        <View style={styles.container}>
-            <View style={{flex: 1, marginTop: '10%', alignItems: 'center'}}>
-                <Text style={{fontWeight: 500, fontSize: 20, marginBottom: 30}}>Export Your Data</Text>
+        <SafeAreaView style={styles.container}>
+            <View style={{flex: 1, paddingHorizontal: 10, alignItems: 'center'}}>
+                <Text style={{fontWeight: 500, fontSize: 20, marginVertical: 30}}>Export Your Wearable Data</Text>
                 <TextField 
                     containerStyle={{paddingHorizontal: 5, paddingVertical: 10, borderBottomColor: 'black', borderBottomWidth: 0.2, width: '100%'}}
                     placeholder="Choose a date"
@@ -160,14 +192,15 @@ export default function ExportDataScreen({navigation}){
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
                 <Button 
                     backgroundColor='white' 
-                    color='black' 
-                    outlineColor='black' 
+                    color={DefaultColors.navy} 
+                    outlineColor={DefaultColors.navy} 
                     label="Cancel" 
                     onPress={() => navigation.navigate('Default')}
                     style={styles.buttonStyle}
 
                 />
                 <Button
+                    backgroundColor={DefaultColors.navy}
                     style={styles.buttonStyle}
                     label="Export" 
                     onPress={handleExportData}/>
@@ -192,13 +225,14 @@ export default function ExportDataScreen({navigation}){
                     justifyContent: 'space-around'}}>
                     <Button 
                         backgroundColor='white' 
-                        color='black' 
-                        outlineColor='black' 
+                        color={DefaultColors.navy} 
+                        outlineColor={DefaultColors.navy} 
                         label="Cancel" onPress={() => setPickerVisible(false)}
                         style={styles.buttonStyle}
                     />
 
                     <Button  
+                        backgroundColor={DefaultColors.navy}
                         label="Done" 
                         onPress={() => handleConfirmDatePick()}                  
                         style={styles.buttonStyle}
@@ -207,7 +241,7 @@ export default function ExportDataScreen({navigation}){
                 
                     
             </Dialog>
-        </View>
+        </SafeAreaView>
     )
 }
 

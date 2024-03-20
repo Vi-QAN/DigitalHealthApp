@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { LineChart, PieChart, BarChart } from "react-native-gifted-charts";
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChartDataConsumer } from '../../../hooks/useChartData';
+import { DefaultColors } from '../../../constants/styles'
 
 const ColorMapping = {
   'Low': '#FF7F97',
@@ -82,16 +83,15 @@ function HeartRateChart({data, chartStyle, gradient}){
     })
     setHeartRateData(formatted);
     setYAxisLabels(generateYAxisLabels());
-  },[])
+  },[data])
 
   return heartRateData && yAxisLabels && (
-    <View
-      style={{
-        padding: 16,
-        borderRadius: 5,
-        backgroundColor: '#232B5D',
-        width: '100%'
-      }}>
+    <View style={chartStyle}>
+        <LinearGradient
+                colors={[DefaultColors.navy, '#3c3c79']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1}}
+                style={gradient}>
       <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
         Heart Rate
       </Text>
@@ -123,7 +123,7 @@ function HeartRateChart({data, chartStyle, gradient}){
         />
       </View>
       {renderLegendComponent()}
-
+      </LinearGradient>
     </View>
   );
 }
@@ -132,7 +132,7 @@ function BloodPressureChart({ data, chartStyle, gradient}){
     return data.length > 0 ?  (
         <View style={chartStyle}>
             <LinearGradient
-                colors={['#130f55', '#3c3c79']}
+                colors={[DefaultColors.navy, '#3c3c79']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1}}
                 style={gradient}> 
@@ -206,17 +206,6 @@ function BloodPressureChart({ data, chartStyle, gradient}){
 function OxygenLevelChart ({data, chartStyle, gradient}) {
   const [ activeSection, setActiveSection  ] = useState(null); 
   const [ oxygenLevelData, setOxygenLevelData ] = useState([]);
-  const pieData = [
-    {
-      value: 47,
-      color: '#009FFF',
-      gradientCenterColor: '#006DFF',
-      focused: true,
-    },
-    {value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE'},
-    {value: 16, color: '#BDB2FA', gradientCenterColor: '#8F80F3'},
-    {value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97'},
-  ];
 
   const renderLegendComponent = () => {
     return (
@@ -290,47 +279,46 @@ function OxygenLevelChart ({data, chartStyle, gradient}) {
     const formatted = calculatePercentage();
     setOxygenLevelData(formatted);
     setActiveSection(formatted[0]);
-  },[])
+  },[data])
 
   
   return oxygenLevelData.length > 0 && activeSection && (
    
-      <View
-        style={{
-          margin: 20,
-          padding: 16,
-          borderRadius: 5,
-          backgroundColor: '#232B5D',
-          width: '100%'
-        }}>
-        <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
-          Oxygen Level
-        </Text>
-        <View style={{padding: 20, alignItems: 'center'}}>
-          <PieChart
-            data={oxygenLevelData}
-            donut
-            focusOnPress
-            onPress={(item) => setActiveSection(item)}
-            showGradient
-            sectionAutoFocus
-            radius={90}
-            innerRadius={60}
-            innerCircleColor={'#232B5D'}
-            centerLabelComponent={() => {
-              return (
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Text
-                    style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
-                    {activeSection.noOfItems}
-                  </Text>
-                  <Text style={{fontSize: 14, color: 'white'}}>Records</Text>
-                </View>
-              );
-            }}
-          />
-        </View>
-        {renderLegendComponent()}
+    <View style={chartStyle}>
+        <LinearGradient
+                colors={[DefaultColors.navy, '#3c3c79']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1}}
+                style={gradient}>
+          <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+            Oxygen Level
+          </Text>
+          <View style={{padding: 20, alignItems: 'center'}}>
+            <PieChart
+              data={oxygenLevelData}
+              donut
+              focusOnPress
+              onPress={(item) => setActiveSection(item)}
+              showGradient
+              sectionAutoFocus
+              radius={90}
+              innerRadius={60}
+              innerCircleColor={'#232B5D'}
+              centerLabelComponent={() => {
+                return (
+                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Text
+                      style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
+                      {activeSection.noOfItems}
+                    </Text>
+                    <Text style={{fontSize: 14, color: 'white'}}>Records</Text>
+                  </View>
+                );
+              }}
+            />
+          </View>
+          {renderLegendComponent()}
+          </LinearGradient>
       </View>
   );
 }
@@ -338,23 +326,44 @@ function OxygenLevelChart ({data, chartStyle, gradient}) {
 
 
 export default function ChartComponent() {
-  const {heartbeatData, bloodPressureData, oxygenLevelData, filterMode } = ChartDataConsumer();
+  const {heartbeatData, bloodPressureData, oxygenLevelData, filterMode} = ChartDataConsumer();
+  const [ hbChartData, setHBChartData ] = useState([]);
+  const [ olChartData, setOLChartData ] = useState([]);
+  const [ bpChartData, setBPChartData ] = useState([]);
+  const [ onLoad, setOnLoad ] = useState(false);
 
-  const bpData = bloodPressureData.map((item, index) => { 
-    return { label: new Date(item.datetime).toLocaleString(), ...item }
-  })
-  const olData = oxygenLevelData.map((item, index) => { 
-      return { label: new Date(item.datetime).toLocaleString(), ...item }
-  })
-  const hbData = heartbeatData.map((item, index) => {
-      return { label: new Date(item.datetime).toLocaleString(), ...item }
-  })
+  const processData = () => {
+    const bpData = bloodPressureData.map((item, index) => { 
+      const date = new Date(item.datetime)
+      return { label: filterMode === 'Daily' ? date.toLocaleTimeString() : date.toLocaleDateString(), ...item }
+    })
+    const olData = oxygenLevelData.map((item, index) => { 
+        return { ...item }
+    })
+    const hbData = heartbeatData.map((item, index) => {
+      const date = new Date(item.datetime)
+
+        return { label: filterMode === 'Daily' ? date.toLocaleTimeString() : date.toLocaleDateString(), ...item }
+    })
+
+    setHBChartData(hbData);
+    setOLChartData(olData);
+    setBPChartData(bpData);
+    
+  }
+
+  useEffect(() => {
+    setOnLoad(true);
+    
+    processData();
+  },[heartbeatData, bloodPressureData, oxygenLevelData])
+  
 
   return (
     <View style={styles.container}>
-      {hbData.length > 0 && <HeartRateChart data={hbData} chartStyle={styles.chart} gradient={styles.gradient} />}
-      {bpData.length > 0 && <BloodPressureChart data={bpData} chartStyle={styles.chart} gradient={styles.gradient}/>}
-      {olData.length > 0 && <OxygenLevelChart data={olData} chartStyle={styles.chart} gradient={styles.gradient} filterMode={filterMode}/> }
+      {hbChartData.length > 0 ? <HeartRateChart data={hbChartData} chartStyle={styles.chart} gradient={styles.gradient} /> : <ActivityIndicator size={'small'} color={DefaultColors.lighterNavy}/>}
+      {bpChartData.length > 0 && <BloodPressureChart data={bpChartData} chartStyle={styles.chart} gradient={styles.gradient}/>}
+      {olChartData.length > 0 && <OxygenLevelChart data={olChartData} chartStyle={styles.chart} gradient={styles.gradient} /> }
     </View>
   )
 }

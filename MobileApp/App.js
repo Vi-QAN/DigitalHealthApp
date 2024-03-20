@@ -13,20 +13,22 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { AuthConsumer, AuthProvider } from "./hooks/useAuth";
+import { ChartDataProvider } from './hooks/useChartData';
 
 import AlertsScreen from './screens/AlertsScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import FileScreen from './screens/FileScreen';
 import ConversationScreen from './screens/ConversationScreen';
+import HomeScreen from './screens/HomeScreen';
 
 import HomeNavigator from './navigators/HomeNavigator';
+
+import { DefaultColors } from './constants/styles';
 
 
 // Web 3
 const projectId = '0caac0cf0fc25f80bea5b3fdbd2af07f';
-
-
 
 const metadata = {
   name: 'Web3Modal RN',
@@ -100,13 +102,15 @@ const AppNavigator = () => {
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Details') {
+          } else if (route.name === 'Authorization') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Alerts'){
             iconName = focused ? 'bell' : 'bell-outline';
             return <MaterialCommunityIcon name={iconName} size={size} color={color} />
-          } else if (route.name === 'Chat'){
-            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+          } else if (route.name === 'Files'){
+            iconName = focused ? 'file-tray-stacked' : 'file-tray-stacked-outline';
+          } else if (route.name === 'Menu'){
+            iconName = focused ? 'menu' : 'menu-outline';
           }
 
           // Return the icon component with the appropriate name and style
@@ -114,21 +118,22 @@ const AppNavigator = () => {
         },
         headerShown: false,
         
-        tabBarActiveTintColor: "blue",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: DefaultColors.navy,
+        tabBarInactiveTintColor: DefaultColors.gray,
         tabBarStyle: [
           {
-            "display": "flex"
+            "display": "flex",
           },
           null
         ]
         
       })}
     >
-      <Tab.Screen name="Home" component={gestureHandlerRootHOC(HomeNavigator)} />
-      <Tab.Screen name="Details" component={gestureHandlerRootHOC(ConversationScreen)} />
-      <Tab.Screen name='Chat' component={gestureHandlerRootHOC(FileScreen)} />
-      <Tab.Screen name="Alerts" component={AlertsScreen} />
+      <Tab.Screen name="Home" component={gestureHandlerRootHOC(HomeScreen)} />
+      <Tab.Screen name="Authorization" component={gestureHandlerRootHOC(ConversationScreen)} />
+      <Tab.Screen name='Files' component={gestureHandlerRootHOC(FileScreen)} />
+      <Tab.Screen name="Alerts" component={gestureHandlerRootHOC(AlertsScreen)} />
+      <Tab.Screen name="Menu" component={gestureHandlerRootHOC(HomeNavigator)} />
     </Tab.Navigator>
   );
 }
@@ -153,9 +158,12 @@ export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <AuthProvider>
-        <NavigationContainer>
-          <Navigator />        
-        </NavigationContainer>
+        <ChartDataProvider>
+
+          <NavigationContainer>
+            <Navigator />        
+          </NavigationContainer>
+        </ChartDataProvider>
       </AuthProvider>
       
     </WagmiConfig>

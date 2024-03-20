@@ -1,6 +1,7 @@
 import React  from 'react';
 import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import { StepContextConsumer } from "../../../hooks/useStepContext"
+import { DefaultColors } from '../../../constants/styles';
 
 const Circle = ({ index, selectedIndex }) => {
   return (
@@ -8,7 +9,7 @@ const Circle = ({ index, selectedIndex }) => {
       style={
         index === selectedIndex
           ? { ...styles['circle'], backgroundColor: '#fff' }
-          : { ...styles['circle'], backgroundColor: '#2E81D3' }
+          : { ...styles['circle'], backgroundColor: DefaultColors.navy }
       }>
       <Text
         style={
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     },
     line: {
       borderBottomWidth: 1,
-      borderBottomColor: '#2E81D3',
+      borderBottomColor: DefaultColors.navy,
       justifyContent: 'center',
       width: '85%',
       position: 'absolute',
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     },
     circle: {
       borderWidth: 1,
-      borderColor: '#2E81D3',
+      borderColor: DefaultColors.navy,
       borderRadius: 50,
       width: 30,
       height: 30,
@@ -92,6 +93,6 @@ const styles = StyleSheet.create({
     },
     selectedcircleTitle: {
       fontSize: 12,
-      color: '#2E81D3',
+      color: DefaultColors.navy,
     },
 });
