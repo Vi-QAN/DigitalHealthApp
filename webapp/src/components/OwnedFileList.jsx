@@ -17,6 +17,14 @@ const OwnedFileList  = ({ipfs, owner}) => {
       console.log(list);
     }
 
+    const onAddFile = (addedList) => {
+      setFileList([...fileList, ...addedList]);
+    }
+
+    const onDeleteFile = (fileId) => {
+      setFileList(fileList => fileList.filter(i => i.fileId !== fileId));
+    }
+
     useEffect(() => {
       loadFileList();
     },[])
@@ -25,14 +33,14 @@ const OwnedFileList  = ({ipfs, owner}) => {
         
         <Container fluid className='d-flex flex-column mb-3' style={{height: '80%', overflowY: 'scroll'}}>
         { fileList.length > 0 ? 
-          <FileList fileList={fileList} ipfs={ipfs} owner={owner} accessor={owner} />
+          <FileList fileList={fileList} ipfs={ipfs} owner={owner} accessor={owner} onDeleteFile={onDeleteFile}/>
           :
           <Alert variant='light'>You have not been authorized for any file </Alert>
         }
         </Container>
            
         <Container fluid className='d-flex justify-content-end mb-3'>
-          <AddFile ipfs={ipfs} owner={owner} accessor={owner}/>
+          <AddFile ipfs={ipfs} owner={owner} accessor={owner} onAddFile={onAddFile}/>
 
         </Container>   
       </Container>

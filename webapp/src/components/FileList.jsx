@@ -31,7 +31,7 @@ const OpenableFileExtenstionMapping = {
 
 
 
-export const FileList = ({fileList, owner, accessor}) => {
+export const FileList = ({fileList, owner, accessor, onDeleteFile}) => {
     // const { ipfs } = IPFSConsumer();
     const [isHL7FileModalOpen, setIsHL7FileModalOpen] = useState(false);
     const [HL7Content, setHL7Content] = useState(null);
@@ -111,7 +111,7 @@ export const FileList = ({fileList, owner, accessor}) => {
 
     const handleDeleteFile = async (e, item) => {
         const result = await deleteFile(item.fileId);
-        console.log(result);
+        onDeleteFile(item.fileId);
     }
 
     const actionMapping = {
@@ -198,7 +198,7 @@ export const FileList = ({fileList, owner, accessor}) => {
     )
 }
 
-export const AddFile = ({owner, accessor}) => {
+export const AddFile = ({owner, accessor, onAddFile}) => {
     // const { ipfs } = IPFSConsumer(); 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -224,7 +224,9 @@ export const AddFile = ({owner, accessor}) => {
         
             formData.append('owner', JSON.stringify(owner));
             formData.append('accessor', JSON.stringify(accessor));
-            saveEncryptedFiles(formData)
+            const addedFiles = await saveEncryptedFiles(formData);
+            console.log(addedFiles);
+            onAddFile(addedFiles);
         }
         // else {
         //     const result = await saveToIpfs(files, ipfs)

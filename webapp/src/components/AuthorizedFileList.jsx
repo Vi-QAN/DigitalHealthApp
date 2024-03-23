@@ -8,11 +8,20 @@ import { AddFile, FileList } from './FileList';
 
 const AuthorizedFileList = ({accessor}) => {
     const [ fileList, setFileList ] = useState([]);
+    const [ activeItem, setActiveItem ] = useState(null);
   
     const loadFileList = async () => {
       const list = await getFileInfoByAccessor(accessor.userId);
       console.log(list)
       setFileList(list)
+    }
+
+    const onAddFile = (addedList) => {
+      let newFileList = fileList;
+      const infoList = newFileList[activeItem]['informationList']
+      const newInfoList = [ ...infoList, ...addedList ];
+      newFileList[activeItem] = newInfoList;
+      setFileList(newFileList);
     }
 
     useEffect(() => {
@@ -24,23 +33,21 @@ const AuthorizedFileList = ({accessor}) => {
         { fileList.length > 0 ? 
           <Fragment>
             <Form.Label style={{ height: '50px', fontWeight: '500', fontSize: '18px'}}>Authorized File List</Form.Label>
-            <Accordion>
+            <Accordion style={{maxHeight: '100%'}}>
       
             {fileList.map((item, index) => (
-              <Container style={{height: '200px'}}>
-                <Accordion.Item  key={index} eventKey={index} >
-                    <Accordion.Header className='d-flex '>
-                      <Container className='d-flex col'>{item.userName}</Container>
-                      <Container className='d-flex col-10 justify-content-end'>
-                        <AddFile owner={{userId: item.ownerId, key: item.key}} accessor={accessor}/>
+              <Accordion.Item  key={index} eventKey={index} >
+                  <Accordion.Header className='d-flex '>
+                    <Container className='d-flex col'>{item.userName}</Container>
+                    <Container className='d-flex col-10 justify-content-end' onClick={() => setActiveItem(index)}>
+                      <AddFile owner={{userId: item.ownerId, key: item.key}} accessor={accessor} onAddFile={onAddFile}/>
 
-                      </Container>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <FileList fileList={item.informationList} owner={{userId: item.ownerId, key: item.key}} accessor={accessor} />
-                    </Accordion.Body>
-                </Accordion.Item>
-              </Container>
+                    </Container>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                      <FileList fileList={item.informationList} owner={{userId: item.ownerId, key: item.key}} accessor={accessor} />
+                  </Accordion.Body>
+              </Accordion.Item>
                 
                 
             ))}

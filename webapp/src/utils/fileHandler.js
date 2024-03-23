@@ -116,13 +116,12 @@ export const savePlainFilesInformation = (metadata) => {
     .catch(err => {throw new Error("Failed to add information of plain file: ", err)})
 }
 
-export const saveEncryptedFiles = (formData) => {
-    fetch(baseUrl + '/File/upload', {
+export const saveEncryptedFiles = async (formData) => {
+    return await fetch(baseUrl + '/File/upload', {
         method: 'POST',
         body: formData,
     })
       .then(response => response.json())
-      .then(data => console.log(data))
       .catch(error => console.error('Error:', error));
 }
 
