@@ -116,13 +116,12 @@ export const savePlainFilesInformation = (metadata) => {
     .catch(err => {throw new Error("Failed to add information of plain file: ", err)})
 }
 
-export const saveEncryptedFiles = (formData) => {
-    fetch(baseUrl + '/File/upload', {
+export const saveEncryptedFiles = async (formData) => {
+    return await fetch(baseUrl + '/File/upload', {
         method: 'POST',
         body: formData,
     })
       .then(response => response.json())
-      .then(data => console.log(data))
       .catch(error => console.error('Error:', error));
 }
 
@@ -180,17 +179,46 @@ export const uploadMedicalRequest = async ({data}) => {
         headers: headers,
         body: data
     })
-    .then(data => console.log(data))
+    .then(result => result.json())
     .catch(err => console.error(err));
 }
 
 export const uploadWearableData = async (data) => {
+ 
     return await fetch(`${baseUrl}/file/upload/wearabledata`, {
         method: "POST",
         headers: headers,
-        body: data
+        body: JSON.stringify(data)
     })
-    .then(result => console.log(result.status))
+    .then(result => result.json())
+    .catch(err => console.error(err));
+}
+
+export const summizeFileRequest = async (fileIds, ownerKey, accessorKey) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("ownerKey", ownerKey);
+    queryParams.append("accessorKey", accessorKey);
+    fileIds.forEach(id => {
+        queryParams.append("fileIds", id);
+    })
+
+    return await fetch(`${baseUrl}/file/summarize?${queryParams.toString()}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+export const getFilesSummaries = async (ownerId) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("ownerId", ownerId);
+  
+    return await fetch(`${baseUrl}/file/summaries?${queryParams.toString()}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
     .catch(err => console.error(err));
 }
 

@@ -10,15 +10,15 @@ namespace HealthSharer.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
-        
-        public FileController(IFileService fileService) { 
+
+        public FileController(IFileService fileService) {
             _fileService = fileService;
         }
 
         [HttpGet]
         [Route("download")]
         public async Task<IActionResult> DownloadFiles(
-            [FromQuery] List<int> fileIds, 
+            [FromQuery] List<int> fileIds,
             [FromQuery] string owner,
             [FromQuery] string accessor,
             [FromQuery] string fileExtension)
@@ -46,7 +46,7 @@ namespace HealthSharer.Controllers
         {
             try
             {
-               var file = await _fileService.downloadFile(fileHash, owner, accessor);
+                var file = await _fileService.downloadFile(fileHash, owner, accessor);
                 Response.Headers.Add("Content-Disposition", $"attachment;filename={file.FileName}");
                 Response.Headers.ContentType = file.ContentType;
                 return File(file.Content, file.ContentType);
@@ -54,7 +54,7 @@ namespace HealthSharer.Controllers
             {
                 return StatusCode(500, $"Error: {ex.Message}");
             }
-            
+
         }
 
         [HttpGet]
@@ -104,9 +104,9 @@ namespace HealthSharer.Controllers
                     return BadRequest("Missing owner information");
                 }
 
-                await _fileService.uploadFiles(files, ownerInfo, accessorInfo);
+                var result = await _fileService.uploadFiles(files, ownerInfo, accessorInfo);
 
-                return Ok("File uploaded, encrypted, and decrypted successfully");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -136,10 +136,10 @@ namespace HealthSharer.Controllers
 
                 converted.Content.Patient.IDImage = file;
 
-                await _fileService.uploadFromText(converted);
+                var result = await _fileService.uploadFromText(converted);
 
 
-                return Ok("File uploaded, encrypted, and decrypted successfully");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -149,14 +149,13 @@ namespace HealthSharer.Controllers
 
         [HttpPost]
         [Route("upload/wearabledata")]
-        public async Task<IActionResult> UploadToJSONFile(AddJSONFileFromTextRequest request)
+        public async Task<IActionResult> UploadToJSONFile([FromBody] AddJSONFileFromTextRequest request)
         {
             try
             {
+                var result = await _fileService.uploadFromText(request);
                 
-                await _fileService.uploadFromText(request);
-                
-                return Ok("File uploaded, encrypted, and decrypted successfully");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -178,6 +177,48 @@ namespace HealthSharer.Controllers
                 return StatusCode(500, $"Error: {ex.Message}");
             }
         }
+
+        [HttpGet]
+        [Route("summarize")]
+        public async Task<IActionResult> SummarizeFiles(
+            [FromQuery] string ownerKey,
+            [FromQuery] string accessorKey,
+            [FromQuery] List<int> fileIds = null
+            ) {
+
+            try
+            {
+                var result = await _fileService.summarizeFiles(fileIds, ownerKey, accessorKey);
+                
+                if (result == null)
+                {
+                    return Ok(new { message = "All Files have been summarize" });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("summaries")]
+        public IActionResult GetFilesSummaries([FromQuery] int ownerId)
+        {
+
+            try
+            {
+                var result = _fileService.getFilesSummaries(ownerId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
 
     }
 }

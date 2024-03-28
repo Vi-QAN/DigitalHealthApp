@@ -107,7 +107,7 @@ namespace HealthSharer.Services
                     Observations = observations,
                     PatientName = name,
                     Sex = sex,
-                    DOB = dob
+                    DOB = $"{dob.Substring(0, 4)}/{dob.Substring(4,2)}/{dob.Substring(6,2)}"
                 };
 
                 response.OrderEntryContent = orderEntryResponse;
@@ -200,7 +200,7 @@ namespace HealthSharer.Services
                     Observations = observations,
                     PatientName = name,
                     Sex = sex,
-                    DOB = dob
+                    DOB = $"{dob.Substring(0, 4)}/{dob.Substring(4, 2)}/{dob.Substring(6, 2)}"
                 };
 
                 response.AdmissionContent = admissionResponse;

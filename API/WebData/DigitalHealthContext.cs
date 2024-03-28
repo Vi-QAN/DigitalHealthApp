@@ -27,6 +27,7 @@ namespace WebData
         public DbSet<FileAuthorizationRecord> FileAuthorizationRecords { get; set; }
         public DbSet<FileNote> FileNotes { get; set; }
         public DbSet<FileNoteAttachment> FileNoteAttachments { get; set; }
+        public DbSet<FilesSummary> FilesSummaries { get; set; }
 
         public DigitalHealthContext(DbContextOptions<DigitalHealthContext> options)
             : base(options)
@@ -51,6 +52,7 @@ namespace WebData
             modelBuilder.ApplyConfiguration(new ActionLogConfiguration());
             modelBuilder.ApplyConfiguration(new FileNoteConfiguration());
             modelBuilder.ApplyConfiguration(new FileNoteAttachmentConfiguration());
+            modelBuilder.ApplyConfiguration(new FilesSummaryConfiguration());
         }
 
     }

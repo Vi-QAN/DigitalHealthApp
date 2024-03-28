@@ -66,4 +66,15 @@ namespace WebData.Models
         
         public virtual FileNote Note { get; set; }
     }
+
+    public class FilesSummary : Identity
+    {
+        public string MedicalDataSummary { get; set; }
+        public string WearableDataFileSummary { get; set; }
+        public string MedicalFileRange { get; set; }
+        public DateTime GeneratedDate { get; set; }
+        public int OwnerId { get; set; }
+
+        public virtual User Owner { get; set; }
+    };
 }

@@ -13,25 +13,49 @@ namespace HealthSharer.Services
     public class ContractService : IContractService
     {
         private readonly DigitalHealthService _service;
-        
-        public ContractService()
+        private readonly ILogger _logger;
+        private static string URL = $"{Environment.GetEnvironmentVariable("CHAIN_CONNECTION")}";
+
+        public ContractService(ILogger<ContractService> logger)
         {
-            var privateKey = "0x1f9e4c87636d315bfdd38a62da3de72b553211488ea5a4dfd673fd8570a3b08a";
-            string url = "http://127.0.0.1:8545";
-            var contractAddress = "0xff3be30b9c317c2ae1d1fa76e5aea258953ee716";
-            var account = new Account(privateKey, 1337);
-            var web3 = new Web3(account, url);
-            _service = new DigitalHealthService(web3, contractAddress);
+            _logger = logger;
+
+            try
+            {
+                var privateKey = Environment.GetEnvironmentVariable("PRIVATE_KEY");
+
+                var contractAddress = Environment.GetEnvironmentVariable("CONTRACT_ADDRESS");
+                var account = new Account(privateKey, 1337);
+                var web3 = new Web3(account, URL);
+                _service = new DigitalHealthService(web3, contractAddress);
+                _logger.LogInformation("Private Key: {PrivateKey}, Contract Address: {ContractAddress}", privateKey, contractAddress);
+            } catch (Exception ex)
+            {
+                _logger.LogError("Error in init contract {Error}", ex.Message);
+            }
+
         }
 
         public async Task<RandomSeed> GetKey(string user, string accessor)
         {
-            var key = await _service.GetKeyQueryAsync(user, accessor);
-            return new RandomSeed()
+            try
             {
-               key = key.ReturnValue1,
-               iv = key.ReturnValue2,
-            };
+                var key = await _service.GetKeyQueryAsync(user, accessor);
+                
+                var seed = new RandomSeed()
+                {
+                    key = key.ReturnValue1,
+                    iv = key.ReturnValue2,
+                };
+
+                _logger.LogInformation("Key: {Key}, IV: {Iv}",seed.key,seed.iv );
+
+                return seed;
+            } catch (Exception ex)
+            {
+                _logger.LogError("Error in get key {Error} {url}", ex.Message, URL);
+                return null;
+            }
         }
 
         public async Task SetKey(string user, RandomSeed random)
@@ -45,14 +69,13 @@ namespace HealthSharer.Services
                         Key = random.key,
                         Iv = random.iv,
                     });
+                _logger.LogInformation("Set Key successfully");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in SetKey: " + ex.Message);
+                _logger.LogError("Error in SetKey: {error} {url}", ex.Message, URL);
             }
 
         }
-
-
     }
 }

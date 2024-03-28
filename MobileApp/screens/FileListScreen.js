@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView  } from 'react-native';
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import { getFileInfoByOwner, saveEncryptedFiles, deleteFile } from '../utils/fileHandler.js';
+
+import { getFileInfoByOwner, saveEncryptedFiles, deleteFile, summizeFileRequest } from '../utils/fileHandler.js';
 import {View, 
     Text, 
     Drawer, 
     ListItem, 
-    GridList, Modal } from 'react-native-ui-lib';
+    GridList, Modal, Checkbox  } from 'react-native-ui-lib';
 import { getHL7File } from '../utils/fileHandler';
 import { DefaultColors, DefaultShadow } from '../constants/styles.js';
 import { AuthConsumer } from '../hooks/useAuth'
+import SearchBar from '../components/Common/SearchBar';
 
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+import { DataConsumer } from '../hooks/useData.jsx';
 
-function FileListComponent ({fileList, navigation, onRefresh, refreshing}) {
+export function FileListComponent ({
+        fileList, 
+        navigation, 
+        onRefresh, 
+        refreshing,
+        disableRefreshing, 
+        onMultiSelect, 
+        setOnMultiSelect,
+        disableMultiSelect,
+        handleSelectChange,
+        handleDeleteFile
+    }) {
     const { user } = AuthConsumer();
-    const [ localFileList, setLocalFileList ] = useState(fileList); 
 
     const handleOpenFile = async ( item) => {
+        if (!disableMultiSelect && onMultiSelect) return;
         try {
             if (item.fileExtension === 'hl7'){
                 const data = await getHL7File(item.fileHash, item.fileExtension, user.key, user.key);
@@ -37,77 +54,93 @@ function FileListComponent ({fileList, navigation, onRefresh, refreshing}) {
         }
     }
 
-    const handleDeleteFile = async (fileId) => {
-        await deleteFile(fileId);
-        const filtered = localFileList.filter(file => file.fileId !== fileId);
-        setLocalFileList(filtered);
+    const handleAuthorize = () => {
+
     }
 
-    const renderRow = ({item, key}) => {
+    const handleMultiSelect = () => {
+        if (disableMultiSelect) return;
+        setOnMultiSelect(true)
+    }
+
+    const renderRow = ({item}) => {
         return (
           <Drawer
             rightItems={[{text: 'Delete', background: DefaultColors.navy, onPress: () => handleDeleteFile(item.fileId)}]}
+            leftItem={{text: 'Authorize', background: DefaultColors.navy, onPress: () => handleAuthorize(item.fileId)}}
+
             itemsMinWidth={50}
             style={{marginHorizontal: 10}}
-            key={key}
-            
+            key={item.fileId}
           >
             <ListItem
-            backgroundColor='white'
+              backgroundColor='white'
               paddingH-10
               paddingV-10
               br20
               onPress={() => handleOpenFile(item)}
+              onLongPress={handleMultiSelect}
               >
+                {!disableMultiSelect && onMultiSelect 
+                    && (item.fileExtension === 'hl7' 
+                        || item.fileName.startsWith('Wearable')) &&  
+                <ListItem.Part>
+                    <Checkbox 
+                            borderRadius={5} 
+                            iconColor={DefaultColors.whiteNavy} 
+                            color={DefaultColors.navy}
+                            value={item.selected}
+                            style={{marginRight: 9}} 
+                            onValueChange={() => handleSelectChange(item)}/>
+                </ListItem.Part>}
+                <ListItem.Part containerStyle={{marginRight: 9}}>
+                    {item.fileExtension === 'jpg' && <AntDesign name={'jpgfile1'} size={22} />}
+                    {item.fileExtension === 'pdf' && <AntDesign name={'pdffile1'} size={22} />}
+                    {(item.fileExtension === 'dcm' || item.fileExtension === 'hl7') && <FontAwesome5 name={'file-medical'} size={22} />} 
+                </ListItem.Part>
                 <ListItem.Part left>
-                        <Text black text80>{item.fileName + '.' + item.fileExtension}</Text>
-
+                    <Text black text80>{item.fileName + '.' + item.fileExtension}</Text>
                 </ListItem.Part>
             </ListItem>
           </Drawer>
         )
     }
 
+    useEffect(() => {
+        
+    },[fileList])
 
-    return (
+    return (   
         <GridList style={styles.container}
             contentContainerStyle={styles.drawer}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            data={localFileList}
+            refreshing={!disableRefreshing ? refreshing : null}
+            onRefresh={!disableRefreshing ? onRefresh : null}
+            data={fileList}
             numColumns={1}
             renderItem={(item, index) => renderRow(item, index)}
             itemSpacing={17}
         />
+
     )
     
 }
 
 export default function FileListScreen({navigation}) {
-    const [fileList, setFileList] = useState(null)
+    const { originalFileList, setOriginalFileList, setOriginalFilesSummaries } = DataConsumer();
     const { width, height } = Dimensions.get('screen');
     const { user } = AuthConsumer();
     const [ isVisible, setIsVisible ] = useState(false);
-    const [ files, setFiles ] = useState([]); 
+    const [ submittedFiles, setSubmittedFiles ] = useState([]); 
     const [ refreshing, setRefreshing ] = useState(false);
+    const [ onMultiSelect, setOnMultiSelect ] = useState(false);
 
     const onRefresh = () => {
         setRefreshing(true);
-        loadData();
         // Simulate fetching new data
         setTimeout(() => {
         
             setRefreshing(false);
         }, 2000);
-    }
-
-    const loadData = async () => {
-        try {
-            const data = await getFileInfoByOwner(user.userId);
-            setFileList(data)
-        } catch(error) {
-            console.log(error)
-        }
     }
 
     const processAssets = (assets) => {
@@ -134,7 +167,7 @@ export default function FileListScreen({navigation}) {
         const assets = processAssets(result.assets);
         
         if (!result.canceled) {
-            setFiles([...files, ...assets])
+            setSubmittedFiles([...submittedFiles, ...assets])
         }
     };
 
@@ -149,13 +182,13 @@ export default function FileListScreen({navigation}) {
         const assets = processAssets(result.assets);
         
         if (!result.canceled) {
-            setFiles([...files, ...assets])
+            setSubmittedFiles([...submittedFiles, ...assets])
         }
     };
 
     const createFormData = () => {
         const formData = new FormData();
-        files.forEach((file) => {
+        submittedFiles.forEach((file) => {
             formData.append(`files`, { 
                 uri: file.content.uri, 
                 name: file.name, 
@@ -168,29 +201,90 @@ export default function FileListScreen({navigation}) {
         return formData;
     }
 
-    const handleAddFiles = () => {
+    const handleAddFiles = async () => {
         const formData = createFormData();
-        console.log(formData);
-        saveEncryptedFiles(formData);
+        const result = await saveEncryptedFiles(formData);
+        const formatted = result.map(info => {
+            return {
+                ...info,
+                selected: false
+            }
+        })
+        setOriginalFileList([...originalFileList, ...formatted])
     }
 
-    const handleRemoveFile = (fileName) => {
-        const filtered = files.filter(file => file.name !== fileName);
-        setFiles(filtered);
+    const handleRemoveSubmittedFile = (fileName) => {
+        const filtered = submittedFiles.filter(file => file.name !== fileName);
+        setSubmittedFiles(filtered);
     }
 
+    const handleSummarizeDocuments = async () => {
+        const selectedFileIds = originalFileList.filter(file => file.selected).map(file => file.fileId);
+        const result = await summizeFileRequest(selectedFileIds, user.key, user.key);
+        setOriginalFilesSummaries(original => [...original, result])
+    }
+
+    const handleDeleteFile = async (fileId) => {
+        await deleteFile(fileId);
+        const filtered = originalFileList.filter(file => file.fileId !== fileId);
+        setOriginalFileList(filtered);
+    }
+
+    const handleSelectChange = (selectedItem) => {
+        const newFileList = originalFileList.map(item => {
+            if (selectedItem.fileId === item.fileId){
+                const newItem = {
+                    ...item,
+                    selected: !item.selected
+                }
+                return newItem;
+            } else {
+                return item;
+            }
+
+        })
+        setOriginalFileList(newFileList); 
+    }
+ 
     useEffect(() => {
-        loadData();
-    },[]);
+        
+    },[originalFileList]);
 
     return (
-        <SafeAreaView>
-            {fileList && <FileListComponent onRefresh={onRefresh} refreshing={refreshing} fileList={fileList} navigation={navigation}/>}
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 10}}>
+            {!onMultiSelect && <SearchBar />}
+                
+            {onMultiSelect && <View style={{display: 'flex', flexDirection: 'row',borderRadius: DefaultShadow.borderRadius, backgroundColor: 'white', width: '100%', height: 50, justifyContent: 'center'}}>
+                <TouchableOpacity style={{ ...DefaultShadow, width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={() => handleSummarizeDocuments()} >
+                    <View style={{display: 'flex', flexDirection: 'row',justifyContent: 'center', flex: 1, alignItems: 'center'}}>
+                        <Ionicons name={'analytics-outline'} size={25} color={DefaultColors.navy} />
+                        <Text style={{marginLeft: 10}}>{'Summarize'}</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ ...DefaultShadow, width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={() => setOnMultiSelect(false)} >
+                    <View style={{display: 'flex', flexDirection: 'row',justifyContent: 'center', flex: 1, alignItems: 'center'}}>
+                        <MaterialCommunityIcons name={'cancel'} size={25} color={DefaultColors.navy} />
+                        <Text style={{marginLeft: 10}}>{'Cancel'}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>}
+            {originalFileList && <FileListComponent 
+                            onRefresh={onRefresh} 
+                            refreshing={refreshing} 
+                            fileList={originalFileList} 
+                            navigation={navigation}
+                            onMultiSelect={onMultiSelect}
+                            setOnMultiSelect={setOnMultiSelect}
+                            disableMultiSelect={false}
+                            disableRefreshing={false}
+                            handleSelectChange={handleSelectChange}
+                            handleDeleteFile={handleDeleteFile}/>}
             <TouchableOpacity style={styles.button} onPress={() => setIsVisible(true)} >
                 <View style={{justifyContent: 'center', flex: 1, alignItems: 'center'}}>
                     <AntDesign name={'addfile'} size={20} color={'white'} />
                 </View>
             </TouchableOpacity>
+            
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -201,7 +295,7 @@ export default function FileListScreen({navigation}) {
                 >
                 <SafeAreaView style={styles.modalContainer}>
                     <Modal.TopBar
-                            onCancel={() => {setIsVisible(false); setFiles([])}}
+                            onCancel={() => {setIsVisible(false); setSubmittedFiles([])}}
                             onDone={handleAddFiles}
                             cancelIcon={null}
                             cancelLabel="Back"
@@ -225,7 +319,8 @@ export default function FileListScreen({navigation}) {
                             </Text>
                     </View>
                     <ScrollView style={{width: '100%', paddingHorizontal: 15}}>
-                        {files.length > 0 && files.map((file, index) => {
+                        {submittedFiles.length > 0 && submittedFiles.map((file, index) => {
+                            
                             return (
                                 <View key={index} style={{flexDirection: 'row', marginBottom: 10, paddingVertical: 10, paddingHorizontal: 7, height: 60, borderRadius: 10, borderWidth: 1}}>
                                     <View style={{borderRadius: 5, width: 40, alignItems:'center', justifyContent:'center', borderWidth: 1, height: '100%'}}>
@@ -235,7 +330,7 @@ export default function FileListScreen({navigation}) {
                                         <Text>{file.name}</Text>
                                     </View>
                                     <View style={{ justifyContent:'center', height: '100%'}}>
-                                        <AntDesign style={{alignSelf: 'flex-end'}} name={'close'} size={18} onPress={() => handleRemoveFile(file.name)}/>
+                                        <AntDesign style={{alignSelf: 'flex-end'}} name={'close'} size={18} onPress={() => handleRemoveSubmittedFile(file.name)}/>
                                     </View>
                                 </View>
                             )
@@ -251,8 +346,9 @@ export default function FileListScreen({navigation}) {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        backgroundColor: 'white',
-        paddingTop: 10,
+        height: '92%',
+        paddingTop: 5,
+        marginTop: 10
     },
     modalContainer: {
         height: '70%',

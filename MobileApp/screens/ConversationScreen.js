@@ -5,7 +5,7 @@ import ContactComponent from '../components/Screens/ContactComponent';
 
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
-import {getUserList, authorizeRequest, getAuthorizationList, revokeAuthorizationRequest} from '../utils/fileHandler';
+import { authorizeRequest, revokeAuthorizationRequest} from '../utils/fileHandler';
 import { useEffect, useState } from 'react';
 import { authorizeAccessor, revokeAccessor } from '../utils/web3Helper';
 import { useContractWrite } from 'wagmi';
@@ -15,15 +15,15 @@ import { AuthConsumer } from '../hooks/useAuth';
 import { DefaultColors, DefaultShadow } from '../constants/styles';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { DataConsumer } from '../hooks/useData';
 
 const abi = DigitalHealthContract['abi']
 
 export default function ConversationScreen({navigation}){
-    const [ userList, setUserList ] = useState([]);
+    const { originalUserList, originalAuthorizationList, setOriginalAuthorizationList } = DataConsumer();
     const [ dropdownData, setDropdownData ] = useState(null);
     const [ selectedItem, setSelectedItem ] = useState(null);
     const [ text, setText ] = useState('');
-    const [ authorizationList, setAuthorizationList ] = useState([]);
     const { data, writeAsync, error, isError } = useContractWrite({
         abi,
         address: process.env.EXPO_PUBLIC_CONTRACT_ADDRESS,
@@ -32,25 +32,21 @@ export default function ConversationScreen({navigation}){
     const { user } = AuthConsumer();
 
     const load = async () => {
-        const originalList = await getUserList();
-        const customList = originalList.filter(item => item.userId !== user.userId).map((item) => {
+        
+        const customList = originalUserList.filter(item => item.userId !== user.userId).map((item) => {
             return { id: item.userId, name: item.name }
         })
-        setUserList(originalList);
         setDropdownData(customList);
-
-        const originalAuthorizationList = await getAuthorizationList({userId: user.userId})
-        setAuthorizationList(originalAuthorizationList.map(item => {return {...item, name: item.name, text: 'Change later'}}))
     }
 
     const handleAuthorization = async () => {
         if (!selectedItem) return;
-        const accessorInfo = userList.find((item) => item.userId === selectedItem.id);
+        const accessorInfo = originalUserList.find((item) => item.userId === selectedItem.id);
         const authorizeAccessorObject = authorizeAccessor({accessor: accessorInfo.key, password: '123', owner: user.key});
         try {
             await writeAsync(authorizeAccessorObject);
             await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
-            setAuthorizationList([...authorizationList, { accessorId: accessorInfo.userId, accessorKey: accessorInfo.key, name: accessorInfo.name, isAuthorized: true}]);
+            setOriginalAuthorizationList([...originalAuthorizationList, { accessorId: accessorInfo.userId, accessorKey: accessorInfo.key, name: accessorInfo.name, isAuthorized: true}]);
         } catch(err) {
             console.log(err);
         }
@@ -63,16 +59,17 @@ export default function ConversationScreen({navigation}){
             await writeAsync(revokeAuthorizationObject);
             isError ? console.log(error.message) : console.log('nothing')
             await revokeAuthorizationRequest({ownerId: user.key, accessorId: accessor.accessorKey});
-            const list = authorizationList.filter((item) => item.accessorId !== accessor.accessorId);
-            setAuthorizationList(list);
+            const list = originalAuthorizationList.filter((item) => item.accessorId !== accessor.accessorId);
+            setOriginalAuthorizationList(list);
         } catch(err) {
             console.log(err);
         }
     }
 
     useEffect(() => {
+        if (!originalUserList || !originalAuthorizationList) return;
         load();
-    },[])
+    },[originalUserList, originalAuthorizationList])
 
     return dropdownData ? (
         <SafeAreaView style={styles.container}>
@@ -82,7 +79,7 @@ export default function ConversationScreen({navigation}){
                     setText(item.name);
                     setSelectedItem(item);
                 }}
-                containerStyle={{ padding: 5, marginHorizontal: 5 }}
+                containerStyle={{ padding: 5, marginHorizontal: 10, ...DefaultShadow, backgroundColor: 'white' }}
                 itemsContainerStyle={{ maxHeight: 140 }}
                 resetValue={false}
                 itemStyle={{
@@ -99,8 +96,6 @@ export default function ConversationScreen({navigation}){
                         underlineColorAndroid: "transparent",
                         style: {
                             padding: 12,
-                            borderWidth: 1,
-                            borderColor: DefaultColors.gray,
                             borderRadius: 5,
                         },
                         value: text,
@@ -114,10 +109,10 @@ export default function ConversationScreen({navigation}){
                     }
                 }
             />
-            {authorizationList.length > 0 && 
+            {originalAuthorizationList.length > 0 && 
                 <ContactComponent 
                     navigation={navigation} 
-                    authorizationList={authorizationList}
+                    authorizationList={originalAuthorizationList}
                     onRevokeAuthorization={handleRevokeAuthorization}
                 />}
             {text.length !== 0 && <TouchableOpacity style={styles.button}onPress={handleAuthorization} >

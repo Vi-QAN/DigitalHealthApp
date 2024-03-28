@@ -17,6 +17,7 @@ namespace WebData.Abstractions
         FileAction GetFileAction(int id);
         FileAction GetFileAction(string name);
         FileMode GetFileMode(string name);
+        List<FileMode> GetFileModes();
 
         FileNote GetNote(int noteId);
         IQueryable<FileNote> GetNotesByFile(int fileId);
@@ -26,5 +27,8 @@ namespace WebData.Abstractions
 
         FileNoteAttachment GetAttachment(int attachmentId);
         void AddAttachments(IEnumerable<FileNoteAttachment> attachments);
+
+        List<FilesSummary> GetFilesSummaries(int userId);
+        void AddFilesSummary(FilesSummary filesSummary);
     }
 }

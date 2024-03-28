@@ -42,6 +42,7 @@ namespace WebData.Repositories
         {
             return _context.FileInformation.AsQueryable()
                 .Include(x => x.FileMode)
+                    .ThenInclude(m => m.AvailableActions)
                 .FirstOrDefault(i => i.OwnerId == userId && i.FileHash == fileHash);
         }
 
@@ -78,7 +79,11 @@ namespace WebData.Repositories
 
         public FileInformation GetInformation(int fileId)
         {
-            return _context.FileInformation.FirstOrDefault(f => f.Id == fileId);
+            return _context.FileInformation
+                    .Include(i => i.FileMode)
+                        .ThenInclude(m => m.AvailableActions)
+                        .ThenInclude(a => a.FileAction)
+                    .FirstOrDefault(f => f.Id == fileId);
         }
 
         public FileNote GetNote(int noteId)
@@ -117,6 +122,24 @@ namespace WebData.Repositories
         public void AddAttachments(IEnumerable<FileNoteAttachment> attachments)
         {
             _context.FileNoteAttachments.AddRange(attachments);
+        }
+
+        public List<Models.FileMode> GetFileModes()
+        {
+            return _context.FileModes
+                    .Include(m => m.AvailableActions)
+                        .ThenInclude(a => a.FileAction)
+                   .ToList();
+        }
+
+        public List<FilesSummary> GetFilesSummaries (int userId)
+        {
+            return _context.FilesSummaries.Where(s => s.OwnerId == userId).ToList();
+        }
+
+        public void AddFilesSummary(FilesSummary filesSummary)
+        {
+            _context.FilesSummaries.Add(filesSummary);
         }
     }
 }

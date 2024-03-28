@@ -1,16 +1,17 @@
-﻿using Azure;
-using Gehtsoft.PDFFlow.Builder;
+﻿using Gehtsoft.PDFFlow.Builder;
 using Gehtsoft.PDFFlow.Models.Enumerations;
 using HealthSharer.Abstractions;
 using HealthSharer.Exceptions;
 using HealthSharer.Extensions;
 using HealthSharer.Models;
 using Newtonsoft.Json;
-using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
 using WebData.Abstractions;
+using LangChain.Providers.OpenAI.Predefined;
+using File = HealthSharer.Models.File;
+using WebData.Models;
 
 namespace HealthSharer.Services
 {
@@ -21,20 +22,24 @@ namespace HealthSharer.Services
         private readonly IUserService _userService;
         private readonly ILogService _logService;
         private readonly IFileRepository _fileRepository;
+        private readonly ILogger _logger;
         public HttpClient _httpClient { get; set; } = new HttpClient();
 
-        private const string IPFSBaseUrl = "http://127.0.0.1:5001/api/v0";
-        private const string IPFSAddUrl = IPFSBaseUrl + "/add";
-        private const string IPFSGetUrl = IPFSBaseUrl + "/cat?arg=";
-        private const string IPFSDeleteUrl = IPFSBaseUrl + "/files/rm?arg=";
+        private static string IPFSBaseUrl = $"{Environment.GetEnvironmentVariable("IPFS_CONNECTION")}";
+        private string IPFSAddUrl = IPFSBaseUrl + "/add";
+        private string IPFSGetUrl = IPFSBaseUrl + "/cat?arg=";
+        private string IPFSDeleteUrl = IPFSBaseUrl + "/files/rm?arg=";
         private HL7ConversionService hl7Service = new HL7ConversionService();
+
+        private static string OpenAPIKey = Environment.GetEnvironmentVariable("OPENAI_KEY");
 
         public FileService(
             IContractService contractService,
             IFileInformationService informationService,
             IUserService userService,
             ILogService logService,
-            IFileRepository fileRepository
+            IFileRepository fileRepository,
+            ILogger<FileService> logger
             )
         {
             _contractService = contractService;
@@ -42,6 +47,7 @@ namespace HealthSharer.Services
             _userService = userService;
             _logService = logService;
             _fileRepository = fileRepository;
+            _logger = logger;
         }
 
         #region
@@ -70,6 +76,7 @@ namespace HealthSharer.Services
 
         public async Task<GetRegularFileResponse> downloadFiles(List<int> fileIds, string ownerKey, string accessorKey, string fileExtension)
         {
+
             var owner = _userService.GetUser(ownerKey);
 
             if (owner == default) throw new NotFoundException("User Not Found");
@@ -107,7 +114,7 @@ namespace HealthSharer.Services
         {
             var owner = _userService.GetUser(ownerKey);
             var accessor = _userService.GetUser(accessorKey);
-            
+
             if (owner == default) throw new NotFoundException("User Not Found");
             if (accessor == default) throw new NotFoundException("User Not Found");
 
@@ -140,8 +147,11 @@ namespace HealthSharer.Services
                     }
                 }
 
+                _logger.LogInformation("Download Successfull");
+
                 return new GetRegularFileResponse()
                 {
+                    FileId = fileInfo.FileId,
                     Content = fileContent,
                     ContentType = fileInfo.FileType,
                     FileName = fileInfo.FileName + '.' + fileInfo.FileExtension,
@@ -149,9 +159,10 @@ namespace HealthSharer.Services
             }
             else
             {
+                _logger.LogError("Failed to download file from IPFS: {status} {response} {url}", response.StatusCode, response.Content.ToString(), IPFSBaseUrl);
                 throw new Exception($"Failed to fetch file from IPFS. Status code: {response.StatusCode}");
             }
-            
+
         }
         #endregion
 
@@ -180,6 +191,7 @@ namespace HealthSharer.Services
                     }
                     else
                     {
+                        _logger.LogError("Failed to upload file to IPFS: {status} {response} {url}", response.StatusCode, response.Content.ToString(), IPFSBaseUrl);
                         throw new Exception($"IPFS upload failed. Status code: {response.StatusCode}");
                     }
                 }
@@ -190,9 +202,10 @@ namespace HealthSharer.Services
             }
         }
 
-        public async Task uploadFiles(List<IFormFile> files, GetUserResponse owner, GetUserResponse accessor) {
+        public async Task<List<GetInformationResponse>> uploadFiles(List<IFormFile> files, GetUserResponse owner, GetUserResponse accessor) {
 
             var seed = await _contractService.GetKey(owner.Key, accessor.Key);
+
             var informationList = new List<AddInformationRequest>();
 
             foreach (var file in files)
@@ -212,12 +225,35 @@ namespace HealthSharer.Services
 
             };
 
-            var infoIds = _informationService.AddAllInformation(informationList);
+            var addedList = _informationService.AddAllInformation(informationList);
             var fileAction = _fileRepository.GetFileAction("Upload");
-            _logService.AddActionLogs(fileAction.Id, accessor.UserId, infoIds);
+            _logService.AddActionLogs(fileAction.Id, accessor.UserId, addedList.Select(i => i.Id));
+
+            var fileModes = _informationService.GetAllFileModes();
+
+            return addedList.Join(
+                fileModes,
+                item => item.FileModeId,
+                mode => mode.Id,
+                (item, mode) => new GetInformationResponse()
+                {
+                    FileId = item.Id,
+                    MultiAddress = item.MultiAddress,
+                    FileName = item.FileName,
+                    FileHash = item.FileHash,
+                    FileExtension = item.FileExtension,
+                    FileType = item.FileType,
+                    AddedDate = item.AddedDate,
+                    FileMode = mode.Name,
+                    FileActions = mode.AvailableActions.Select(a => new GetFileActionResponse()
+                    {
+                        Id = a.FileAction.Id,
+                        Name = a.FileAction.Name,
+                    }).ToList()
+                }).ToList();
         }
 
-        public async Task uploadFromText(AddJSONFileFromTextRequest request)
+        public async Task<GetInformationResponse> uploadFromText(AddJSONFileFromTextRequest request)
         {
             var user = _userService.GetUser(request.OwnerId);
             var seed = await _contractService.GetKey(user.Key, user.Key);
@@ -228,7 +264,9 @@ namespace HealthSharer.Services
             var fromDate = request.Content.ElementAt(0).DateTime.ToString();
             var toDate = request.Content.ElementAt(request.Content.Count - 1).DateTime.ToString();
 
-            var fileName = $"Wearable_Data_{user.UserId}_from_{fromDate}_to_{toDate}.json";
+            var currentDate = DateTime.UtcNow;
+
+            var fileName = $"Wearable_Data_{user.UserId}_{currentDate.ToFileTimeUtc()}.json";
 
             var fileHash = await uploadFile(contentBytes);
 
@@ -240,16 +278,47 @@ namespace HealthSharer.Services
                         FileHash = fileHash,
                         FileType = "application/json",
                         MultiAddress = "/ip4/127.0.0.1/tcp/5001",
-
                     }
                 };
 
-            var infoIds = _informationService.AddAllInformation(informationList);
+            var addedList = _informationService.AddAllInformation(informationList);
             var fileAction = _fileRepository.GetFileAction("Upload");
-            _logService.AddActionLogs(fileAction.Id, user.UserId, infoIds);
+            _logService.AddActionLogs(fileAction.Id, user.UserId, addedList.Select(i => i.Id));
+
+            return _informationService.GetInformationById(addedList[0].Id);
         }
 
-        public async Task uploadFromText(AddPDFFileFromTextRequest request)
+        public async Task<List<List<AddJSONFileFromTextContent>>> openWearableDataFiles(List<int> fileIds, string ownerKey, string accessorKey, string fileExtension)
+        {
+            List<List<AddJSONFileFromTextContent>> result = new ();
+
+            if (fileIds.Count == 0) return result;
+
+            var owner = _userService.GetUser(ownerKey);
+            if (owner == default) throw new NotFoundException("User Not Found");
+
+            var seed = await _contractService.GetKey(ownerKey, accessorKey);
+
+            var files = await downloadFiles(fileIds, seed, fileExtension, owner.UserId);
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    var dataStr = Encoding.ASCII.GetString(file.Content);
+                    var data = dataStr.DeserializeWeareableDataFile();
+                    result.Add(data);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<GetInformationResponse> uploadFromText(AddPDFFileFromTextRequest request)
         {
             var section = SectionBuilder.New();
             var document = DocumentBuilder.New();
@@ -291,10 +360,11 @@ namespace HealthSharer.Services
                     }
                 };
 
-                var infoIds = _informationService.AddAllInformation(informationList);
+                var addedList = _informationService.AddAllInformation(informationList);
                 var fileAction = _fileRepository.GetFileAction("Upload");
-                _logService.AddActionLogs(fileAction.Id, user.UserId, infoIds);
+                _logService.AddActionLogs(fileAction.Id, user.UserId, addedList.Select(i => i.Id));
 
+                return _informationService.GetInformationById(addedList[0].Id);
             }
         }
 
@@ -358,14 +428,16 @@ namespace HealthSharer.Services
 
         public async Task<List<GetHL7FileResponse>> openHL7Files(List<int> fileIds, string ownerKey, string accessorKey, string fileExtension)
         {
+            List<GetHL7FileResponse> result = new List<GetHL7FileResponse>();
+
+            if (fileIds.Count == 0) return result;
+
             var owner = _userService.GetUser(ownerKey);
             if (owner == default) throw new NotFoundException("User Not Found");
 
             var seed = await _contractService.GetKey(ownerKey, accessorKey);
 
             var files = await downloadFiles(fileIds, seed, fileExtension, owner.UserId);
-
-            List<GetHL7FileResponse> result = new List<GetHL7FileResponse>();
 
             foreach (var file in files)
             {
@@ -375,13 +447,114 @@ namespace HealthSharer.Services
                     converted.FileName = file.FileName;
                     converted.ContentType = file.ContentType;
                     result.Add(converted);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     Console.WriteLine(ex);
                 }
             }
 
             return result;
         }
+        #endregion
+
+        public List<GetFilesSummaryResponse> getFilesSummaries(int ownerId)
+        {
+            var summaries = _fileRepository.GetFilesSummaries(ownerId);
+
+            return summaries.Select(s => new GetFilesSummaryResponse()
+            {
+                Id = s.Id,
+                GeneratedDate = s.GeneratedDate,
+                MedicalDataSummary = s.MedicalDataSummary.DeserializeMedicalDataSummary(),
+                MedicalDataFiles = s.MedicalFileRange.DeserializeSummaryFileList(),
+                WearableDataFilesSummaries = s.WearableDataFileSummary.DeserializeWearableDataSummary(),
+            }).OrderBy(s => s.GeneratedDate).ToList();
+        }
+
+        public async Task<GetFilesSummaryResponse> summarizeFiles (List<int> fileIds = null, string ownerKey = null, string accessorKey = null) {
+            var user = _userService.GetUser(ownerKey);
+
+            if (user == default) 
+                throw new NotFoundException("User not found");
+
+            /*if (OpenAPIKey == null)
+                throw new Exception("Missing API Key");*/
+
+            var infoList = _informationService.GetAllInformationByOwner(user.UserId);
+            var previousSummaries = getFilesSummaries(user.UserId);
+            
+            var storedFileIds = infoList.Select(i => i.FileId).ToList();
+            var summarizedFileIds = new List<int>();
+            var notSummarizedFileIds = new List<int>();
+
+            if (fileIds != null)
+            {
+                notSummarizedFileIds = fileIds;
+            }
+            else
+            {
+                foreach (var summary in previousSummaries)
+                {
+                    summarizedFileIds = summary.WearableDataFilesSummaries.Select(f => f.Id).Union(summarizedFileIds).ToList();
+                    summarizedFileIds = summary.MedicalDataFiles.Select(f => f.Id).Union(summarizedFileIds).ToList();
+                }
+                notSummarizedFileIds = storedFileIds.Except(summarizedFileIds).ToList();
+            }
+            
+            if (notSummarizedFileIds.Any())
+            {
+                var notSummarizedInfoList = infoList.Where(i => notSummarizedFileIds.Contains(i.FileId));
+
+                var hl7Files = notSummarizedInfoList.Where(i => i.FileExtension == "hl7")
+                        .Select(i => new File()
+                        {
+                            Id = i.FileId,
+                            Name = i.FileName + '.' + i.FileExtension,
+                        }).ToList();
+
+                var hl7FilesContent = await openHL7Files(hl7Files.Select(f => f.Id).ToList(), ownerKey, ownerKey, "hl7");
+
+                var hl7FilesSummaryStr = hl7FilesContent.Summarize();
+
+                var hl7FilesSummary = new MedicalDataSummary()
+                {
+                    Content = hl7FilesSummaryStr,
+                };
+                
+                var wearableFiles = notSummarizedInfoList.Where(i => i.FileExtension == "json" && i.FileName.StartsWith("Wearable"))
+                    .Select(i => new File() { 
+                            Id = i.FileId,
+                            Name = i.FileName + '.' + i.FileExtension
+                        })
+                    .ToList();
+
+                var wearableFilesContent = await openWearableDataFiles(wearableFiles.Select(f => f.Id).ToList(), ownerKey, ownerKey, "json");
+
+                var wearableSummaries = wearableFilesContent.Summarize(wearableFiles);
+
+                var newSummary = new FilesSummary()
+                {
+                    MedicalDataSummary = hl7FilesSummary.Serialize(),
+                    MedicalFileRange = hl7Files.Serialize(),
+                    WearableDataFileSummary = wearableSummaries.Serialize(),
+                    GeneratedDate = DateTime.UtcNow,
+                    OwnerId = user.UserId
+                };
+
+                _fileRepository.AddFilesSummary(newSummary);
+                _fileRepository.SaveChanges();
+
+                return new GetFilesSummaryResponse()
+                {
+                    Id = newSummary.Id,
+                    GeneratedDate = newSummary.GeneratedDate,
+                    MedicalDataSummary = hl7FilesSummary,
+                    MedicalDataFiles = hl7Files,
+                    WearableDataFilesSummaries = wearableSummaries,
+                };
+            }
+
+            return null;
+        }
     }
-    #endregion
+    
 }

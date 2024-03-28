@@ -21,6 +21,8 @@ namespace WebData.Models
         public virtual IEnumerable<ActionLog> ActionLogs { get; set; }
         public virtual IEnumerable<Notification> Notifications { get; set; }
         public virtual IEnumerable<FileNote> FileNotes { get; set; }
+
+        public virtual IEnumerable<FilesSummary> FilesSummaries { get; set; }
     }
 
     public class AuthorizationRecord : Identity

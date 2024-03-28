@@ -10,6 +10,7 @@ import { ChartDataConsumer } from '../hooks/useChartData';
 import { uploadWearableData } from '../utils/fileHandler';
 import { AuthConsumer } from '../hooks/useAuth';
 import { DefaultColors } from '../constants/styles';
+import { DataConsumer } from '../hooks/useData';
 const DataTypeMapping = {
     'All' : 0,
     'Heart Rate' : 1,
@@ -26,6 +27,7 @@ const DropdownData = [
 
 export default function ExportDataScreen({navigation}){
     const { user } = AuthConsumer();
+    const { setOriginalFileList } = DataConsumer();
     const { sampleData } = ChartDataConsumer();
     const [ date, setDate ] = useState({state: 'from', from: '', to: ''});
     const [ pickerVisible, setPickerVisible ] = useState(false);
@@ -115,7 +117,8 @@ export default function ExportDataScreen({navigation}){
             ownerId: user.userId,
             content: mappedData
         }
-        uploadWearableData(submission)
+        const result = await uploadWearableData(submission);
+        setOriginalFileList(list => [...list, { ...result, selected: false}])
     }
 
     const handleFocus = (state) => {
@@ -203,7 +206,7 @@ export default function ExportDataScreen({navigation}){
                     backgroundColor={DefaultColors.navy}
                     style={styles.buttonStyle}
                     label="Export" 
-                    onPress={handleExportData}/>
+                    onPress={() => handleExportData()}/>
             </View>
             
             

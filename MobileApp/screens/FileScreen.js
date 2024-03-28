@@ -1,7 +1,6 @@
 import React, { useEffect} from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import FileListScreen from './FileListScreen';
-import SearchBar from '../components/Common/SearchBar';
 import HL7MessageScreen from './HL7MessageScreen';
 import DICOMScreen from './DICOMScreen';
 import FileOpenerScreen from './FileOpenerScreen';
@@ -15,14 +14,12 @@ export default function FileScreen () {
        
         <Stack.Navigator
             screenOptions={({ route }) => ({
-                
+                headerShown: false
             })}>
             <Stack.Screen 
                 name="File List" 
                 component={FileListScreen} 
-                options={{
-                    header: () => <SearchBar />,
-                }}
+                
             />
             <Stack.Screen 
                 name="Medical Message" 

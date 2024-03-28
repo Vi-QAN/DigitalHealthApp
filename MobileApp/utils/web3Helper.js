@@ -35,19 +35,19 @@ const chains = [localhost]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 
-export const login = async ({password, account}) => {
+export const login = async ({email, password, account}) => {
   const convertedPassword = convertToBytes32(password);
+  const convertedEmail = convertToBytes32(email);
   return await publicClient.readContract( {
       abi, 
       address: contractAddress,
       functionName: 'login',
-      args: [convertedPassword],
+      args: [convertedEmail, convertedPassword],
       account: account
   })
 }
 
 export const register = ({name, email, password, account, walletClient}) => {
-    console.log(publicClient, 'aa', walletClient)
   const convertedPassword = convertToBytes32(password);
   const convertedEmail = convertToBytes32(email);
   const convertedName = convertToBytes32(name);

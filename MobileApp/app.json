@@ -1,5 +1,19 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ]
+    ],
     "name": "DigitalHealth",
     "slug": "DigitalHealth",
     "version": "1.0.0",
@@ -19,6 +33,7 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSPhotoLibraryUsageDescription": "This app uses the photo for verifying identity",
         "LSApplicationQueriesSchemes": [
           "metamask",
           "trust",

@@ -20,17 +20,23 @@ namespace HealthSharer.Services
         private readonly IUserService _userService;
         private readonly IFileRepository _fileRepository;
         private readonly IAuthorizationService _authorizationService;
+        private readonly ILogger _logger;
         public HttpClient _httpClient { get; set; } = new HttpClient();
 
-        private const string IPFSBaseUrl = "http://127.0.0.1:5001/api/v0";
-        private const string IPFSAddUrl = IPFSBaseUrl + "/add";
-        private const string IPFSGetUrl = IPFSBaseUrl + "/cat?arg=";
+        private static string IPFSBaseUrl = $"{Environment.GetEnvironmentVariable("IPFS_CONNECTION")}";
+        private string IPFSAddUrl = IPFSBaseUrl + "/add";
+        private string IPFSGetUrl = IPFSBaseUrl + "/cat?arg=";
 
-        public FileInformationService(IUserService userService, IFileRepository fileRepository, IAuthorizationService authorizationService)
+        public FileInformationService(
+            IUserService userService, 
+            IFileRepository fileRepository, 
+            IAuthorizationService authorizationService,
+            ILogger<FileInformationService> logger)
         {
             _userService = userService;
             _fileRepository = fileRepository;
             _authorizationService = authorizationService;
+            _logger = logger;
         }
 
         public GetInformationResponse AddInformation(AddInformationRequest addInformationRequest)
@@ -152,7 +158,7 @@ namespace HealthSharer.Services
 
         }
 
-        public IEnumerable<int> AddAllInformation(List<AddInformationRequest> requests)
+        public List<FileInformation> AddAllInformation(List<AddInformationRequest> requests)
         {
             var user = _userService.GetUser(requests[0].OwnerId);
             if (user == default)
@@ -177,7 +183,7 @@ namespace HealthSharer.Services
             _fileRepository.AddAllInformation(list);
             _fileRepository.SaveChanges();
 
-            return list.Select(i => i.Id);
+            return list;
         }
 
         public GetFileActionResponse GetFileAction(int id)
@@ -202,7 +208,12 @@ namespace HealthSharer.Services
                 FileHash = fileInfo.FileHash,
                 FileType = fileInfo.FileType,
                 FileMode = fileInfo.FileMode.Name,
-                AddedDate = fileInfo.AddedDate
+                AddedDate = fileInfo.AddedDate,
+                FileActions = fileInfo.FileMode.AvailableActions.Select(a => new GetFileActionResponse()
+                {
+                    Id = a.FileAction.Id,
+                    Name = a.FileAction.Name,
+                }).ToList(),
             };
         }
 
@@ -224,6 +235,11 @@ namespace HealthSharer.Services
                 FileType = fileInfo.FileType,
                 FileMode = fileInfo.FileMode.Name,
                 AddedDate = fileInfo.AddedDate,
+                FileActions = fileInfo.FileMode.AvailableActions.Select(a => new GetFileActionResponse()
+                {
+                    Id = a.FileAction.Id,
+                    Name = a.FileAction.Name,
+                }).ToList(),
             };
         }
 
@@ -346,6 +362,7 @@ namespace HealthSharer.Services
                     }
                     else
                     {
+                        _logger.LogError("Failed to upload attachment to IPFS: {status} {response} {url}", response.StatusCode, response.Content.ToString(), IPFSBaseUrl);
                         throw new Exception($"IPFS upload failed. Status code: {response.StatusCode}");
                     }
                 }
@@ -382,8 +399,14 @@ namespace HealthSharer.Services
             }
             else
             {
+                _logger.LogError("Failed to download attachment from IPFS: {status} {response} {url}", response.StatusCode, response.Content.ToString(), IPFSBaseUrl);
                 throw new Exception($"Failed to fetch file from IPFS. Status code: {response.StatusCode}");
             }
+        }
+
+        public List<WebData.Models.FileMode> GetAllFileModes()
+        {
+            return _fileRepository.GetFileModes();
         }
     }
 }

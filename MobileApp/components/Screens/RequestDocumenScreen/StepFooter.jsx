@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { StepContextConsumer } from "../../../hooks/useStepContext"
 import { uploadMedicalRequest } from "../../../utils/fileHandler";
 import { AuthConsumer } from "../../../hooks/useAuth";
+import { DataConsumer } from '../../../hooks/useData';
 
 
 
 const StepFooter = () => {
   const { user } = AuthConsumer();
+  const { setOriginalFileList } = DataConsumer();
   const { currentStepIndex, steps, setCurrentStepIndex, provider, patient, documentList } = StepContextConsumer();
   const previous = () => {
     setCurrentStepIndex(
@@ -52,14 +54,13 @@ const StepFooter = () => {
     return formData;
 }
 
-const handleSendRequest = () => {
-    
+const handleSendRequest = async () => {
     const uri = patient.idImage.assets[0].uri;
     const formData = createFormData(uri);
-    console.log(formData);
     
-
-    uploadMedicalRequest({data: formData})
+    const result = await uploadMedicalRequest({data: formData})
+    console.log(result);
+    setOriginalFileList(list => [...list, { ...result, selected: false}])
 }
   return (
     <View style={styles.container}>

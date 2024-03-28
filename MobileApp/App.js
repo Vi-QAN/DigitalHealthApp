@@ -14,6 +14,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 
 import { AuthConsumer, AuthProvider } from "./hooks/useAuth";
 import { ChartDataProvider } from './hooks/useChartData';
+import { DataProvider } from './hooks/useData';
 
 import AlertsScreen from './screens/AlertsScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -22,7 +23,7 @@ import FileScreen from './screens/FileScreen';
 import ConversationScreen from './screens/ConversationScreen';
 import HomeScreen from './screens/HomeScreen';
 
-import HomeNavigator from './navigators/HomeNavigator';
+import MenuNavigator from './navigators/MenuNavigator';
 
 import { DefaultColors } from './constants/styles';
 
@@ -133,7 +134,7 @@ const AppNavigator = () => {
       <Tab.Screen name="Authorization" component={gestureHandlerRootHOC(ConversationScreen)} />
       <Tab.Screen name='Files' component={gestureHandlerRootHOC(FileScreen)} />
       <Tab.Screen name="Alerts" component={gestureHandlerRootHOC(AlertsScreen)} />
-      <Tab.Screen name="Menu" component={gestureHandlerRootHOC(HomeNavigator)} />
+      <Tab.Screen name="Menu" component={gestureHandlerRootHOC(MenuNavigator)} />
     </Tab.Navigator>
   );
 }
@@ -158,12 +159,14 @@ export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <AuthProvider>
-        <ChartDataProvider>
+        <DataProvider>
+          <ChartDataProvider>
 
-          <NavigationContainer>
-            <Navigator />        
-          </NavigationContainer>
-        </ChartDataProvider>
+            <NavigationContainer>
+              <Navigator />        
+            </NavigationContainer>
+          </ChartDataProvider>
+        </DataProvider>
       </AuthProvider>
       
     </WagmiConfig>

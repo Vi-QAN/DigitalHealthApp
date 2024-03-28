@@ -72,4 +72,15 @@ namespace WebData.Configurations
         }
     }
 
+    public class FilesSummaryConfiguration : IEntityTypeConfiguration<FilesSummary>
+    {
+        public void Configure(EntityTypeBuilder<FilesSummary> builder)
+        {
+            builder.ToTable("FilesSummary").HasKey(x => x.Id);  
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
+            builder.HasOne(u => u.Owner).WithMany(s => s.FilesSummaries).HasForeignKey(s => s.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+
 }

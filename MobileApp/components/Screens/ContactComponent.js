@@ -54,7 +54,7 @@ export default function ContactComponent({navigation, authorizationList, onRevok
             br20
             >
             <ListItem.Part marginR-10 >
-                <Avatar></Avatar>
+                <Avatar  source={{uri: item.avatarUri}}></Avatar>
               </ListItem.Part>
               <ListItem.Part containerStyle={{width: '65%'}} column  >
                 <Text text80BO>{item.name}</Text>

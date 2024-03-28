@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 export default function DICOMScreen ({navigation, route}) {
@@ -22,18 +22,20 @@ export default function DICOMScreen ({navigation, route}) {
             originWhitelist={["*"]}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            pullToRefreshEnabled={true}        
+            // pullToRefreshEnabled={true}        
             webviewDebuggingEnabled={true}
             mixedContentMode={'always'}
             allowUniversalAccessFromFileURLs={true}
-            scrollEnabled={true}/>
+            scrollEnabled={true}
+            />
       );
 }
 
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        overflowY: 'scroll'
     }
 })
 

@@ -10,13 +10,15 @@ import { AuthConsumer } from '../hooks/useAuth';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 import { DefaultColors } from '../constants/styles';
 
 
 const Stack = createStackNavigator();
 
-export default function ChatScreen({navigation}) {
+export default function MenuScreen({navigation}) {
   const { logout, user } = AuthConsumer();
   const { width, height } = Dimensions.get('screen');
 
@@ -58,6 +60,32 @@ export default function ChatScreen({navigation}) {
               </View>
               <View style={{justifyContent: 'center', marginLeft: 20, width: '75%'}}>
                 <Text style={{color: DefaultColors.navy}}>{'Export Wearable Data'}</Text>
+              </View>
+              <View style={{justifyContent: 'center', opacity: 0.9}}>
+                <FontAwesome name={"angle-right"} size={30} color={DefaultColors.navy} />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('SharedWithMe')}}>
+           <View style={{flexDirection: 'row', width: '100%'}}>
+              <View style={styles.iconContainer}>
+                <MaterialCommunityIcons name={'share-variant-outline'} size={20} color={DefaultColors.navy}/>
+              </View>
+              <View style={{justifyContent: 'center', marginLeft: 20, width: '75%'}}>
+                <Text style={{color: DefaultColors.navy}}>{'Shared With Me'}</Text>
+              </View>
+              <View style={{justifyContent: 'center', opacity: 0.9}}>
+                <FontAwesome name={"angle-right"} size={30} color={DefaultColors.navy} />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonStyle} onPress={() => {navigation.navigate('Summary')}}>
+           <View style={{flexDirection: 'row', width: '100%'}}>
+              <View style={styles.iconContainer}>
+                <Ionicons name={'analytics-outline'} size={20} color={DefaultColors.navy}/>
+              </View>
+              <View style={{justifyContent: 'center', marginLeft: 20, width: '75%'}}>
+                <Text style={{color: DefaultColors.navy}}>{'File Summaries'}</Text>
               </View>
               <View style={{justifyContent: 'center', opacity: 0.9}}>
                 <FontAwesome name={"angle-right"} size={30} color={DefaultColors.navy} />
