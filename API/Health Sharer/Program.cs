@@ -19,9 +19,12 @@ builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IFileInformationService, FileInformationService>();
+builder.Services.AddSingleton<ContractService>();
+builder.Services.AddScoped<IAssistantService, AssistantService>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILogRepository, LogRepository>();
+builder.Services.AddScoped<IAssistantRepository, AssistantRepository>();
 
 
 builder.Services.AddCors(options =>
@@ -40,27 +43,29 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLogging(builder => builder.AddConsole());   
+builder.Services.AddLogging(builder => builder.AddEventSourceLogger());
+builder.Services.AddLogging(builder => builder.AddDebug());
 
 var app = builder.Build();
 
 {
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<DigitalHealthContext>();
+
     try
     {
         // Apply migrations to create/update the database
         context.Database.Migrate();
         Console.WriteLine("Database migration successful.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
-    }
-    context.Database.Migrate();
+        Seed.EnsureFileActions(context);
+        Seed.EnsureFileModes(context);
+        Seed.EnsureAvailableActions(context);
 
-    Seed.EnsureFileActions(context);
-    Seed.EnsureFileModes(context);
-    Seed.EnsureAvailableActions(context);
+    } catch(Exception ex)
+    {
+        Console.WriteLine(ex.ToString());
+    }
 }
 
 
@@ -69,10 +74,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpsRedirection();
 }
 app.UseCors("AllowOrigin");
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

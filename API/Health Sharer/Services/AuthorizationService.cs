@@ -19,7 +19,7 @@ namespace HealthSharer.Services
             _userRepository = userRepository;
             _contractService = contractService;
         }
-        public int AddAuthorization(AuthorizationRequest request)
+        public GetAuthorizationResponse AddAuthorization(AuthorizationRequest request)
         {
             var owner = _userRepository.GetUserByAddress(request.OwnerId);
             var accessor = _userRepository.GetUserByAddress(request.AccessorId);
@@ -40,16 +40,26 @@ namespace HealthSharer.Services
                 {
                     OwnerId = owner.Id,
                     AccessorId = accessor.Id,
-                    IsAuthorized = true
+                    IsAuthorized = true,
+                    AuthorizedDate = DateTime.UtcNow,
                 };
 
                 _userRepository.AddAuthorizationRecord(newRecord);
                 _userRepository.SaveChanges();
 
-                return newRecord.Id;
+                return new GetAuthorizationResponse()
+                {
+                    AccessorId = record.AccessorId,
+                    AccessorKey = accessor.PublicKey,
+                    Name = accessor.Name,
+                    IsAuthorized = record.IsAuthorized,
+                    AuthorizedDate = record.AuthorizedDate,
+                };
+           
             }
 
             record.IsAuthorized = true;
+            record.AuthorizedDate = DateTime.UtcNow;
 
             var records = _userRepository.GetFileAuthorizationRecordsByAccessor(accessor.Id).ToList();
 
@@ -59,7 +69,14 @@ namespace HealthSharer.Services
             _userRepository.UpdateAuthorizationRecord(record);
             _userRepository.SaveChanges();
 
-            return record.Id;
+            return new GetAuthorizationResponse()
+            {
+                AccessorId = record.AccessorId,
+                AccessorKey = accessor.PublicKey,
+                Name = accessor.Name,
+                IsAuthorized = record.IsAuthorized,
+                AuthorizedDate = record.AuthorizedDate,
+            };
         }
 
         public int RemoveAuthorization(AuthorizationRequest request)
@@ -114,6 +131,7 @@ namespace HealthSharer.Services
                         AccessorKey = user.PublicKey,
                         Name = user.Name,
                         IsAuthorized = record.IsAuthorized,
+                        AuthorizedDate = record.AuthorizedDate,
                     }
                 ).ToList();
         }

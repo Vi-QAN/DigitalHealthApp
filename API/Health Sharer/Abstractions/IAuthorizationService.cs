@@ -5,7 +5,7 @@ namespace HealthSharer.Abstractions
 {
     public interface IAuthorizationService
     {
-        int AddAuthorization(AuthorizationRequest request);
+        GetAuthorizationResponse AddAuthorization(AuthorizationRequest request);
         int RemoveAuthorization(AuthorizationRequest request);
         List<GetAuthorizationResponse> GetAuthorization(int userId);
         List<GetAllInformationResponse> GetAuthorizationRecordsByAccessor(int accessorId);

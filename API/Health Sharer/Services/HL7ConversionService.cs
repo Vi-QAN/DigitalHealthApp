@@ -107,7 +107,7 @@ namespace HealthSharer.Services
                     Observations = observations,
                     PatientName = name,
                     Sex = sex,
-                    DOB = $"{dob.Substring(0, 4)}/{dob.Substring(4,2)}/{dob.Substring(6,2)}"
+                    DOB = dob != null ? $"{dob.Substring(0, 4)}/{dob.Substring(4, 2)}/{dob.Substring(6, 2)}" : null
                 };
 
                 response.OrderEntryContent = orderEntryResponse;
@@ -157,6 +157,55 @@ namespace HealthSharer.Services
         {
             var response = new GetHL7FileResponse();
 
+            var adtAO1Message = _pipeParser.Parse(hl7Message) as NHapi.Model.V24.Message.ADT_A01;
+
+            if (adtAO1Message != null)
+            {
+                // Access specific segments and fields in v2.4 message
+                string admissionReason = adtAO1Message.PV2.AdmitReason.Text.Value;
+                List<string> allergies = new List<string>();
+                List<string> diagnosises = new List<string>();
+                List<Observation> observations = new List<Observation>();
+
+                var patient = adtAO1Message.PID;
+                var name = patient.GetPatientName()[0].FamilyName.Surname.Value + " " + patient.GetPatientName()[0].GivenName.Value;
+                var dob = patient.DateTimeOfBirth.TimeOfAnEvent.Value;
+                var sex = patient.AdministrativeSex.Value;
+
+
+                foreach (var obx in adtAO1Message.OBXs)
+                {
+                    var observation = ProcessObservations(obx.GetObservationValue());
+                    observations.AddRange(observation);
+                }
+
+                foreach (var al in adtAO1Message.AL1s)
+                {
+                    allergies.Add(al.AllergenCodeMnemonicDescription.Text.Value);
+                }
+
+                foreach (var dg in adtAO1Message.DG1s)
+                {
+                    diagnosises.Add(dg.DiagnosisDescription.Value);
+                }
+
+                // Implement further processing Logic for v2.4
+                var admissionResponse = new HL7AdmissionResponseContent()
+                {
+                    AdmissionReason = admissionReason,
+                    Allergies = allergies,
+                    Diagnosises = diagnosises,
+                    MessageType = "Admission",
+                    Observations = observations,
+                    PatientName = name,
+                    Sex = sex,
+                    DOB = dob != null ? $"{dob.Substring(0, 4)}/{dob.Substring(4, 2)}/{dob.Substring(6, 2)}" : null,
+                };
+
+                response.AdmissionContent = admissionResponse;
+                return response;
+            }
+
             // Parse and process HL7 v2.4 message using NHAPI
             var adtAO5Message = _pipeParser.Parse(hl7Message) as NHapi.Model.V24.Message.ADT_A05;
 
@@ -200,7 +249,7 @@ namespace HealthSharer.Services
                     Observations = observations,
                     PatientName = name,
                     Sex = sex,
-                    DOB = $"{dob.Substring(0, 4)}/{dob.Substring(4, 2)}/{dob.Substring(6, 2)}"
+                    DOB = dob != null ? $"{dob.Substring(0, 4)}/{dob.Substring(4, 2)}/{dob.Substring(6, 2)}" : null,
                 };
 
                 response.AdmissionContent = admissionResponse;

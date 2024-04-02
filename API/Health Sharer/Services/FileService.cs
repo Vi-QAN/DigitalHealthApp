@@ -31,7 +31,7 @@ namespace HealthSharer.Services
         private string IPFSDeleteUrl = IPFSBaseUrl + "/files/rm?arg=";
         private HL7ConversionService hl7Service = new HL7ConversionService();
 
-        private static string OpenAPIKey = Environment.GetEnvironmentVariable("OPENAI_KEY");
+        private static string OpenAPIKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
         public FileService(
             IContractService contractService,
@@ -408,8 +408,14 @@ namespace HealthSharer.Services
             GetHL7FileResponse result;
             switch (hl7Service.FileVersion)
             {
+                case "2.3":
+                    result = hl7Service.ProcessHL7v23Message(decoded);
+                    break;
                 case "2.4":
                     result = hl7Service.ProcessHL7v24Message(decoded);
+                    break;
+                case "2.5":
+                    result = hl7Service.ProcessHL7v25Message(decoded);
                     break;
                 case "2.8.1":
                     result = hl7Service.ProcessHL7v281Message(decoded);
@@ -476,8 +482,10 @@ namespace HealthSharer.Services
             if (user == default) 
                 throw new NotFoundException("User not found");
 
-            /*if (OpenAPIKey == null)
-                throw new Exception("Missing API Key");*/
+            if (OpenAPIKey == null)
+                throw new Exception("Missing API Key");
+
+            var model = new Gpt35TurboModel(OpenAPIKey);
 
             var infoList = _informationService.GetAllInformationByOwner(user.UserId);
             var previousSummaries = getFilesSummaries(user.UserId);
@@ -514,6 +522,14 @@ namespace HealthSharer.Services
                 var hl7FilesContent = await openHL7Files(hl7Files.Select(f => f.Id).ToList(), ownerKey, ownerKey, "hl7");
 
                 var hl7FilesSummaryStr = hl7FilesContent.Summarize();
+
+                try
+                {
+                    hl7FilesSummaryStr = await model.GenerateAsync("Generate a summary paragraph for the following medical information " + hl7FilesSummaryStr);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
 
                 var hl7FilesSummary = new MedicalDataSummary()
                 {

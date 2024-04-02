@@ -23,6 +23,7 @@ namespace WebData.Models
         public virtual IEnumerable<FileNote> FileNotes { get; set; }
 
         public virtual IEnumerable<FilesSummary> FilesSummaries { get; set; }
+        public virtual IEnumerable<AssistantMessage> AssistantMessages { get; set;}
     }
 
     public class AuthorizationRecord : Identity

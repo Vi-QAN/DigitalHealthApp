@@ -19,7 +19,7 @@ namespace HealthSharer.Models
         public string FileName { get; set; }
         public string FileExtension { get; set; }
         public string FileType { get; set; }
-        public string FileMode { get; set; }
+        public string? FileMode { get; set; }
         public DateTime AddedDate { get; set; }
         public List<GetFileActionResponse>? FileActions { get; set; }
     }

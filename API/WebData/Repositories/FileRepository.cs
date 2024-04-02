@@ -43,6 +43,7 @@ namespace WebData.Repositories
             return _context.FileInformation.AsQueryable()
                 .Include(x => x.FileMode)
                     .ThenInclude(m => m.AvailableActions)
+                    .ThenInclude(a => a.FileAction)
                 .FirstOrDefault(i => i.OwnerId == userId && i.FileHash == fileHash);
         }
 

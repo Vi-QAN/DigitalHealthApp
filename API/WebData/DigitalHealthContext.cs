@@ -28,6 +28,7 @@ namespace WebData
         public DbSet<FileNote> FileNotes { get; set; }
         public DbSet<FileNoteAttachment> FileNoteAttachments { get; set; }
         public DbSet<FilesSummary> FilesSummaries { get; set; }
+        public DbSet<AssistantMessage> AssistantMessages  { get; set; }
 
         public DigitalHealthContext(DbContextOptions<DigitalHealthContext> options)
             : base(options)
@@ -53,6 +54,7 @@ namespace WebData
             modelBuilder.ApplyConfiguration(new FileNoteConfiguration());
             modelBuilder.ApplyConfiguration(new FileNoteAttachmentConfiguration());
             modelBuilder.ApplyConfiguration(new FilesSummaryConfiguration());
+            modelBuilder.ApplyConfiguration(new AssistantMessageConfiguration());
         }
 
     }

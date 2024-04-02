@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebData;
 
@@ -11,9 +12,11 @@ using WebData;
 namespace WebData.Migrations
 {
     [DbContext(typeof(DigitalHealthContext))]
-    partial class DigitalHealthContextModelSnapshot : ModelSnapshot
+    [Migration("20240329104055_ApplyFilesSummaryConfiguration")]
+    partial class ApplyFilesSummaryConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +54,6 @@ namespace WebData.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ActionLogs", (string)null);
-                });
-
-            modelBuilder.Entity("WebData.Models.AssistantMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("AssistantMessages", (string)null);
                 });
 
             modelBuilder.Entity("WebData.Models.AuthorizationRecord", b =>
@@ -419,17 +393,6 @@ namespace WebData.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebData.Models.AssistantMessage", b =>
-                {
-                    b.HasOne("WebData.Models.User", "Owner")
-                        .WithMany("AssistantMessages")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
             modelBuilder.Entity("WebData.Models.AuthorizationRecord", b =>
                 {
                     b.HasOne("WebData.Models.User", null)
@@ -602,8 +565,6 @@ namespace WebData.Migrations
             modelBuilder.Entity("WebData.Models.User", b =>
                 {
                     b.Navigation("ActionLogs");
-
-                    b.Navigation("AssistantMessages");
 
                     b.Navigation("FileInformation");
 

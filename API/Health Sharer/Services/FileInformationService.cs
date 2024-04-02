@@ -232,14 +232,9 @@ namespace HealthSharer.Services
                 FileExtension = fileInfo.FileExtension,
                 FileName = fileInfo.FileName,
                 FileHash = fileInfo.FileHash,
-                FileType = fileInfo.FileType,
                 FileMode = fileInfo.FileMode.Name,
-                AddedDate = fileInfo.AddedDate,
-                FileActions = fileInfo.FileMode.AvailableActions.Select(a => new GetFileActionResponse()
-                {
-                    Id = a.FileAction.Id,
-                    Name = a.FileAction.Name,
-                }).ToList(),
+                FileType = fileInfo.FileType,
+                AddedDate = fileInfo.AddedDate,                
             };
         }
 

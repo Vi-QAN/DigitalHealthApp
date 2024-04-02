@@ -2,6 +2,7 @@
 using HealthSharer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Diagnostics.Eventing.Reader;
 
 namespace HealthSharer.Controllers
 {
@@ -61,23 +62,33 @@ namespace HealthSharer.Controllers
         [Route("open")]
         public async Task<IActionResult> OpenFiles(
             [FromQuery] List<int> fileIds,
-            [FromQuery] string owner,
-            [FromQuery] string accessor,
+            [FromQuery] string ownerKey,
+            [FromQuery] string accessorKey,
             [FromQuery] string fileExtension)
         {
-            if (fileExtension == "hl7")
+            try
             {
-                try
+                if (fileExtension == "hl7")
                 {
-                    var files = await _fileService.openHL7Files(fileIds, owner, accessor, fileExtension);
-                    return Ok(files);
-                } catch (Exception ex)
-                {
-                    return StatusCode(500, $"Error: {ex.Message}");
+                    var result = await _fileService.openHL7Files(fileIds, ownerKey, accessorKey, fileExtension);
+                    return Ok(result);
                 }
+                else if (fileExtension == "json")
+                {
+                    var result = await _fileService.openWearableDataFiles(fileIds, ownerKey, accessorKey, fileExtension);
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest("File Extension Not Supported");
+                }
+
+
+            } catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
             }
 
-            return BadRequest("File Extension Not Supported");
         }
 
         [HttpPost("upload")]

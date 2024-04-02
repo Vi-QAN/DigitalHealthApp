@@ -43,7 +43,16 @@ namespace WebData.Configurations
         }
     }
 
+    public class AssistantMessageConfiguration : IEntityTypeConfiguration<AssistantMessage>
+    {
+        public void Configure(EntityTypeBuilder<AssistantMessage> builder)
+        {
+            builder.ToTable("AssistantMessages").HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
+            builder.HasOne(u => u.Owner).WithMany(s => s.AssistantMessages).HasForeignKey(s => s.OwnerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+        }
+    }
 
     /*public class DoctorConfiguration : IEntityTypeConfiguration<Doctor>
     {
