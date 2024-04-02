@@ -45,8 +45,13 @@ export default function ConversationScreen({navigation}){
         const authorizeAccessorObject = authorizeAccessor({accessor: accessorInfo.key, password: '123', owner: user.key});
         try {
             await writeAsync(authorizeAccessorObject);
-            await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
-            setOriginalAuthorizationList([...originalAuthorizationList, { accessorId: accessorInfo.userId, accessorKey: accessorInfo.key, name: accessorInfo.name, isAuthorized: true}]);
+            const result = await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
+            console.log(result);
+            setOriginalAuthorizationList([...originalAuthorizationList, { 
+                ...result, 
+                name: result.name,
+                avatarUri: 'https://images.unsplash.com/photo-1707655096648-1655344fc4d5?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' 
+            }]);
         } catch(err) {
             console.log(err);
         }

@@ -5,13 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ChartDataConsumer } from '../../../hooks/useChartData';
 import { DefaultColors } from '../../../constants/styles'
 
-const ColorMapping = {
+export const ColorMapping = {
   'Low': '#FF7F97',
   'Normal' : '#3BE9DE',
   'High' : '#006DFF',
 }
 
-const renderDot = color => {
+export const renderDot = color => {
   return (
     <View
       style={{
@@ -25,7 +25,7 @@ const renderDot = color => {
   );
 };
 
-function HeartRateChart({data, chartStyle, gradient}){
+export function HeartRateChart({data, chartStyle, gradient}){
   const [ heartRateData, setHeartRateData ] = useState([]);
   const [ yAxisLabels, setYAxisLabels ] = useState([])
   const maxValue = 150;
@@ -128,7 +128,7 @@ function HeartRateChart({data, chartStyle, gradient}){
   );
 }
 
-function BloodPressureChart({ data, chartStyle, gradient}){
+export function BloodPressureChart({ data, chartStyle, gradient}){
     return data.length > 0 ?  (
         <View style={chartStyle}>
             <LinearGradient
@@ -155,7 +155,7 @@ function BloodPressureChart({ data, chartStyle, gradient}){
                     noOfSections={6}
                     yAxisThickness={0}
                     xAxisType={'dashed'}
-
+                    
                     yAxisTextStyle={{color: 'lightgray'}}
                     //rulesType="solid"
                     //rulesColor="transparent"
@@ -203,7 +203,7 @@ function BloodPressureChart({ data, chartStyle, gradient}){
     ) : null
 }
 
-function OxygenLevelChart ({data, chartStyle, gradient}) {
+export function OxygenLevelChart ({data, chartStyle, gradient}) {
   const [ activeSection, setActiveSection  ] = useState(null); 
   const [ oxygenLevelData, setOxygenLevelData ] = useState([]);
 
@@ -327,43 +327,20 @@ function OxygenLevelChart ({data, chartStyle, gradient}) {
 
 export default function ChartComponent() {
   const {heartbeatData, bloodPressureData, oxygenLevelData, filterMode} = ChartDataConsumer();
-  const [ hbChartData, setHBChartData ] = useState([]);
-  const [ olChartData, setOLChartData ] = useState([]);
-  const [ bpChartData, setBPChartData ] = useState([]);
+
   const [ onLoad, setOnLoad ] = useState(false);
-
-  const processData = () => {
-    const bpData = bloodPressureData.map((item, index) => { 
-      const date = new Date(item.datetime)
-      return { label: filterMode === 'Daily' ? date.toLocaleTimeString() : date.toLocaleDateString(), ...item }
-    })
-    const olData = oxygenLevelData.map((item, index) => { 
-        return { ...item }
-    })
-    const hbData = heartbeatData.map((item, index) => {
-      const date = new Date(item.datetime)
-
-        return { label: filterMode === 'Daily' ? date.toLocaleTimeString() : date.toLocaleDateString(), ...item }
-    })
-
-    setHBChartData(hbData);
-    setOLChartData(olData);
-    setBPChartData(bpData);
-    
-  }
 
   useEffect(() => {
     setOnLoad(true);
     
-    processData();
-  },[heartbeatData, bloodPressureData, oxygenLevelData])
+  },[filterMode])
   
 
   return (
     <View style={styles.container}>
-      {hbChartData.length > 0 ? <HeartRateChart data={hbChartData} chartStyle={styles.chart} gradient={styles.gradient} /> : <ActivityIndicator size={'small'} color={DefaultColors.lighterNavy}/>}
-      {bpChartData.length > 0 && <BloodPressureChart data={bpChartData} chartStyle={styles.chart} gradient={styles.gradient}/>}
-      {olChartData.length > 0 && <OxygenLevelChart data={olChartData} chartStyle={styles.chart} gradient={styles.gradient} /> }
+      {heartbeatData.length > 0 ? <HeartRateChart data={heartbeatData} chartStyle={styles.chart} gradient={styles.gradient} /> : <ActivityIndicator size={'small'} color={DefaultColors.lighterNavy}/>}
+      {bloodPressureData.length > 0 && <BloodPressureChart data={bloodPressureData} chartStyle={styles.chart} gradient={styles.gradient}/>}
+      {oxygenLevelData.length > 0 && <OxygenLevelChart data={oxygenLevelData} chartStyle={styles.chart} gradient={styles.gradient} /> }
     </View>
   )
 }

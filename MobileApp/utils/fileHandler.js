@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 
 const baseUrl =`${process.env.EXPO_PUBLIC_SERVER_ENDPOINT}/api`;
+const mockServerUrl = `${process.env.EXPO_PUBLIC_MOCK_SERVER}`;
 
 const headers = {
     "Content-type": "application/json",
@@ -62,8 +63,8 @@ export const authorizeRequest = async ({ownerId, accessorId}) => {
       method: "POST",
       headers: headers,
       body: JSON.stringify({
-        "OwnerId": ownerId,
-        "AccesserId": accessorId,
+        "ownerId": ownerId,
+        "accessorId": accessorId,
       })
     })
     .then(response => response.json())
@@ -75,8 +76,8 @@ export const revokeAuthorizationRequest = async ({ownerId, accessorId}) => {
       method: "PUT",
       headers: headers,
       body: JSON.stringify({
-        "OwnerId": ownerId,
-        "AccesserId": accessorId,
+        "ownerId": ownerId,
+        "accessorId": accessorId,
       })
     })
     .then(response => response.json())
@@ -125,12 +126,45 @@ export const saveEncryptedFiles = async (formData) => {
       .catch(error => console.error('Error:', error));
 }
 
-export const getHL7File = async (fileHash, owner, accessor) => {
-    if (!owner || !accessor) return; 
-    const response =  await getEncryptedFile(fileHash, owner, accessor)
-    return await response.json();
+export const openWearableFiles = async (fileIds, ownerKey, accessorKey) => {
+    if (!ownerKey || !accessorKey || fileIds.length === 0) return; 
+    const queryParams = new URLSearchParams();
+    queryParams.append("ownerKey", ownerKey);
+    queryParams.append("accessorKey", accessorKey);
+    queryParams.append("fileExtension", "json");
+
+    fileIds.forEach(id => {
+        queryParams.append("fileIds", id);
+    })
+
+    return await fetch(`${baseUrl}/file/open?${queryParams.toString()}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
 }
 
+export const openHL7Files = async (fileIds, ownerKey, accessorKey) => {
+    if (!ownerKey || !accessorKey || fileIds.length === 0) return; 
+    const queryParams = new URLSearchParams();
+    queryParams.append("ownerKey", ownerKey);
+    queryParams.append("accessorKey", accessorKey);
+    queryParams.append("fileExtension", "hl7");
+
+    fileIds.forEach(id => {
+        queryParams.append("fileIds", id);
+    })
+
+    return await fetch(`${baseUrl}/file/open?${queryParams.toString()}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+// download files
 export const getRegularFile = async (fileHash, owner, accessor) => {
     if (!owner || !accessor) return; 
     const response =  await getEncryptedFile(fileHash, owner, accessor)
@@ -147,6 +181,7 @@ export const getRegularFile = async (fileHash, owner, accessor) => {
     return { blob, fileName, contentType }
 }
 
+// download files
 const getEncryptedFile = async (fileHash, owner, accessor) => {
     const queryParams = new URLSearchParams();
     queryParams.append("owner", owner);
@@ -184,7 +219,6 @@ export const uploadMedicalRequest = async ({data}) => {
 }
 
 export const uploadWearableData = async (data) => {
- 
     return await fetch(`${baseUrl}/file/upload/wearabledata`, {
         method: "POST",
         headers: headers,
@@ -256,5 +290,66 @@ export const updateNotification = async (id) => {
         method: "PUT",
         headers: headers,
     })
+    .catch(err => console.error(err));
+}
+
+/////////////////////////////////////////
+// Assistant Request
+/////////////////////////////////////////
+export const promptMessage = async (userId, message) => {
+    return await fetch(`${baseUrl}/assistant/messages`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+            ownerId: userId,
+            userMessage: message,
+        })
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+export const promptDetection = async (requests, ownerId) => {
+    return await fetch(`${baseUrl}/assistant/detection?ownerId=${ownerId}`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(requests)
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+export const getMessageHistory = async (userId) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("ownerId", userId);
+    return await fetch(`${baseUrl}/assistant/messages?${queryParams.toString()}`, {
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+////////////////////////////////////
+// Mock Server
+///////////////////////////////////
+export const getLatestWearableData = async () => {
+    return await fetch(`${mockServerUrl}/latest`,{
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
+    .catch(err => console.error(err));
+}
+
+export const getDataRange = async (startDate, endDate) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("start_date", startDate);
+    queryParams.append("end_date", endDate);
+    return await fetch(`${mockServerUrl}/data?${queryParams.toString()}`,{
+        method: "GET",
+        headers: headers,
+    })
+    .then(res => res.json())
     .catch(err => console.error(err));
 }

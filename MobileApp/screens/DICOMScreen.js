@@ -4,10 +4,11 @@ import { WebView } from 'react-native-webview';
 
 export default function DICOMScreen ({navigation, route}) {
     const webViewRef = useRef(null);
-    const owner = route.params.key;
+    const ownerKey = route.params.ownerKey;
+    const accessorKey = route.params.accessorKey;
     const fileHash = route.params.fileHash;
     const baseURI = "https://vi-qan.github.io/DicomViewer";
-    const uri = `${baseURI}/?fileHash=${fileHash}&owner=${owner}&accessor=${owner}`;
+    const uri = `${baseURI}/?fileHash=${fileHash}&owner=${ownerKey}&accessor=${accessorKey}`;
     const encodedUri = encodeURI(uri);
     
     useEffect(() => {

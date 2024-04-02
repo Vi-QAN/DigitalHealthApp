@@ -7,15 +7,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
-import { getFileInfoByOwner, saveEncryptedFiles, deleteFile, summizeFileRequest } from '../utils/fileHandler.js';
+import { saveEncryptedFiles, deleteFile, summizeFileRequest } from '../utils/fileHandler.js';
 import {View, 
     Text, 
     Drawer, 
     ListItem, 
-    GridList, Modal, Checkbox  } from 'react-native-ui-lib';
-import { getHL7File } from '../utils/fileHandler';
+    GridList, Modal, Checkbox, TextField  } from 'react-native-ui-lib';
 import { DefaultColors, DefaultShadow } from '../constants/styles.js';
 import { AuthConsumer } from '../hooks/useAuth'
+import FeatherIcon from 'react-native-vector-icons/Feather';
+
 import SearchBar from '../components/Common/SearchBar';
 
 import * as DocumentPicker from 'expo-document-picker';
@@ -40,14 +41,16 @@ export function FileListComponent ({
         if (!disableMultiSelect && onMultiSelect) return;
         try {
             if (item.fileExtension === 'hl7'){
-                const data = await getHL7File(item.fileHash, item.fileExtension, user.key, user.key);
-                navigation.navigate('Medical Message', data)
+                navigation.navigate('Medical Message', { fileIds: [item.fileId],  ownerKey: user.key, accessorKey: user.key})
             }
             else if (item.fileExtension === 'dcm'){
-                navigation.navigate('DICOM', { key: user.key, fileHash: item.fileHash});
+                navigation.navigate('DICOM', { fileHash: item.fileHash, ownerKey: user.key, accessorKey: user.key});
+            }
+            else if (item.fileExtension === 'json' && item.fileName.startsWith('Wearable')){
+                navigation.navigate('Wearable', {fileIds: [item.fileId], ownerKey: user.key, accessorKey: user.key})
             }
             else {
-                navigation.navigate('File Opener', { key: user.key, fileHash: item.fileHash});
+                navigation.navigate('File Opener', { ownerKey: user.key, accessorKey: user.key, fileHash: item.fileHash});
             }
         } catch (err){
             console.log(err);
@@ -126,7 +129,8 @@ export function FileListComponent ({
 }
 
 export default function FileListScreen({navigation}) {
-    const { originalFileList, setOriginalFileList, setOriginalFilesSummaries } = DataConsumer();
+    const { originalFileList, setOriginalFileList, setOriginalFilesSummaries, loadOriginalFileList } = DataConsumer();
+    const [ localFileList, setLocalFileList ] = useState(originalFileList)
     const { width, height } = Dimensions.get('screen');
     const { user } = AuthConsumer();
     const [ isVisible, setIsVisible ] = useState(false);
@@ -136,6 +140,7 @@ export default function FileListScreen({navigation}) {
 
     const onRefresh = () => {
         setRefreshing(true);
+        loadOriginalFileList();
         // Simulate fetching new data
         setTimeout(() => {
         
@@ -243,16 +248,38 @@ export default function FileListScreen({navigation}) {
             }
 
         })
+        setLocalFileList(newFileList);
         setOriginalFileList(newFileList); 
+    }
+
+    const handleOnChangeText = (text) => {
+        if (text.length === 0) {
+            setLocalFileList(originalFileList);
+            return;
+        }
+        const newList = originalFileList.filter(file => file.fileName.startsWith(text.toUpperCase()) || file.fileName.includes(text.toUpperCase()));
+        setLocalFileList(newList);
     }
  
     useEffect(() => {
         
-    },[originalFileList]);
+    },[originalFileList, localFileList]);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 10}}>
-            {!onMultiSelect && <SearchBar />}
+            {!onMultiSelect && <View style={styles.textFieldContainer} >
+                <FeatherIcon name={'search'} size={30} style={{color: 'grey'}}/>
+                <TextField
+                    migrate
+                    containerStyle={styles.textField}
+                    preset={null}
+                    placeholder={'Search file name'}
+                    floatingPlaceholder={false}
+                    enableErrors={false}
+                    onChangeText={(text) => handleOnChangeText(text)}
+                />
+                
+            </View>}
                 
             {onMultiSelect && <View style={{display: 'flex', flexDirection: 'row',borderRadius: DefaultShadow.borderRadius, backgroundColor: 'white', width: '100%', height: 50, justifyContent: 'center'}}>
                 <TouchableOpacity style={{ ...DefaultShadow, width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={() => handleSummarizeDocuments()} >
@@ -268,10 +295,10 @@ export default function FileListScreen({navigation}) {
                     </View>
                 </TouchableOpacity>
             </View>}
-            {originalFileList && <FileListComponent 
+            {localFileList && <FileListComponent 
                             onRefresh={onRefresh} 
                             refreshing={refreshing} 
-                            fileList={originalFileList} 
+                            fileList={localFileList} 
                             navigation={navigation}
                             onMultiSelect={onMultiSelect}
                             setOnMultiSelect={setOnMultiSelect}
@@ -345,6 +372,7 @@ export default function FileListScreen({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         width: '100%',
         height: '92%',
         paddingTop: 5,
@@ -362,8 +390,8 @@ const styles = StyleSheet.create({
     },
     drawer: {
         ...DefaultShadow,
-      },
-      button: {
+    },
+    button: {
         marginBottom: 10,
         width: 55,
         height: 55,
@@ -386,6 +414,23 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+    textFieldContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 50,
+        width: '95%',
+        backgroundColor: 'white',
+        borderRadius: 5,
+        marginHorizontal: 10,
+        paddingHorizontal: 10,
+        ...DefaultShadow,
+      },
+    
+    textField: {
+        width: '100%',
+        marginLeft: 5
+    },
   });
   

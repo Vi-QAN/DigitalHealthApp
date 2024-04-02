@@ -26,6 +26,7 @@ import HomeScreen from './screens/HomeScreen';
 import MenuNavigator from './navigators/MenuNavigator';
 
 import { DefaultColors } from './constants/styles';
+import { OpenAIProvider } from './hooks/useOpenAI';
 
 
 // Web 3
@@ -37,7 +38,7 @@ const metadata = {
   url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   redirect: {
-    native: 'digitalhealth://',
+    native: 'exp://',
     universal: 'YOUR_APP_UNIVERSAL_LINK.com'
   }
 }
@@ -161,10 +162,12 @@ export default function App() {
       <AuthProvider>
         <DataProvider>
           <ChartDataProvider>
+            <OpenAIProvider>
 
-            <NavigationContainer>
-              <Navigator />        
-            </NavigationContainer>
+              <NavigationContainer>
+                <Navigator />        
+              </NavigationContainer>
+            </OpenAIProvider>
           </ChartDataProvider>
         </DataProvider>
       </AuthProvider>

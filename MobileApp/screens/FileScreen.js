@@ -4,6 +4,8 @@ import FileListScreen from './FileListScreen';
 import HL7MessageScreen from './HL7MessageScreen';
 import DICOMScreen from './DICOMScreen';
 import FileOpenerScreen from './FileOpenerScreen';
+import WearableOpenerScreen from './WearableOpenerScreen';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +31,11 @@ export default function FileScreen () {
             <Stack.Screen 
                 name="DICOM" 
                 component={DICOMScreen}
+            />
+
+            <Stack.Screen
+                name='Wearable'
+                component={gestureHandlerRootHOC(WearableOpenerScreen)}
             />
 
             <Stack.Screen

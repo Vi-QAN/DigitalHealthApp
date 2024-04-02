@@ -18,9 +18,9 @@ const useDataContext = () => {
         const formatted = list.map(item => {
             return {...item, 
                 name: item.name, 
-                text: 'Change later',
                 avatarUri: 'https://images.unsplash.com/photo-1707655096648-1655344fc4d5?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' 
             }})
+        console.log(formatted)
         setOriginalAuthorizationList(formatted);
     }
 
@@ -60,7 +60,8 @@ const useDataContext = () => {
         setOriginalFileList,
         originalFilesSummaries,
         setOriginalFilesSummaries,
-        originalUserList
+        originalUserList,
+        loadOriginalFileList
     }
 }
 

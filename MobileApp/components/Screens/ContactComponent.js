@@ -3,18 +3,15 @@ import { StyleSheet, Dimensions } from 'react-native';
 import {View, 
         Text, 
         Drawer, 
-        Colors, 
         ListItem, 
         Avatar, 
-        GridView,
         GridList,
-        GridListItem} from 'react-native-ui-lib';
+        } from 'react-native-ui-lib';
 
 import { DefaultShadow, DefaultColors } from '../../constants/styles';
 
 export default function ContactComponent({navigation, authorizationList, onRevokeAuthorization}){
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    const { width, height } = Dimensions.get("screen");
 
     const handleRevokeAuthorization = (item) => {
       onRevokeAuthorization(item);
@@ -57,15 +54,15 @@ export default function ContactComponent({navigation, authorizationList, onRevok
                 <Avatar  source={{uri: item.avatarUri}}></Avatar>
               </ListItem.Part>
               <ListItem.Part containerStyle={{width: '65%'}} column  >
-                <Text text80BO>{item.name}</Text>
-                <Text>{item.text}</Text>
+                <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+                <Text style={{fontSize: 10, opacity: 0.5}}>{`Authorized on ${new Date(item.authorizedDate).toLocaleDateString("en-US")}`}</Text>
               </ListItem.Part>
-              <ListItem.Part flex center column>
+              {/* <ListItem.Part flex center column>
                 <Text>{formattedDateTime}</Text>
                 <View style={styles.messageCount}>
                   <Text white text80 center>3</Text>
                 </View>
-              </ListItem.Part>
+              </ListItem.Part> */}
           </ListItem>
         </Drawer>
       )
