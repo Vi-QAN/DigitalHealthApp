@@ -20,7 +20,6 @@ function AssistantModal({isVisible, setIsVisible}){
         const userMessage = newMessages[0].text;
 
         const result = await promptMessage(user.userId, userMessage);
-        console.log(result);
         const botMessage = {
             _id: result.messageId,
             text: result.messageContent,

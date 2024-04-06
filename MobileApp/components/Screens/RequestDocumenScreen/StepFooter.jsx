@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { StepContextConsumer } from "../../../hooks/useStepContext"
 import { uploadMedicalRequest } from "../../../utils/fileHandler";
 import { AuthConsumer } from "../../../hooks/useAuth";
 import { DataConsumer } from '../../../hooks/useData';
 
+import InfoDialog from '../../Common/InfoDialog';
 
 
 const StepFooter = () => {
   const { user } = AuthConsumer();
   const { setOriginalFileList } = DataConsumer();
   const { currentStepIndex, steps, setCurrentStepIndex, provider, patient, documentList } = StepContextConsumer();
+  const [ infoDialog, setInfoDialog ] = useState({state: 'error', message: 'Medical request form has been created successfully', visible: false, onload: false});
+
   const previous = () => {
     setCurrentStepIndex(
       currentStepIndex <= 1 ? currentStepIndex : currentStepIndex - 1
@@ -55,11 +58,17 @@ const StepFooter = () => {
 }
 
 const handleSendRequest = async () => {
+    setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
+
     const uri = patient.idImage.assets[0].uri;
     const formData = createFormData(uri);
     
     const result = await uploadMedicalRequest({data: formData})
-    console.log(result);
+    if (result){
+      setInfoDialog({ state: 'success', message: 'Medical request form has been created successfully', visible: true, onload: false});
+    }else {
+      setInfoDialog({ state: 'error', message: 'Error encountered while creating medical request form', visible: true, onload: false});
+    }
     setOriginalFileList(list => [...list, { ...result, selected: false}])
 }
   return (
@@ -80,6 +89,7 @@ const handleSendRequest = async () => {
         </Text>
       </TouchableOpacity>}
       
+      <InfoDialog infoDialog={infoDialog} setInfoDialog={setInfoDialog}/>
 
       
     </View>

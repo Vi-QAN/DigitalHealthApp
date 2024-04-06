@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
 import { TextField, Button, Dialog } from 'react-native-ui-lib';
 
+import InfoDialog from '../components/Common/InfoDialog';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
@@ -9,8 +11,9 @@ import { ChartDataConsumer } from '../hooks/useChartData';
 
 import { uploadWearableData } from '../utils/fileHandler';
 import { AuthConsumer } from '../hooks/useAuth';
-import { DefaultColors } from '../constants/styles';
+import { DefaultColors} from '../constants/styles';
 import { DataConsumer } from '../hooks/useData';
+
 const DataTypeMapping = {
     'All' : 0,
     'Heart Rate' : 1,
@@ -33,6 +36,7 @@ export default function ExportDataScreen({navigation}){
     const [ pickerVisible, setPickerVisible ] = useState(false);
     const [ pickedDate, setPickedDate ] = useState(new Date())
     const [ selectedDataType, setSelectedDataType ] = useState('All');
+    const [ infoDialog, setInfoDialog ] = useState({state: 'error', message: 'Wearable data has been exported successfully', visible: false, onload: false});
 
     const handleChangeDateFrom = (value) => {
         setDate(d => { return { ...d, from: value}});
@@ -104,20 +108,27 @@ export default function ExportDataScreen({navigation}){
     }
 
     const handleExportData = async () => {
+        if (date.from.length === 0 || date.to.length === 0) return
         const dateFrom = new Date(date.from);
         const dateTo = new Date(date.to);
-
         if (dateFrom > dateTo) return;
         const current = new Date();
         if (dateTo > current) return;
-        
-        const filteredData = filterData(sampleData, dateFrom, dateTo);
+
+        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
+        const filteredData = filterData(sampleData.current, dateFrom, dateTo);
         const mappedData = mapData(selectedDataType, filteredData);
         const submission = {
             ownerId: user.userId,
             content: mappedData
         }
         const result = await uploadWearableData(submission);
+        if (result){
+            setInfoDialog({ state: 'success', message: 'Wearable data has been exported successfully', visible: true, onload: false});
+        } else {
+            setInfoDialog({ state: 'error', message: 'Error encountered while exporting data', visible: true, onload: false});
+        }
+
         setOriginalFileList(list => [...list, { ...result, selected: false}])
     }
 
@@ -198,7 +209,7 @@ export default function ExportDataScreen({navigation}){
                     color={DefaultColors.navy} 
                     outlineColor={DefaultColors.navy} 
                     label="Cancel" 
-                    onPress={() => navigation.navigate('Default')}
+                    onPress={() => navigation.goBack('Default')}
                     style={styles.buttonStyle}
 
                 />
@@ -240,10 +251,9 @@ export default function ExportDataScreen({navigation}){
                         onPress={() => handleConfirmDatePick()}                  
                         style={styles.buttonStyle}
                     />
-                </View>
-                
-                    
+                </View>          
             </Dialog>
+            <InfoDialog infoDialog={infoDialog} setInfoDialog={setInfoDialog}/>
         </SafeAreaView>
     )
 }

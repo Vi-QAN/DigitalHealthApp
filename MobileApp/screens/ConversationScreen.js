@@ -17,6 +17,8 @@ import { DefaultColors, DefaultShadow } from '../constants/styles';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { DataConsumer } from '../hooks/useData';
 
+import InfoDialog from '../components/Common/InfoDialog';
+
 const abi = DigitalHealthContract['abi']
 
 export default function ConversationScreen({navigation}){
@@ -29,6 +31,8 @@ export default function ConversationScreen({navigation}){
         address: process.env.EXPO_PUBLIC_CONTRACT_ADDRESS,
         functionName: 'signup',
     });
+    const [ infoDialog, setInfoDialog ] = useState({state: 'success', message: 'Authorize successfully', visible: false, onload: false});
+
     const { user } = AuthConsumer();
 
     const load = async () => {
@@ -41,12 +45,18 @@ export default function ConversationScreen({navigation}){
 
     const handleAuthorization = async () => {
         if (!selectedItem) return;
+        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
         const accessorInfo = originalUserList.find((item) => item.userId === selectedItem.id);
         const authorizeAccessorObject = authorizeAccessor({accessor: accessorInfo.key, password: '123', owner: user.key});
         try {
             await writeAsync(authorizeAccessorObject);
             const result = await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
-            console.log(result);
+            // ${error.message}
+            if (isError || !result){
+                setInfoDialog({ state: 'success', message: `Error while authorizing ${accessor.name}`, visible: true, onload: false});
+            } else {
+                setInfoDialog({ state: 'error', message: `Authorize ${accessor.name} successfully`, visible: true, onload: false});
+            }
             setOriginalAuthorizationList([...originalAuthorizationList, { 
                 ...result, 
                 name: result.name,
@@ -59,10 +69,17 @@ export default function ConversationScreen({navigation}){
 
     const handleRevokeAuthorization = async (accessor) => {
         if (!accessor) return;
+        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
         const revokeAuthorizationObject = revokeAccessor({accessor: accessor.accessorKey, password: '123', owner: user.key})
         try {
             await writeAsync(revokeAuthorizationObject);
-            isError ? console.log(error.message) : console.log('nothing')
+            // ${error.message}
+            if (isError){
+                setInfoDialog({ state: 'success', message: `Error while revoking authorization of ${accessor.name}`, visible: true, onload: false});
+            } else {
+                setInfoDialog({ state: 'error', message: `Revoke authorization of ${accessor.name} successfully`, visible: true, onload: false});
+            }
+
             await revokeAuthorizationRequest({ownerId: user.key, accessorId: accessor.accessorKey});
             const list = originalAuthorizationList.filter((item) => item.accessorId !== accessor.accessorId);
             setOriginalAuthorizationList(list);
@@ -125,7 +142,8 @@ export default function ConversationScreen({navigation}){
                     <AntDesign name={'check'} size={20} color={'white'} />
                 </View>
             </TouchableOpacity>}
-        
+            <InfoDialog infoDialog={infoDialog} setInfoDialog={setInfoDialog}/>
+
         </SafeAreaView>
 
     ) : null;

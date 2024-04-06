@@ -6,8 +6,6 @@ import { TextField, Button } from "react-native-ui-lib";
 export default function SubmitSection ({navigation}) {
     const { provider, patient, documentList} = StepContextConsumer();
 
-     
-
     return (
         <ScrollView>
             <View style={styles.sectionContainer}>

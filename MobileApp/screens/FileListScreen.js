@@ -12,12 +12,13 @@ import {View,
     Text, 
     Drawer, 
     ListItem, 
-    GridList, Modal, Checkbox, TextField  } from 'react-native-ui-lib';
+    GridList, Modal, Checkbox, TextField } from 'react-native-ui-lib';
 import { DefaultColors, DefaultShadow } from '../constants/styles.js';
 import { AuthConsumer } from '../hooks/useAuth'
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
-import SearchBar from '../components/Common/SearchBar';
+import InfoDialog from '../components/Common/InfoDialog';
+import SummaryDialog from '../components/Common/SummaryDialog'
 
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -25,7 +26,6 @@ import { DataConsumer } from '../hooks/useData.jsx';
 
 export function FileListComponent ({
         fileList, 
-        navigation, 
         onRefresh, 
         refreshing,
         disableRefreshing, 
@@ -33,28 +33,13 @@ export function FileListComponent ({
         setOnMultiSelect,
         disableMultiSelect,
         handleSelectChange,
-        handleDeleteFile
+        handleDeleteFile,
+        onOpenFile
     }) {
-    const { user } = AuthConsumer();
 
     const handleOpenFile = async ( item) => {
         if (!disableMultiSelect && onMultiSelect) return;
-        try {
-            if (item.fileExtension === 'hl7'){
-                navigation.navigate('Medical Message', { fileIds: [item.fileId],  ownerKey: user.key, accessorKey: user.key})
-            }
-            else if (item.fileExtension === 'dcm'){
-                navigation.navigate('DICOM', { fileHash: item.fileHash, ownerKey: user.key, accessorKey: user.key});
-            }
-            else if (item.fileExtension === 'json' && item.fileName.startsWith('Wearable')){
-                navigation.navigate('Wearable', {fileIds: [item.fileId], ownerKey: user.key, accessorKey: user.key})
-            }
-            else {
-                navigation.navigate('File Opener', { ownerKey: user.key, accessorKey: user.key, fileHash: item.fileHash});
-            }
-        } catch (err){
-            console.log(err);
-        }
+        onOpenFile(item);
     }
 
     const handleAuthorize = () => {
@@ -129,7 +114,7 @@ export function FileListComponent ({
 }
 
 export default function FileListScreen({navigation}) {
-    const { originalFileList, setOriginalFileList, setOriginalFilesSummaries, loadOriginalFileList } = DataConsumer();
+    const { originalFileList, setOriginalFileList, setOriginalFilesSummaries, loadOriginalFileList, originalFilesSummaries } = DataConsumer();
     const [ localFileList, setLocalFileList ] = useState(originalFileList)
     const { width, height } = Dimensions.get('screen');
     const { user } = AuthConsumer();
@@ -137,13 +122,15 @@ export default function FileListScreen({navigation}) {
     const [ submittedFiles, setSubmittedFiles ] = useState([]); 
     const [ refreshing, setRefreshing ] = useState(false);
     const [ onMultiSelect, setOnMultiSelect ] = useState(false);
+    const [ infoDialog, setInfoDialog ] = useState({state: 'success', message: 'Files are added successfully', visible: false, onload: false});
+    const [ summaryDialog, setSummaryDialog ] = useState({visible: true, content: originalFilesSummaries[originalFilesSummaries.length - 1], onload: false})
 
     const onRefresh = () => {
         setRefreshing(true);
         loadOriginalFileList();
         // Simulate fetching new data
         setTimeout(() => {
-        
+            setLocalFileList(originalFileList);
             setRefreshing(false);
         }, 2000);
     }
@@ -207,8 +194,14 @@ export default function FileListScreen({navigation}) {
     }
 
     const handleAddFiles = async () => {
+        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
         const formData = createFormData();
         const result = await saveEncryptedFiles(formData);
+        if (result){
+            setInfoDialog({ state: 'success', message: 'File(s) are successfully', visible: true, onload: false});
+        } else {
+            setInfoDialog({ state: 'error', message: 'Error encountered while adding file(s)', visible: true, onload: false});
+        }
         const formatted = result.map(info => {
             return {
                 ...info,
@@ -218,14 +211,37 @@ export default function FileListScreen({navigation}) {
         setOriginalFileList([...originalFileList, ...formatted])
     }
 
+    const handleOpenFile = (item) => {
+        try {
+            if (item.fileExtension === 'hl7'){
+                navigation.navigate('Medical Message', { fileIds: [item.fileId],  ownerKey: user.key, accessorKey: user.key})
+            }
+            else if (item.fileExtension === 'dcm'){
+                navigation.navigate('DICOM', { fileHash: item.fileHash, ownerKey: user.key, accessorKey: user.key});
+            }
+            else if (item.fileExtension === 'json' && item.fileName.startsWith('Wearable')){
+                navigation.navigate('Wearable', {fileIds: [item.fileId], ownerKey: user.key, accessorKey: user.key})
+            }
+            else {
+                navigation.navigate('File Opener', { ownerKey: user.key, accessorKey: user.key, fileHash: item.fileHash});
+            }
+        } catch (err){
+            console.log(err);
+        }
+    }
+
     const handleRemoveSubmittedFile = (fileName) => {
         const filtered = submittedFiles.filter(file => file.name !== fileName);
         setSubmittedFiles(filtered);
     }
 
     const handleSummarizeDocuments = async () => {
+        setSummaryDialog((data) => {return { ...data, visible: true, onload: true}})
         const selectedFileIds = originalFileList.filter(file => file.selected).map(file => file.fileId);
         const result = await summizeFileRequest(selectedFileIds, user.key, user.key);
+        if (result){
+            setSummaryDialog({ content: result, visible: true, onload: false})
+        }
         setOriginalFilesSummaries(original => [...original, result])
     }
 
@@ -305,7 +321,8 @@ export default function FileListScreen({navigation}) {
                             disableMultiSelect={false}
                             disableRefreshing={false}
                             handleSelectChange={handleSelectChange}
-                            handleDeleteFile={handleDeleteFile}/>}
+                            handleDeleteFile={handleDeleteFile}
+                            onOpenFile={handleOpenFile}/>}
             <TouchableOpacity style={styles.button} onPress={() => setIsVisible(true)} >
                 <View style={{justifyContent: 'center', flex: 1, alignItems: 'center'}}>
                     <AntDesign name={'addfile'} size={20} color={'white'} />
@@ -366,6 +383,8 @@ export default function FileListScreen({navigation}) {
 
                 </SafeAreaView>
             </Modal>
+            <InfoDialog infoDialog={infoDialog} setInfoDialog={setInfoDialog}/>
+            <SummaryDialog summaryDialog={summaryDialog} setSummaryDialog={setSummaryDialog}/>
         </SafeAreaView>    
     )
 }
