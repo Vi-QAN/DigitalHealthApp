@@ -1,4 +1,5 @@
-﻿using HealthSharer.Abstractions;
+﻿using AutoMapper.Internal;
+using HealthSharer.Abstractions;
 using HealthSharer.Exceptions;
 using HealthSharer.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -40,10 +41,10 @@ namespace HealthSharer.Services
             _logRepository.AddActionLogs(logs);
             _logRepository.SaveChanges();
 
-            AddNotifications(logs);
+            AddNotifications(logs, fileAction);
         }
 
-        public void AddNotifications(IEnumerable<ActionLog> logs)
+        public void AddNotifications(IEnumerable<ActionLog> logs, GetFileActionResponse fileAction)
         {
             var authorizationRecords = _authorizationService.GetAllAuthorizationRecords();
 
@@ -53,15 +54,27 @@ namespace HealthSharer.Services
             
             foreach (var log in logs)
             {
+                var recipientIds = new List<int>();
+
                 var fileInfo = fileInfoList.FirstOrDefault(f => f.Id == log.InformationId);
 
                 if (fileInfo == default || fileInfo.FileMode.Name == "Public") continue;
 
-                var recipientIds = authorizationRecords.Where(r => r.OwnerId == fileInfo.OwnerId).Select(r => r.AccessorId).ToList();
+                if (fileAction.Name == "Open" || fileAction.Name == "Download")
+                {
+                    recipientIds.Add(fileInfo.OwnerId);
+                }
 
-                if (fileInfo.OwnerId != log.UserId)
-                   recipientIds.Add(fileInfo.OwnerId);
-                
+                if (fileAction.Name == "Upload" || fileAction.Name == "Remove")
+                {             
+                    recipientIds.AddRange(
+                        authorizationRecords
+                            .Where(r => r.OwnerId == fileInfo.OwnerId && r.AccessorId != log.UserId)
+                            .Select(r => r.AccessorId)
+                            .ToList());
+
+                    if (fileInfo.OwnerId != log.UserId) recipientIds.Add(fileInfo.OwnerId);
+                }
 
                 foreach (var recipientId in recipientIds)
                 {
@@ -109,7 +122,6 @@ namespace HealthSharer.Services
                 .OrderBy(n => n.CreatedDate)
                 .ToList();
             return notifications;
-
         }
 
         public void UpdateNotification(int notiId)

@@ -9,8 +9,6 @@ using HealthSharer.Models;
 using WebData.Abstractions;
 using HealthSharer.Abstractions;
 using WebData.Models;
-using Google.Protobuf.WellKnownTypes;
-
 namespace HealthSharer.Services
 {
     public class AssistantService : IAssistantService
@@ -195,6 +193,11 @@ namespace HealthSharer.Services
                 CreatedDate = m.CreatedDate,
                 MessageContent = m.Content
             }).OrderByDescending(m => m.CreatedDate).ToList();
+        }
+
+        public async Task<string> Prompt(string hl7FilesSummaryStr)
+        {
+            return await model.GenerateAsync("Generate a summary paragraph for the following medical information " + hl7FilesSummaryStr);
         }
     }
 }

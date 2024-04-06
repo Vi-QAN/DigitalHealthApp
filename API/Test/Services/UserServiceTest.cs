@@ -1,4 +1,5 @@
 using HealthSharer.Abstractions;
+using HealthSharer.Exceptions;
 using HealthSharer.Models;
 using HealthSharer.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +21,17 @@ namespace Test.Services
         public void Setup()
         {
             var dbOption = new DbContextOptionsBuilder<DigitalHealthContext>()
-                .UseInMemoryDatabase("Test Database")
+                .UseInMemoryDatabase("user Test")
                 
                 .Options;
 
             _context = new DigitalHealthContext(dbOption);
 
+            if (!_context.FileInformation.Any())
+            {
+                Seed.Init(_context);
+            }
 
-            Seed.Init(_context);
-            
             _userService = new UserService(
                 new UserRepository(_context),
                 MockServices.GetMockContractService());
@@ -70,20 +73,55 @@ namespace Test.Services
         }
 
         [Test]
+        public void GetUserByAddress_NotFound()
+        {
+            // Assert
+            Assert.Throws<NotFoundException>(() => _userService.GetUser("This is a public key"));
+        }
+
+        [Test]
         public void GetUserById_Success()
         {
             // Setup
             var user = users.ElementAt(1);
 
             // Act
-            var response = _userService.GetUser(2);
+            var response = _userService.GetUser(user.Id);
 
             // Assert
             Assert.That(user.Name, Is.EqualTo(response.Name));
         }
 
         [Test]
-        public void Signup_Success()
+        public void GetUserById_NotFound()
+        {
+            // Assert
+            Assert.Throws<NotFoundException>(() => _userService.GetUser(10));
+        }
+
+        [Test]
+        public void Signup_ExistUser_Success()
+        {
+            // Setup
+            var seedUser = Seed.GetUsers().ElementAt(0);
+            var request = new SignupRequest()
+            {
+                Key = seedUser.PublicKey,
+                UserName = seedUser.Name,
+            };
+
+            // Act
+            var response = _userService.Signup(request);
+
+            // Assert
+            var users = _context.Users.Where(u => u.PublicKey == seedUser.PublicKey).ToList();
+            Assert.That(users.Count, Is.EqualTo(1));
+            Assert.That(users.ElementAt(0).Id, Is.EqualTo(seedUser.Id));
+            Assert.That(response.UserId, Is.EqualTo(seedUser.Id));
+        }
+
+        [Test]
+        public void Signup_NotExistUser_Success()
         {
             // Setup
             var request = new SignupRequest()
@@ -96,9 +134,13 @@ namespace Test.Services
             var response = _userService.Signup(request);
 
             // Assert
-            var user = _userService.GetUsers().FirstOrDefault(u => u.UserId == response.UserId);
+            var user = _context.Users.FirstOrDefault(u => u.PublicKey == request.Key);
             Assert.That(user, Is.Not.Null);
-            Assert.That(user.Key, Is.EqualTo(request.Key));
+            Assert.That(user.Name, Is.EqualTo(request.UserName));
+            Assert.That(response.Key, Is.EqualTo(request.Key));
+            Assert.That(response.Name, Is.EqualTo(request.UserName));
         }
+
+        
     }
 }

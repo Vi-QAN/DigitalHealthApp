@@ -30,7 +30,7 @@ namespace WebData.Repositories
 
         public IQueryable<FileInformation> GetAllInformation()
         {
-            return _context.FileInformation;
+            return _context.FileInformation.Include(i => i.FileMode);
         }
 
         public IQueryable<FileInformation> GetAllInformationByUser(int userId)

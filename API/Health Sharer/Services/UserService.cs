@@ -21,7 +21,7 @@ namespace HealthSharer.Services
             _contractService = contractService;
         }
 
-            public GetUserResponse GetUser(int id)
+        public GetUserResponse GetUser(int id)
         {
             var user = _userRepository.GetUserById(id);
 
@@ -81,7 +81,8 @@ namespace HealthSharer.Services
                 return new GetUserResponse()
                 {
                     UserId = user.Id,
-                    Key = request.Key,
+                    Key = user.PublicKey,
+                    Name = user.Name
                 };
             }
 
@@ -100,7 +101,8 @@ namespace HealthSharer.Services
             return new GetUserResponse()
             {
                 UserId = newUser.Id,
-                Key = request.Key,
+                Key = newUser.PublicKey,
+                Name = newUser.Name,
             };
         }
 

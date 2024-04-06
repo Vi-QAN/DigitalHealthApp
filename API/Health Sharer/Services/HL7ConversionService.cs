@@ -98,7 +98,6 @@ namespace HealthSharer.Services
                     }
                 }
 
-                // Implement further processing Logic for v2.4
                 var orderEntryResponse = new HL7OrderEntryResponseContent()
                 {
                     Allergies = allergies,

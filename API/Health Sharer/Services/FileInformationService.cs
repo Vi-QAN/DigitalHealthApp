@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using Org.BouncyCastle.Crypto.Prng;
+using OpenAI.Threads;
 
 namespace HealthSharer.Services
 {
@@ -41,12 +42,9 @@ namespace HealthSharer.Services
 
         public GetInformationResponse AddInformation(AddInformationRequest addInformationRequest)
         {
-            var user = _userService.GetUser(addInformationRequest.OwnerId);
-            if (user == default) {
-                throw new NotFoundException("User not found");
-            }
+            var owner = _userService.GetUser(addInformationRequest.OwnerId);
 
-            var information = _fileRepository.GetInformation(addInformationRequest.OwnerId, addInformationRequest.FileHash);
+            var information = _fileRepository.GetInformation(owner.UserId, addInformationRequest.FileHash);
 
             if (information != default) {
                 throw new BadRequestException("Information existed");
@@ -83,13 +81,9 @@ namespace HealthSharer.Services
         public List<GetInformationResponse> GetAllInformationByOwner(int userId)
         {
             var user = _userService.GetUser(userId);
-            if (user == default)
-            {
-                throw new NotFoundException("User not found");
-            }
 
             var information = _fileRepository.GetAllInformation()
-                .Where(i => i.OwnerId == userId)
+                .Where(i => i.OwnerId == user.UserId)
                 .Include(x => x.FileMode)
                     .ThenInclude(x => x.AvailableActions)
                         .ThenInclude(x => x.FileAction);
@@ -116,17 +110,12 @@ namespace HealthSharer.Services
         {
             var user = _userService.GetUser(userId);
 
-            if (user == default)
-            {
-                throw new NotFoundException("User not found");
-            }
-
             var information = _fileRepository.GetAllInformation()
                 .Include(x => x.FileMode)
                     .ThenInclude(x => x.AvailableActions)
                         .ThenInclude(x => x.FileAction); 
 
-            var records = _authorizationService.GetAuthorizationRecordsByAccessor(userId);
+            var records = _authorizationService.GetAuthorizationRecordsByAccessor(user.UserId);
 
             return records.GroupJoin(
                 information,
@@ -161,11 +150,7 @@ namespace HealthSharer.Services
         public List<FileInformation> AddAllInformation(List<AddInformationRequest> requests)
         {
             var user = _userService.GetUser(requests[0].OwnerId);
-            if (user == default)
-            {
-                throw new NotFoundException("User not found");
-            }
-
+           
             var fileMode = _fileRepository.GetFileMode("Private");
 
             var list = requests.Select(request => new FileInformation()
@@ -188,7 +173,12 @@ namespace HealthSharer.Services
 
         public GetFileActionResponse GetFileAction(int id)
         {
-            return new GetFileActionResponse() { Id = id };
+            var action = _fileRepository.GetFileAction(id);
+
+            return new GetFileActionResponse() { 
+                Id = action.Id,
+                Name = action.Name,
+            };
         }
 
         public GetInformationResponse GetInformationById(int id)
@@ -249,7 +239,7 @@ namespace HealthSharer.Services
             var owner = _userService.GetUser(ownerKey);
             var file = _fileRepository.GetInformation(owner.UserId, fileHash);
 
-            if (file == null)
+            if (file == default)
                 throw new NotFoundException("File doesn't exist");
 
             var notes = _fileRepository.GetNotesByFile(file.Id)
@@ -278,7 +268,7 @@ namespace HealthSharer.Services
             var file = _fileRepository.GetInformation(owner.UserId, fileHash);
             var attachmentList = new List<FileNoteAttachment>();
 
-            if (file == null)
+            if (file == default)
                 throw new NotFoundException("File doesn't exist");
 
             for (var i = 0; i < attachments.Count; i++)
@@ -371,11 +361,14 @@ namespace HealthSharer.Services
         public async Task<GetRegularFileResponse> GetAttachment(string fileHash, int noteId, int attachmentId)
         {
             var attachment = _fileRepository.GetAttachment(attachmentId);
+            
+            if (attachment == null)
+                throw new NotFoundException("Attachment Not Found");
+
             var note = attachment.Note;
             var file = note.FileInformation;
 
-            if (attachment == null || file.FileHash != fileHash || note.Id != noteId)
-                throw new NotFoundException("Attachment Not Found");
+            /*file.FileHash != fileHash || note.Id != noteId*/
 
             string apiUrl = IPFSGetUrl + attachment.IPFSHash;
 

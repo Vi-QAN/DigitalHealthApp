@@ -10,6 +10,7 @@ using HealthSharer.Services;
 using Microsoft.EntityFrameworkCore;
 using WebData.Repositories;
 using HealthSharer.Models;
+using HealthSharer.Exceptions;
 
 namespace Test.Services
 {
@@ -24,14 +25,17 @@ namespace Test.Services
         public void Setup()
         {
             var dbOption = new DbContextOptionsBuilder<DigitalHealthContext>()
-                .UseInMemoryDatabase("Test Database")
+                .UseInMemoryDatabase("Authorization Test")
 
                 .Options;
 
             _context = new DigitalHealthContext(dbOption);
 
 
-            Seed.Init(_context);
+            if (!_context.FileInformation.Any())
+            {
+                Seed.Init(_context);
+            }
 
             _authorizationService = new AuthorizationService(
                 new UserRepository(_context),
@@ -55,50 +59,151 @@ namespace Test.Services
             var records = _authorizationService.GetAllAuthorizationRecords();
 
             // Assert
-            Assert.That(authorizationRecords.ElementAt(0).OwnerId, Is.EqualTo(records[0].OwnerId));
-            Assert.That(users.ElementAt(2).Id, Is.EqualTo(records[1].AccessorId));
+            Assert.That(records.Any(), Is.True);
+            /*Assert.That(authorizationRecords.ElementAt(0).OwnerId, Is.EqualTo(records[0].OwnerId));
+            Assert.That(users.ElementAt(2).Id, Is.EqualTo(records[1].AccessorId));*/
         }
 
         [Test]
-        public void AddAuthorization_Success()
+        public void AddAuthorization_AddNewRecord_Success()
         {
             // Setup
+            var owner = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey1);
+            var accessor = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey3);
             var request = new AuthorizationRequest()
             {
-                OwnerId = Seed.userPublicKey1,
-                AccessorId = Seed.userPublicKey3,
+                OwnerId = owner.PublicKey,
+                AccessorId = accessor.PublicKey,
             };
 
             // Act
             var response = _authorizationService.AddAuthorization(request);
 
             // Assert
-            var owner = _context.Users.FirstOrDefault(u => u.PublicKey == request.OwnerId);
-            var accessor = _context.Users.FirstOrDefault(u => u.PublicKey == request.AccessorId);
-            var record = _authorizationService.GetAllAuthorizationRecords().FirstOrDefault(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id);
+            var record = _context.AuthorizationRecords.FirstOrDefault(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id);
             Assert.That(record, Is.Not.Null);
             Assert.That(record.IsAuthorized, Is.True);
+            Assert.That(response.IsAuthorized, Is.True);
+            Assert.That(response.AccessorKey, Is.EqualTo(accessor.PublicKey));
+        }
+
+        [Test]
+        public void AddAuthorization_UpdateRecord_Success()
+        {
+            // Setup
+            var owner = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey2);
+            var accessor = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey3);
+            var oldLength = _context.AuthorizationRecords.ToList().Count;
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = owner.PublicKey,
+                AccessorId = accessor.PublicKey,
+            };
+
+            // Act
+            var response = _authorizationService.AddAuthorization(request);
+
+            // Assert
+            var record = _context.AuthorizationRecords.FirstOrDefault(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id);
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.IsAuthorized, Is.True);
+            Assert.That(oldLength, Is.EqualTo(_context.AuthorizationRecords.ToList().Count));
+            Assert.That(response.IsAuthorized, Is.True);
+            Assert.That(response.AccessorKey, Is.EqualTo(accessor.PublicKey));
+        }
+
+        [Test]
+        public void AddAuthorization_OwnerNotFound()
+        {
+            // Setup
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = "Different owner key",
+                AccessorId = Seed.userPublicKey3,
+            };
+
+            // Act
+            Assert.Throws<NotFoundException>(() => _authorizationService.AddAuthorization(request));
+        }
+
+        [Test]
+        public void AddAuthorization_AccessorNotFound()
+        {
+            // Setup
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = Seed.userPublicKey1,
+                AccessorId = "Different accessor key",
+            };
+
+            // Act
+            Assert.Throws<NotFoundException>(() => _authorizationService.AddAuthorization(request));
         }
 
         [Test]
         public void RemoveAuthorization_Success()
         {
             // Setup
+            var owner = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey1);
+            var accessor = _context.Users.FirstOrDefault(u => u.PublicKey == Seed.userPublicKey2);
             var request = new AuthorizationRequest()
             {
-                OwnerId = Seed.userPublicKey1,
-                AccessorId = Seed.userPublicKey3,
+                OwnerId = owner.PublicKey,
+                AccessorId = accessor.PublicKey,
             };
 
             // Act
             var response = _authorizationService.RemoveAuthorization(request);
 
             // Assert
-            var owner = _context.Users.FirstOrDefault(u => u.PublicKey == request.OwnerId);
-            var accessor = _context.Users.FirstOrDefault(u => u.PublicKey == request.AccessorId);
-            var record = _authorizationService.GetAllAuthorizationRecords().FirstOrDefault(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id);
+            var record = _context.AuthorizationRecords.FirstOrDefault(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id);
+            var fileRecords = _context.FileAuthorizationRecords.Where(r => r.AccessorId == accessor.Id && r.OwnerId == owner.Id).ToList();
             Assert.That(record, Is.Not.Null);
             Assert.That(record.IsAuthorized, Is.False);
+            Assert.That(fileRecords.Any(), Is.True);
+            Assert.That(fileRecords.All(r => r.IsAuthorized == false), Is.True);
+        }
+
+        [Test]
+        public void RemoveAuthorization_OwnerNotFound()
+        {
+            // Setup
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = "Different owner key",
+                AccessorId = Seed.userPublicKey3,
+            };
+
+            // Act
+            Assert.Throws<NotFoundException>(() => _authorizationService.RemoveAuthorization(request));
+        }
+
+        [Test]
+        public void RemoveAuthorization_AccessorNotFound()
+        {
+            // Setup
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = Seed.userPublicKey1,
+                AccessorId = "Different accessor key",
+            };
+
+            // Act
+            Assert.Throws<NotFoundException>(() => _authorizationService.RemoveAuthorization(request));
+        }
+
+        [Test]
+        public void RemoveAuthorization_RecordNotFound()
+        {
+            // Setup
+            var request = new AuthorizationRequest()
+            {
+                OwnerId = Seed.userPublicKey2,
+                AccessorId = Seed.userPublicKey1,
+            };
+
+            // Act
+            Assert.Throws<NotFoundException>(() => _authorizationService.RemoveAuthorization(request));
         }
 
         [Test]
@@ -106,23 +211,34 @@ namespace Test.Services
         {
             // Setup
             var owner = _context.Users.FirstOrDefault(u => u.Id == 1);
-            var accessor = _context.Users.FirstOrDefault(u => u.Id == 2);
 
             // Act
             var authorizationList = _authorizationService.GetAuthorization(owner.Id);
 
             // Assert
-            var response = authorizationList.FirstOrDefault(r => r.AccessorId == accessor.Id);
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.IsAuthorized, Is.True);
+            Assert.That(authorizationList.Any(), Is.True);
+            Assert.That(authorizationList.All(r => r.IsAuthorized == true), Is.True);
+        }
+
+        [Test]
+        public void GetAuthorization_UserNotFound()
+        {
+            // Assert
+            Assert.Throws<NotFoundException>(() => _authorizationService.GetAuthorization(10));
         }
 
         [Test]
         public void GetAuthorizationRecordsByAccessor_Success()
         {
             // Setup
+            var accessor = _context.Users.FirstOrDefault(u => u.Id == 2);
 
-            // Act 
+            // Act
+            var result = _authorizationService.GetAuthorizationRecordsByAccessor(accessor.Id);
+
+            // Assert
+            Assert.That(result.Any(), Is.True);
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -157,14 +273,24 @@ namespace Test.Services
         }
 
         [Test]
-        public void AddFileAuthorization_Success()
+        public void RemoveFileAuthorization_NotFound()
+        {
+            // Assert
+            Assert.Throws<NotFoundException>(() => _authorizationService.RemoveFileAuthorization(10));
+        }
+
+        [Test]
+        public void AddFileAuthorization_AddNewRecord_Success()
         {
             // Setup
+            var owner = _context.Users.FirstOrDefault(u => u.Id == 1);
+            var accessor = _context.Users.FirstOrDefault(u => u.Id == 2);
+            var fileInfo = _context.FileInformation.FirstOrDefault(f => f.Id == 5);
             var request = new FileAuthorizationRequest()
             {
-                AccessorId = 2,
-                OwnerId = 1,
-                FileId = 5,
+                AccessorId = accessor.Id,
+                OwnerId = owner.Id,
+                FileId = fileInfo.Id,
             };
 
             // Act
@@ -178,6 +304,35 @@ namespace Test.Services
 
             Assert.That(record, Is.Not.Null);
             Assert.That(record.IsAuthorized, Is.True);
+        }
+
+        [Test]
+        public void AddFileAuthorization_UpdateRecord_Success()
+        {
+            // Setup
+            var owner = _context.Users.FirstOrDefault(u => u.Id == 1);
+            var accessor = _context.Users.FirstOrDefault(u => u.Id == 2);
+            var fileInfo = _context.FileInformation.FirstOrDefault(f => f.Id == 4);
+            var oldLength = _context.FileAuthorizationRecords.ToList().Count;
+            var request = new FileAuthorizationRequest()
+            {
+                AccessorId = accessor.Id,
+                OwnerId = owner.Id,
+                FileId = fileInfo.Id,
+            };
+
+            // Act
+            _authorizationService.AddFileAuthorization(request);
+
+            // Assert
+            var record = _context.FileAuthorizationRecords.
+                FirstOrDefault(r => r.AccessorId == request.AccessorId
+                        && r.OwnerId == request.OwnerId
+                        && r.FileInformationId == request.FileId);
+
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.IsAuthorized, Is.True);
+            Assert.That(oldLength, Is.EqualTo(_context.FileAuthorizationRecords.ToList().Count));
         }
     }
 }

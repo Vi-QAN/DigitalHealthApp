@@ -40,7 +40,15 @@ namespace HealthSharer.Extensions
 
         public static List<AddJSONFileFromTextContent> DeserializeWeareableDataFile(this string content)
         {
-            return JsonSerializer.Deserialize<List<AddJSONFileFromTextContent>>(content);
+            var result = new List<AddJSONFileFromTextContent>();
+            try
+            {
+                result = JsonSerializer.Deserialize<List<AddJSONFileFromTextContent>>(content);
+            } catch (Exception ex){
+                Console.WriteLine(ex.Message);
+            }
+
+            return result;
         }
 
         public static List<WearableDataFileSummary> Summarize(this List<List<AddJSONFileFromTextContent>> list, List<File> fileInfoList)
@@ -149,12 +157,31 @@ namespace HealthSharer.Extensions
                 }
             }
 
-            result += "Name on record" + names[0];
-            result += " Age " + (DateTime.UtcNow.Year - int.Parse(dobs[0].Split("/")[0]));
-            result += " Sex ";
-            result += (sexes[0] == 'M') ? "Male" : "Female";       
-            result += " Allergies " + string.Join(", ", allergies);
-            result += " Diagnoses " + string.Join(", ", diagnoses);
+            if (names.Count > 0)
+            {
+                result += "Name on record" + names[0];
+            }
+
+            if (dobs.Count > 0)
+            {
+                result += " Age " + (DateTime.UtcNow.Year - int.Parse(dobs[0].Split("/")[0]));
+            }
+
+            if (sexes.Count > 0)
+            {
+                result += " Sex ";
+                result += (sexes[0] == 'M') ? "Male" : "Female";
+            }
+            
+            if (allergies.Count > 0)
+            {
+                result += " Allergies " + string.Join(", ", allergies);
+            }
+
+            if (diagnoses.Count > 0)
+            {
+                result += " Diagnoses " + string.Join(", ", diagnoses);
+            }
 
             return result;
         }

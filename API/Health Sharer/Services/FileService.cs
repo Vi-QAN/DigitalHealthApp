@@ -21,6 +21,7 @@ namespace HealthSharer.Services
         private readonly IFileInformationService _informationService;
         private readonly IUserService _userService;
         private readonly ILogService _logService;
+        private readonly IAssistantService _assistantService;
         private readonly IFileRepository _fileRepository;
         private readonly ILogger _logger;
         public HttpClient _httpClient { get; set; } = new HttpClient();
@@ -31,15 +32,14 @@ namespace HealthSharer.Services
         private string IPFSDeleteUrl = IPFSBaseUrl + "/files/rm?arg=";
         private HL7ConversionService hl7Service = new HL7ConversionService();
 
-        private static string OpenAPIKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-
         public FileService(
             IContractService contractService,
             IFileInformationService informationService,
             IUserService userService,
             ILogService logService,
             IFileRepository fileRepository,
-            ILogger<FileService> logger
+            ILogger<FileService> logger,
+            IAssistantService assistantService
             )
         {
             _contractService = contractService;
@@ -48,10 +48,12 @@ namespace HealthSharer.Services
             _logService = logService;
             _fileRepository = fileRepository;
             _logger = logger;
+            _assistantService = assistantService;
+
         }
 
-        #region
-        private async Task<List<GetRegularFileResponse>> downloadFiles(List<int> fileIds, RandomSeed seed, string fileExtension, int userId)
+    #region
+    private async Task<List<GetRegularFileResponse>> downloadFiles(List<int> fileIds, RandomSeed seed, string fileExtension, int userId)
         {
             List<GetRegularFileResponse> responses = new List<GetRegularFileResponse>();
 
@@ -288,36 +290,6 @@ namespace HealthSharer.Services
             return _informationService.GetInformationById(addedList[0].Id);
         }
 
-        public async Task<List<List<AddJSONFileFromTextContent>>> openWearableDataFiles(List<int> fileIds, string ownerKey, string accessorKey, string fileExtension)
-        {
-            List<List<AddJSONFileFromTextContent>> result = new ();
-
-            if (fileIds.Count == 0) return result;
-
-            var owner = _userService.GetUser(ownerKey);
-            if (owner == default) throw new NotFoundException("User Not Found");
-
-            var seed = await _contractService.GetKey(ownerKey, accessorKey);
-
-            var files = await downloadFiles(fileIds, seed, fileExtension, owner.UserId);
-
-            foreach (var file in files)
-            {
-                try
-                {
-                    var dataStr = Encoding.ASCII.GetString(file.Content);
-                    var data = dataStr.DeserializeWeareableDataFile();
-                    result.Add(data);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-
-            return result;
-        }
-
         public async Task<GetInformationResponse> uploadFromText(AddPDFFileFromTextRequest request)
         {
             var section = SectionBuilder.New();
@@ -395,8 +367,6 @@ namespace HealthSharer.Services
             }
         }
         #endregion
-
-
         #region
         private async Task<GetHL7FileResponse> convertHL7(byte[] data)
         {
@@ -460,6 +430,36 @@ namespace HealthSharer.Services
 
             return result;
         }
+
+        public async Task<List<List<AddJSONFileFromTextContent>>> openWearableDataFiles(List<int> fileIds, string ownerKey, string accessorKey, string fileExtension)
+        {
+            List<List<AddJSONFileFromTextContent>> result = new();
+
+            if (fileIds.Count == 0) return result;
+
+            var owner = _userService.GetUser(ownerKey);
+            if (owner == default) throw new NotFoundException("User Not Found");
+
+            var seed = await _contractService.GetKey(ownerKey, accessorKey);
+
+            var files = await downloadFiles(fileIds, seed, fileExtension, owner.UserId);
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    var dataStr = Encoding.ASCII.GetString(file.Content);
+                    var data = dataStr.DeserializeWeareableDataFile();
+                    result.Add(data);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
+            return result;
+        }
         #endregion
 
         public List<GetFilesSummaryResponse> getFilesSummaries(int ownerId)
@@ -479,18 +479,10 @@ namespace HealthSharer.Services
         public async Task<GetFilesSummaryResponse> summarizeFiles (List<int> fileIds = null, string ownerKey = null, string accessorKey = null) {
             var user = _userService.GetUser(ownerKey);
 
-            if (user == default) 
-                throw new NotFoundException("User not found");
-
-            if (OpenAPIKey == null)
-                throw new Exception("Missing API Key");
-
-            var model = new Gpt35TurboModel(OpenAPIKey);
-
             var infoList = _informationService.GetAllInformationByOwner(user.UserId);
             var previousSummaries = getFilesSummaries(user.UserId);
             
-            var storedFileIds = infoList.Select(i => i.FileId).ToList();
+            var storedFileIds = infoList.Where(i => i.FileExtension == "hl7" || (i.FileExtension == "json" && i.FileName.StartsWith("Wearable"))).Select(i => i.FileId).ToList();
             var summarizedFileIds = new List<int>();
             var notSummarizedFileIds = new List<int>();
 
@@ -510,7 +502,7 @@ namespace HealthSharer.Services
             
             if (notSummarizedFileIds.Any())
             {
-                var notSummarizedInfoList = infoList.Where(i => notSummarizedFileIds.Contains(i.FileId));
+                var notSummarizedInfoList = infoList.Where(i => notSummarizedFileIds.Contains(i.FileId)).ToList();
 
                 var hl7Files = notSummarizedInfoList.Where(i => i.FileExtension == "hl7")
                         .Select(i => new File()
@@ -525,7 +517,7 @@ namespace HealthSharer.Services
 
                 try
                 {
-                    hl7FilesSummaryStr = await model.GenerateAsync("Generate a summary paragraph for the following medical information " + hl7FilesSummaryStr);
+                    hl7FilesSummaryStr = await _assistantService.Prompt(hl7FilesSummaryStr);
                 } catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());

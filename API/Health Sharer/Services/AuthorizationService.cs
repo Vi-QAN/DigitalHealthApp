@@ -49,11 +49,11 @@ namespace HealthSharer.Services
 
                 return new GetAuthorizationResponse()
                 {
-                    AccessorId = record.AccessorId,
+                    AccessorId = accessor.Id,
                     AccessorKey = accessor.PublicKey,
                     Name = accessor.Name,
-                    IsAuthorized = record.IsAuthorized,
-                    AuthorizedDate = record.AuthorizedDate,
+                    IsAuthorized = newRecord.IsAuthorized,
+                    AuthorizedDate = newRecord.AuthorizedDate,
                 };
            
             }
@@ -61,11 +61,6 @@ namespace HealthSharer.Services
             record.IsAuthorized = true;
             record.AuthorizedDate = DateTime.UtcNow;
 
-            var records = _userRepository.GetFileAuthorizationRecordsByAccessor(accessor.Id).ToList();
-
-            records.ForAll(r => r.IsAuthorized = false);
-
-            _userRepository.UpdateFileAuthorizationRecords(records);
             _userRepository.UpdateAuthorizationRecord(record);
             _userRepository.SaveChanges();
 
@@ -99,7 +94,7 @@ namespace HealthSharer.Services
 
             record.IsAuthorized = false;
 
-            var records = _userRepository.GetFileAuthorizationRecordsByAccessor(accessor.Id).ToList();
+            var records = _userRepository.GetFileAuthorizationRecordsByAccessor(accessor.Id).Where(r => r.OwnerId == owner.Id).ToList();
 
             records.ForAll(r => r.IsAuthorized = false);
 
