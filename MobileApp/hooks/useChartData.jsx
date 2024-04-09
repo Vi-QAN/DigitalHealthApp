@@ -134,7 +134,8 @@ function useChartDataContext () {
         oxygenLevelData,
         heartbeatData,
         filterMode,
-        handleChangeFilter
+        handleChangeFilter,
+        formatDate
     }
 }
 

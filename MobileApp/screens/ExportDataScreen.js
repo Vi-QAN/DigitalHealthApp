@@ -9,7 +9,7 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import { ChartDataConsumer } from '../hooks/useChartData';
 
-import { uploadWearableData } from '../utils/fileHandler';
+import { uploadWearableData, getDataRange } from "../utils/fileHandler";
 import { AuthConsumer } from '../hooks/useAuth';
 import { DefaultColors} from '../constants/styles';
 import { DataConsumer } from '../hooks/useData';
@@ -31,7 +31,7 @@ const DropdownData = [
 export default function ExportDataScreen({navigation}){
     const { user } = AuthConsumer();
     const { setOriginalFileList } = DataConsumer();
-    const { sampleData } = ChartDataConsumer();
+    const { formatDate } = ChartDataConsumer();
     const [ date, setDate ] = useState({state: 'from', from: '', to: ''});
     const [ pickerVisible, setPickerVisible ] = useState(false);
     const [ pickedDate, setPickedDate ] = useState(new Date())
@@ -115,8 +115,12 @@ export default function ExportDataScreen({navigation}){
         const current = new Date();
         if (dateTo > current) return;
 
-        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
-        const filteredData = filterData(sampleData.current, dateFrom, dateTo);
+        setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})
+        const formattedFromDate = formatDate(dateFrom);
+        const formattedToDate = formatDate(dateTo);
+        const res = await getDataRange(formattedFromDate,formattedToDate );
+
+        const filteredData = filterData(res, dateFrom, dateTo);
         const mappedData = mapData(selectedDataType, filteredData);
         const submission = {
             ownerId: user.userId,
@@ -125,11 +129,11 @@ export default function ExportDataScreen({navigation}){
         const result = await uploadWearableData(submission);
         if (result){
             setInfoDialog({ state: 'success', message: 'Wearable data has been exported successfully', visible: true, onload: false});
+            setOriginalFileList(list => [...list, { ...result, selected: false}])
         } else {
             setInfoDialog({ state: 'error', message: 'Error encountered while exporting data', visible: true, onload: false});
         }
 
-        setOriginalFileList(list => [...list, { ...result, selected: false}])
     }
 
     const handleFocus = (state) => {

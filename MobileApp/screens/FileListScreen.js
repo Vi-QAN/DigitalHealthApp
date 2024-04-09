@@ -123,7 +123,7 @@ export default function FileListScreen({navigation}) {
     const [ refreshing, setRefreshing ] = useState(false);
     const [ onMultiSelect, setOnMultiSelect ] = useState(false);
     const [ infoDialog, setInfoDialog ] = useState({state: 'success', message: 'Files are added successfully', visible: false, onload: false});
-    const [ summaryDialog, setSummaryDialog ] = useState({visible: true, content: originalFilesSummaries[originalFilesSummaries.length - 1], onload: false})
+    const [ summaryDialog, setSummaryDialog ] = useState({visible: false, content: originalFilesSummaries[originalFilesSummaries.length - 1], onload: false})
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -156,9 +156,9 @@ export default function FileListScreen({navigation}) {
           quality: 1,
         });
         
-        const assets = processAssets(result.assets);
         
         if (!result.canceled) {
+            const assets = processAssets(result.assets);
             setSubmittedFiles([...submittedFiles, ...assets])
         }
     };
@@ -171,9 +171,9 @@ export default function FileListScreen({navigation}) {
           type: 'application/pdf'
         });
         
-        const assets = processAssets(result.assets);
         
         if (!result.canceled) {
+            const assets = processAssets(result.assets);
             setSubmittedFiles([...submittedFiles, ...assets])
         }
     };
@@ -194,21 +194,25 @@ export default function FileListScreen({navigation}) {
     }
 
     const handleAddFiles = async () => {
+        setIsVisible(false);
         setInfoDialog((data) => {{return {...data, visible: true, onload: true}}})        
         const formData = createFormData();
         const result = await saveEncryptedFiles(formData);
         if (result){
             setInfoDialog({ state: 'success', message: 'File(s) are successfully', visible: true, onload: false});
+            const formatted = result.map(info => {
+                return {
+                    ...info,
+                    selected: false
+                }
+            })
+            setOriginalFileList([...originalFileList, ...formatted])
+            setLocalFileList([...originalFileList, ...formatted])
+            setSubmittedFiles([])
         } else {
             setInfoDialog({ state: 'error', message: 'Error encountered while adding file(s)', visible: true, onload: false});
         }
-        const formatted = result.map(info => {
-            return {
-                ...info,
-                selected: false
-            }
-        })
-        setOriginalFileList([...originalFileList, ...formatted])
+        
     }
 
     const handleOpenFile = (item) => {
@@ -249,6 +253,7 @@ export default function FileListScreen({navigation}) {
         await deleteFile(fileId);
         const filtered = originalFileList.filter(file => file.fileId !== fileId);
         setOriginalFileList(filtered);
+        setLocalFileList(filtered);
     }
 
     const handleSelectChange = (selectedItem) => {
@@ -275,6 +280,19 @@ export default function FileListScreen({navigation}) {
         }
         const newList = originalFileList.filter(file => file.fileName.startsWith(text.toUpperCase()) || file.fileName.includes(text.toUpperCase()));
         setLocalFileList(newList);
+    }
+
+    const handleOnCancel = () => {
+        const newList = originalFileList.map(file => {
+            return {
+                ...file,
+                selected: false,
+            }
+        })
+
+        setOriginalFileList(newList);
+        setLocalFileList(newList);
+        setOnMultiSelect(false);
     }
  
     useEffect(() => {
@@ -304,7 +322,7 @@ export default function FileListScreen({navigation}) {
                         <Text style={{marginLeft: 10}}>{'Summarize'}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ ...DefaultShadow, width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={() => setOnMultiSelect(false)} >
+                <TouchableOpacity style={{ ...DefaultShadow, width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={() => handleOnCancel()} >
                     <View style={{display: 'flex', flexDirection: 'row',justifyContent: 'center', flex: 1, alignItems: 'center'}}>
                         <MaterialCommunityIcons name={'cancel'} size={25} color={DefaultColors.navy} />
                         <Text style={{marginLeft: 10}}>{'Cancel'}</Text>

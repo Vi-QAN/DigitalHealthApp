@@ -48,17 +48,18 @@ export default function AlertsScreen({navigation}) {
           <ListItem.Part marginR-10>
               <Avatar source={{uri: item.imageUri}} />
             </ListItem.Part>
-            <ListItem.Part containerStyle={{width: '65%'}} column  >
+            <ListItem.Part containerStyle={{width: '60%'}} column  >
               <Text text90BO >{item.name}</Text>
               <Text>{item.message}</Text>
               <Text text90BO>{item.fileName}</Text>
             </ListItem.Part>
-            <ListItem.Part flex center column>
-              <Text>{new Date(item.createdDate).toLocaleTimeString("en-US", options)}</Text>
-              <View style={{     marginTop: 10,   alignSelf: 'center'}}>
+            <ListItem.Part flex center column containerStyle={{width: '30%', alignItems: 'flex-end', paddingRight: 30}}>
+              <Text style={{fontSize: 12, fontWeight: 500, marginBottom: 5}}>{new Date(item.createdDate).toLocaleDateString()}</Text>
+              <Text style={{fontSize: 10}}>{new Date(item.createdDate).toLocaleTimeString("en-US", options)}</Text>
+              {/* <View style={{     marginTop: 10,   alignSelf: 'center'}}>
                 {!item.isRead && <Avatar  size={10} backgroundColor='orange'/>}
 
-              </View>
+              </View> */}
             </ListItem.Part>
           </ListItem>
         </Drawer>
@@ -100,6 +101,11 @@ export default function AlertsScreen({navigation}) {
     useEffect(() => {
       setRefreshing(true);
       loadData()
+      const intervalId = setInterval(loadData, 15000)
+        return () => {
+          clearInterval(intervalId);
+          console.log("unmounted")
+        }
     },[])
     return (
         <SafeAreaView style={styles.container}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import ChartComponent from '../components/Screens/HomeScreen/ChartComponent';
 import InfoSection from '../components/Screens/HomeScreen/InfoSection';
@@ -14,28 +14,41 @@ import { promptMessage } from '../utils/fileHandler';
 function AssistantModal({isVisible, setIsVisible}){
     const { messageHistory } = OpenAIConsumer();
     const { user } = AuthConsumer();
+    const [ isTyping, setIsTyping ] = useState(false);
+    const [ messages, setMessages] = useState(messageHistory.current)
 
-    const onSend = async (newMessages) => {
-        messageHistory.current = GiftedChat.append(messageHistory.current, newMessages);
+    const onSend = useCallback((newMessages = []) => {
+        setIsTyping(true);
+        setMessages(prevMessages => GiftedChat.append(prevMessages, newMessages));
         const userMessage = newMessages[0].text;
-
-        const result = await promptMessage(user.userId, userMessage);
-        const botMessage = {
-            _id: result.messageId,
-            text: result.messageContent,
-            createdAt: new Date(result.createdDate),
-            user: {
-                _id: 1337,
-                name: 'Assistant',
-                avatar: 'https://www.pngitem.com/pimgs/m/122-1223088_one-bot-discord-avatar-hd-png-download.png'
-            }
-        }
-        messageHistory.current = GiftedChat.append(messageHistory.current, botMessage);
-    }
+        
+        promptMessage(user.userId, userMessage).then(result => {
+            if (result){
+                const botMessage = {
+                    _id: result.messageId,
+                    text: result.messageContent,
+                    createdAt: new Date(result.createdDate),
+                    user: {
+                        _id: 1337,
+                        name: 'Assistant',
+                        avatar: 'https://www.pngitem.com/pimgs/m/122-1223088_one-bot-discord-avatar-hd-png-download.png'
+                    }
+                }
+                setMessages(prevMessages => GiftedChat.append(prevMessages, botMessage));
+                setIsTyping(false);
+            }    
+        });
+        
+        
+    })
 
     useEffect(() => {
-        
-    },[messageHistory.current]);
+
+    },[isTyping])
+
+    useEffect(() => {
+        setMessages(messageHistory.current);
+    },[messageHistory.current ]);
 
     return (
         <Modal
@@ -61,11 +74,12 @@ function AssistantModal({isVisible, setIsVisible}){
                         containerStyle={{ width: '100%', borderRadius: 5, ...DefaultShadow,}}
                     />
                     <GiftedChat
-                        messages={messageHistory.current}
+                        messages={messages}
                         onSend={newMessages => onSend(newMessages)}
                         user={{
                             _id: user.userId,
                         }}
+                        isTyping={isTyping}
                     />
                 </View>
 

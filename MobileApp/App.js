@@ -143,11 +143,12 @@ const AppNavigator = () => {
 export default function App() {
 
   useEffect(() => {
-    // const subscription = AppState.addEventListener('change', handleAppState);
+    //const subscription = AppState.addEventListener('change', handleAppState);
 
-    // return () => {
-    //   subscription.remove();
-    // };
+    return () => {
+      localStorage.clear();
+      //subscription.remove();
+    };
   }, []);
 
   const handleNavReady = () => {

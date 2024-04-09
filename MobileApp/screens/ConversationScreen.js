@@ -53,9 +53,9 @@ export default function ConversationScreen({navigation}){
             const result = await authorizeRequest({ownerId: user.key, accessorId: accessorInfo.key});
             // ${error.message}
             if (isError || !result){
-                setInfoDialog({ state: 'success', message: `Error while authorizing ${accessor.name}`, visible: true, onload: false});
+                setInfoDialog({ state: 'error', message: `Error while authorizing ${accessorInfo.name}`, visible: true, onload: false});
             } else {
-                setInfoDialog({ state: 'error', message: `Authorize ${accessor.name} successfully`, visible: true, onload: false});
+                setInfoDialog({ state: 'success', message: `Authorize ${accessorInfo.name} successfully`, visible: true, onload: false});
             }
             setOriginalAuthorizationList([...originalAuthorizationList, { 
                 ...result, 
@@ -75,9 +75,10 @@ export default function ConversationScreen({navigation}){
             await writeAsync(revokeAuthorizationObject);
             // ${error.message}
             if (isError){
-                setInfoDialog({ state: 'success', message: `Error while revoking authorization of ${accessor.name}`, visible: true, onload: false});
+                setInfoDialog({ state: 'error', message: `Error while revoking authorization of ${accessor.name}`, visible: true, onload: false});
             } else {
-                setInfoDialog({ state: 'error', message: `Revoke authorization of ${accessor.name} successfully`, visible: true, onload: false});
+                setInfoDialog({ state: 'success',message: `Revoke authorization of ${accessor.name} successfully`, visible: true, onload: false});
+
             }
 
             await revokeAuthorizationRequest({ownerId: user.key, accessorId: accessor.accessorKey});
