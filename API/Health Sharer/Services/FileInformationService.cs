@@ -103,7 +103,7 @@ namespace HealthSharer.Services
                     Id = a.FileAction.Id,
                     Name = a.FileAction.Name,
                 }).ToList()
-            }).OrderBy(x => x.AddedDate).ToList();
+            }).OrderByDescending(x => x.AddedDate).ToList();
         }
 
         public List<GetAllInformationResponse> GetAllInformationByAccessor(int userId)

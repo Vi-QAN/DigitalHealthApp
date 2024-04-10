@@ -119,7 +119,8 @@ namespace HealthSharer.Services
                     IsRead = n.IsRead,
                     ActionName = n.ActionLog.FileAction.Name
                 })
-                .OrderBy(n => n.CreatedDate)
+                .OrderByDescending(n => n.CreatedDate)
+                .Take(10)
                 .ToList();
             return notifications;
         }

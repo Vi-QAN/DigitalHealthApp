@@ -192,7 +192,7 @@ namespace HealthSharer.Services
                 From = m.From,
                 CreatedDate = m.CreatedDate,
                 MessageContent = m.Content
-            }).OrderByDescending(m => m.CreatedDate).ToList();
+            }).OrderByDescending(m => m.CreatedDate).Take(10).ToList();
         }
 
         public async Task<string> Prompt(string hl7FilesSummaryStr)

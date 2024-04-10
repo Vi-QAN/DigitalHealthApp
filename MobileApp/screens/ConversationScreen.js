@@ -1,5 +1,5 @@
 
-import { StyleSheet, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, SafeAreaView, TouchableOpacity, View, Text} from 'react-native';
 
 import ContactComponent from '../components/Screens/ContactComponent';
 
@@ -115,7 +115,7 @@ export default function ConversationScreen({navigation}){
                 }}
                 textInputProps={
                     {
-                        placeholder: "Find User",
+                        placeholder: "Authorize an user",
                         underlineColorAndroid: "transparent",
                         style: {
                             padding: 12,
@@ -132,6 +132,9 @@ export default function ConversationScreen({navigation}){
                     }
                 }
             />
+            <Text style={{marginTop: 10, marginLeft: 10, opacity: 0.9, fontWeight: 500, ...DefaultShadow}}>
+                Authorized users
+            </Text>
             {originalAuthorizationList.length > 0 && 
                 <ContactComponent 
                     navigation={navigation} 

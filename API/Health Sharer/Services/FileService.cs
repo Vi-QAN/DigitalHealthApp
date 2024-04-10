@@ -122,9 +122,14 @@ namespace HealthSharer.Services
 
             var seed = await _contractService.GetKey(owner.Key, accessor.Key);
 
-            var file = _informationService.GetInformationByHash(owner.UserId, fileHash);
+            var fileInfo = _informationService.GetInformationByHash(owner.UserId, fileHash);
 
-            return await downloadFile(file, seed);
+            var file = await downloadFile(fileInfo, seed);
+
+            var fileAction = _fileRepository.GetFileAction("Open");
+            _logService.AddActionLogs(fileAction.Id, accessor.UserId, new List<int>() { fileInfo.FileId});
+
+            return file;
         }
 
         private async Task<GetRegularFileResponse> downloadFile(GetInformationResponse fileInfo, RandomSeed seed)
@@ -409,7 +414,7 @@ namespace HealthSharer.Services
             if (fileIds.Count == 0) return result;
 
             var owner = _userService.GetUser(ownerKey);
-            if (owner == default) throw new NotFoundException("User Not Found");
+            var accessor = _userService.GetUser(accessorKey);
 
             var seed = await _contractService.GetKey(ownerKey, accessorKey);
 
@@ -428,6 +433,9 @@ namespace HealthSharer.Services
                 }
             }
 
+            var fileAction = _fileRepository.GetFileAction("Open");
+            _logService.AddActionLogs(fileAction.Id, accessor.UserId, fileIds);
+
             return result;
         }
 
@@ -438,7 +446,7 @@ namespace HealthSharer.Services
             if (fileIds.Count == 0) return result;
 
             var owner = _userService.GetUser(ownerKey);
-            if (owner == default) throw new NotFoundException("User Not Found");
+            var accessor = _userService.GetUser(accessorKey);
 
             var seed = await _contractService.GetKey(ownerKey, accessorKey);
 
@@ -457,6 +465,9 @@ namespace HealthSharer.Services
                     Console.WriteLine(ex);
                 }
             }
+
+            var fileAction = _fileRepository.GetFileAction("Open");
+            _logService.AddActionLogs(fileAction.Id, accessor.UserId, fileIds);
 
             return result;
         }

@@ -240,8 +240,9 @@ export default function FileListScreen({navigation}) {
     }
 
     const handleSummarizeDocuments = async () => {
-        setSummaryDialog((data) => {return { ...data, visible: true, onload: true}})
         const selectedFileIds = originalFileList.filter(file => file.selected).map(file => file.fileId);
+        if (selectedFileIds.length === 0) return;
+        setSummaryDialog((data) => {return { ...data, visible: true, onload: true}})
         const result = await summizeFileRequest(selectedFileIds, user.key, user.key);
         if (result){
             setSummaryDialog({ content: result, visible: true, onload: false})
