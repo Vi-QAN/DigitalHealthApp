@@ -34,7 +34,7 @@
     "it-to-buffer": "^4.0.4",
     "node-sass": "^9.0.0",
     "pako": "^2.1.0",
-    "pdfjs-dist": "^4.0.189",
+    "pdfjs-dist": "^4.2.67",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
