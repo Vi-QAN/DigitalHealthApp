@@ -21,7 +21,7 @@
     "buffer": "^6.0.3",
     "cors": "^2.8.5",
     "ethers": "5.7.2",
-    "expo": "~50.0.11",
+    "expo": "~51.0.8",
     "expo-application": "~5.8.3",
     "expo-av": "~13.10.5",
     "expo-clipboard": "~5.0.1",
