@@ -20,7 +20,7 @@
     "@web3modal/wagmi-react-native": "^1.2.0",
     "buffer": "^6.0.3",
     "cors": "^2.8.5",
-    "ethers": "5.7.2",
+    "ethers": "6.0.0",
     "expo": "~50.0.11",
     "expo-application": "~5.8.3",
     "expo-av": "~13.10.5",
@@ -60,8 +60,8 @@
     "react-native-webview": "13.6.4",
     "stream-chat": "^8.12.0",
     "stream-chat-expo": "^5.17.1",
-    "viem": "1.21.4",
-    "wagmi": "1.4.13"
+    "viem": "2.15.1",
+    "wagmi": "2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
