@@ -48,7 +48,7 @@
     "viem": "^2.7.2",
     "wagmi": "^2.5.5",
     "web-vitals": "^2.1.4",
-    "web3": "^4.1.2",
+    "web3": "^4.13.0",
     "web3-providers-http": "^4.1.0"
   },
   "scripts": {
